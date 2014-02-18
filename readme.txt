@@ -44,6 +44,11 @@ function my_register_fields()
 }
 `
 
+== Screenshots ==
+
+1. Set a default icon, and choose how you want icon data to be returned.
+2. Searchable list of all icons, including large live preview
+
 == Changelog ==
 
 = 1.0.0 =
