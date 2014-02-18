@@ -1,4 +1,4 @@
-=== Advanced Custom Fields: Font Awesome Field ===
+=== Advanced Custom Fields: Font Awesome ===
 Contributors: mattkeys
 Tags: Advanced Custom Fields, ACF, Font Awesome, FontAwesome
 Requires at least: 3.5
