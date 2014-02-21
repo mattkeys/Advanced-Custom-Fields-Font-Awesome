@@ -17,7 +17,6 @@ class acf_field_font_awesome extends acf_field
 
 	function __construct()
 	{
-		// vars
 		$this->name = 'font-awesome';
 		$this->label = __('Font Awesome Icon');
 		$this->category = __("Content",'acf'); // Basic, Content, Choice, etc
@@ -399,10 +398,6 @@ class acf_field_font_awesome extends acf_field
 			)
 		);
 
-		// do not delete!
-    	parent::__construct();
-
-    	// settings
 		$this->settings = array(
 			'path' => apply_filters('acf/helpers/get_path', __FILE__),
 			'dir' => apply_filters('acf/helpers/get_dir', __FILE__),
@@ -410,7 +405,16 @@ class acf_field_font_awesome extends acf_field
 		);
 
 		add_filter('acf/load_field', array( $this, 'maybe_enqueue_font_awesome' ) );
+
+    	parent::__construct();
 	}
+
+	/*
+	*  maybe_enqueue_font_awesome()
+	*
+	*  If Enqueue FA is set to true, enqueue it in the footer. We cannot enqueue in the header because wp_head has already been called
+	*  
+	*/
 
 	function maybe_enqueue_font_awesome( $field )
 	{
@@ -450,17 +454,20 @@ class acf_field_font_awesome extends acf_field
 				<label><?php _e("Default Icon", 'acf'); ?></label>
 			</td>
 			<td>
-				<?php
+				<div class="fa-field-wrapper">
+					<div class="fa-live-preview"></div>
+					<?php
 
-				do_action('acf/create_field', array(
-					'type'    =>  'select',
-					'name'    =>  'fields[' . $key . '][default_value]',
-					'value'   =>  $field['default_value'],
-					'class'	  =>  'fontawesome',
-					'choices' =>  array_merge( array( 'null' => __("Select",'acf') ), $field['choices'] )
-				));
+					do_action('acf/create_field', array(
+						'type'    =>  'select',
+						'name'    =>  'fields[' . $key . '][default_value]',
+						'value'   =>  $field['default_value'],
+						'class'	  =>  'fontawesome',
+						'choices' =>  array_merge( array( 'null' => __("Select",'acf') ), $field['choices'] )
+					));
 
-				?>
+					?>
+				</div>
 			</td>
 		</tr>
 		<tr class="field_option field_option_<?php echo $this->name; ?>">
@@ -508,7 +515,7 @@ class acf_field_font_awesome extends acf_field
 		<tr class="field_option field_option_<?php echo $this->name; ?>">
 			<td class="label">
 				<label><?php _e("Enqueue FontAwesome?",'acf'); ?></label>
-				<p class="description"><?php _e("Set to 'No' if you have already enqueued FA manually. Set to 'Yes' to enqueue FA in the footer on any pages using this field.", 'acf'); ?></p>
+				<p class="description"><?php _e("Set to 'Yes' to enqueue FA in the footer on any pages using this field.", 'acf'); ?></p>
 			</td>
 			<td>
 				<?php 
@@ -525,13 +532,6 @@ class acf_field_font_awesome extends acf_field
 				?>
 			</td>
 		</tr>
-
-		<script type="text/javascript">
-			jQuery(".fontawesome").select2({
-				width : 'resolve'
-			});
-		</script>
-
 		<?php
 
 	}
@@ -572,6 +572,7 @@ class acf_field_font_awesome extends acf_field
 		$field['value'] = array_map('trim', $field['value']);
 		
 		// html
+		echo '<div class="fa-field-wrapper">';
 		echo '<div class="fa-live-preview"></div>';
 		echo '<select id="' . $field['id'] . '" class="' . $field['class'] . ' fa-select2-field" name="' . $field['name'] . '" >';	
 		
@@ -592,6 +593,7 @@ class acf_field_font_awesome extends acf_field
 		}
 
 		echo '</select>';
+		echo '</div>';
 	}
 
 	function find_selected( $needle, $haystack, $type, $choices )
@@ -631,15 +633,15 @@ class acf_field_font_awesome extends acf_field
 	{
 		// register acf scripts
 		wp_register_script('acf-input-font-awesome-select2', $this->settings['dir'] . 'js/select2/select2.min.js', array('acf-input'), $this->settings['version']);
-		wp_register_script('acf-input-font-awesome', $this->settings['dir'] . 'js/input.js', array('acf-input'), $this->settings['version']);
+		wp_register_script('acf-input-font-awesome-edit-input', $this->settings['dir'] . 'js/edit_input.js', array('acf-input'), $this->settings['version']);
 		wp_register_style('acf-input-font-awesome-input', $this->settings['dir'] . 'css/input.css', array('acf-input'), $this->settings['version']);
 		wp_register_style('acf-input-font-awesome-fa', $this->settings['dir'] . 'css/fontawesome.css', array('acf-input'), $this->settings['version']);
-		wp_register_style('acf-input-font-awesome-select2', $this->settings['dir'] . 'css/select2.css', array('acf-input'), $this->settings['version']);
+		wp_register_style('acf-input-font-awesome-select2-css', $this->settings['dir'] . 'css/select2.css', array('acf-input'), $this->settings['version']);
 
 
 		// scripts
 		wp_enqueue_script(array(
-			'acf-input-font-awesome',
+			'acf-input-font-awesome-edit-input',
 			'acf-input-font-awesome-select2'
 		));
 
@@ -647,7 +649,7 @@ class acf_field_font_awesome extends acf_field
 		wp_enqueue_style(array(
 			'acf-input-font-awesome-input',
 			'acf-input-font-awesome-fa',
-			'acf-input-font-awesome-select2'
+			'acf-input-font-awesome-select2-css'
 		));
 	}
 
@@ -667,22 +669,23 @@ class acf_field_font_awesome extends acf_field
 	{
 		// register acf scripts
 		wp_register_script('acf-input-font-awesome-select2', $this->settings['dir'] . 'js/select2/select2.min.js', array('acf-input'), $this->settings['version']);
-		wp_register_script('acf-input-font-awesome-select2', $this->settings['dir'] . 'js/select2/select2.min.js', array('acf-input'), $this->settings['version']);
+		wp_register_script('acf-input-font-awesome-create-input', $this->settings['dir'] . 'js/create_input.js', array('acf-input'), $this->settings['version']);
 		wp_register_style('acf-input-font-awesome-input', $this->settings['dir'] . 'css/input.css', array('acf-input'), $this->settings['version']);
 		wp_register_style('acf-input-font-awesome-fa', $this->settings['dir'] . 'css/fontawesome.css', array('acf-input'), $this->settings['version']);
-		wp_register_style('acf-input-font-awesome-select2', $this->settings['dir'] . 'css/select2.css', array('acf-input'), $this->settings['version']);
+		wp_register_style('acf-input-font-awesome-select2-css', $this->settings['dir'] . 'css/select2.css', array('acf-input'), $this->settings['version']);
 
 
 		// scripts
 		wp_enqueue_script(array(
-			'acf-input-font-awesome-select2'
+			'acf-input-font-awesome-select2',
+			'acf-input-font-awesome-create-input'
 		));
 
 		// styles
 		wp_enqueue_style(array(
 			'acf-input-font-awesome-input',
 			'acf-input-font-awesome-fa',
-			'acf-input-font-awesome-select2'
+			'acf-input-font-awesome-select2-css'
 		));
 	}
 
@@ -749,8 +752,4 @@ class acf_field_font_awesome extends acf_field
 
 }
 
-
-// create field
 new acf_field_font_awesome();
-
-?>

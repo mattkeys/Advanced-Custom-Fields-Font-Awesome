@@ -1,4 +1,4 @@
-=== Advanced Custom Fields: Font Awesome ===
+=== Advanced Custom Fields: Font Awesome Field ===
 Contributors: mattkeys
 Tags: Advanced Custom Fields, ACF, Font Awesome, FontAwesome
 Requires at least: 3.5
@@ -14,7 +14,7 @@ Adds a new 'Font Awesome Icon' field to the popular Advanced Custom Fields plugi
 Add a [Font Awesome](http://fontawesome.io/) icon field type to Advanced Custom Fields.
 
 * Optionally set a default icon
-* Returns Icon Element, or Icon Class, or Object include class, element, and unicode value
+* Returns Icon Element, or Icon Class, or an Object including the class, element, and unicode value
 * Optionally enqueues Font Awesome in footer
 
 = Compatibility =
@@ -44,12 +44,13 @@ function my_register_fields()
 }
 `
 
-== Screenshots ==
-
-1. Set a default icon, and choose how you want icon data to be returned.
-2. Searchable list of all icons, including large live preview
-
 == Changelog ==
+
+= 1.1.0 =
+* Added support for use in repeater fields
+* Added support for use in flexible content fields
+* Added live icon preview to field creation screen
+* Fixed various bugs with Select2 initialization on dynamically added fields
 
 = 1.0.0 =
 * Initial Release.
