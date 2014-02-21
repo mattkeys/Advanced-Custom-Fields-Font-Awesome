@@ -46,6 +46,9 @@ function my_register_fields()
 
 == Changelog ==
 
+= 1.1.1 =
+* Fixed JS error which was breaking conditional field select boxes
+
 = 1.1.0 =
 * Added support for use in repeater fields
 * Added support for use in flexible content fields
@@ -56,6 +59,9 @@ function my_register_fields()
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+This version fixes a JS error caused by 1.1.0 that was causing issues with conditional field select boxes.
 
 = 1.1.0 =
 This version adds support for use in repeater fields and flexible content fields, and also fixes some small bugs.

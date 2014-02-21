@@ -401,7 +401,7 @@ class acf_field_font_awesome extends acf_field
 		$this->settings = array(
 			'path' => apply_filters('acf/helpers/get_path', __FILE__),
 			'dir' => apply_filters('acf/helpers/get_dir', __FILE__),
-			'version' => '1.0.0'
+			'version' => '1.1.1'
 		);
 
 		add_filter('acf/load_field', array( $this, 'maybe_enqueue_font_awesome' ) );
@@ -632,25 +632,11 @@ class acf_field_font_awesome extends acf_field
 	function input_admin_enqueue_scripts()
 	{
 		// register acf scripts
-		wp_register_script('acf-input-font-awesome-select2', $this->settings['dir'] . 'js/select2/select2.min.js', array('acf-input'), $this->settings['version']);
-		wp_register_script('acf-input-font-awesome-edit-input', $this->settings['dir'] . 'js/edit_input.js', array('acf-input'), $this->settings['version']);
-		wp_register_style('acf-input-font-awesome-input', $this->settings['dir'] . 'css/input.css', array('acf-input'), $this->settings['version']);
-		wp_register_style('acf-input-font-awesome-fa', $this->settings['dir'] . 'css/fontawesome.css', array('acf-input'), $this->settings['version']);
-		wp_register_style('acf-input-font-awesome-select2-css', $this->settings['dir'] . 'css/select2.css', array('acf-input'), $this->settings['version']);
-
-
-		// scripts
-		wp_enqueue_script(array(
-			'acf-input-font-awesome-edit-input',
-			'acf-input-font-awesome-select2'
-		));
-
-		// styles
-		wp_enqueue_style(array(
-			'acf-input-font-awesome-input',
-			'acf-input-font-awesome-fa',
-			'acf-input-font-awesome-select2-css'
-		));
+		wp_enqueue_script('acf-input-font-awesome-select2', $this->settings['dir'] . 'js/select2/select2.min.js', array(), $this->settings['version']);
+		wp_enqueue_script('acf-input-font-awesome-edit-input', $this->settings['dir'] . 'js/edit_input.js', array(), $this->settings['version']);
+		wp_enqueue_style('acf-input-font-awesome-input', $this->settings['dir'] . 'css/input.css', array(), $this->settings['version']);
+		wp_enqueue_style('acf-input-font-awesome-fa', $this->settings['dir'] . 'css/fontawesome.css', array(), $this->settings['version']);
+		wp_enqueue_style('acf-input-font-awesome-select2-css', $this->settings['dir'] . 'css/select2.css', array(), $this->settings['version']);
 	}
 
 	/*
@@ -668,25 +654,11 @@ class acf_field_font_awesome extends acf_field
 	function field_group_admin_enqueue_scripts()
 	{
 		// register acf scripts
-		wp_register_script('acf-input-font-awesome-select2', $this->settings['dir'] . 'js/select2/select2.min.js', array('acf-input'), $this->settings['version']);
-		wp_register_script('acf-input-font-awesome-create-input', $this->settings['dir'] . 'js/create_input.js', array('acf-input'), $this->settings['version']);
-		wp_register_style('acf-input-font-awesome-input', $this->settings['dir'] . 'css/input.css', array('acf-input'), $this->settings['version']);
-		wp_register_style('acf-input-font-awesome-fa', $this->settings['dir'] . 'css/fontawesome.css', array('acf-input'), $this->settings['version']);
-		wp_register_style('acf-input-font-awesome-select2-css', $this->settings['dir'] . 'css/select2.css', array('acf-input'), $this->settings['version']);
-
-
-		// scripts
-		wp_enqueue_script(array(
-			'acf-input-font-awesome-select2',
-			'acf-input-font-awesome-create-input'
-		));
-
-		// styles
-		wp_enqueue_style(array(
-			'acf-input-font-awesome-input',
-			'acf-input-font-awesome-fa',
-			'acf-input-font-awesome-select2-css'
-		));
+		wp_enqueue_script('font-awesome-select2', $this->settings['dir'] . 'js/select2/select2.min.js', array(), $this->settings['version']);
+		wp_enqueue_script('font-awesome-create-input', $this->settings['dir'] . 'js/create_input.js', array(), $this->settings['version']);
+		wp_enqueue_style('acf-input-font-awesome-input', $this->settings['dir'] . 'css/input.css', array(), $this->settings['version']);
+		wp_enqueue_style('acf-input-font-awesome-fa', $this->settings['dir'] . 'css/fontawesome.css', array(), $this->settings['version']);
+		wp_enqueue_style('acf-input-font-awesome-select2-css', $this->settings['dir'] . 'css/select2.css', array(), $this->settings['version']);
 	}
 
 	/*
