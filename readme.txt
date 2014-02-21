@@ -54,3 +54,9 @@ function my_register_fields()
 
 = 1.0.0 =
 * Initial Release.
+
+== Upgrade Notice ==
+
+= 1.1.0 =
+This version adds support for use in repeater fields and flexible content fields, and also fixes some small bugs.
+
