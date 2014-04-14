@@ -1,5 +1,6 @@
 === Advanced Custom Fields: Font Awesome ===
 Contributors: mattkeys
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UTNU7YJG2KVPJ
 Tags: Advanced Custom Fields, ACF, Font Awesome, FontAwesome
 Requires at least: 3.5
 Tested up to: 3.8.1
@@ -25,7 +26,7 @@ This add-on will work with:
 
 == Installation ==
 
-This add-on can be treated as both a WP plugin and a theme include.
+This add-on can be treated as both a WP plugin and a theme include (Use one or the other, plugin method is best practice).
 
 = Plugin =
 1. Copy the 'acf-font-awesome' folder into your plugins folder
@@ -51,6 +52,9 @@ function my_register_fields()
 
 == Changelog ==
 
+= 1.1.2 =
+* Fixed overly specific JS selector which was causing font preview icons to not load when used on taxonomy term pages
+
 = 1.1.1 =
 * Fixed JS error which was breaking conditional field select boxes
 
@@ -65,9 +69,11 @@ function my_register_fields()
 
 == Upgrade Notice ==
 
+= 1.1.2 =
+This version fixes an error causing font preview icons to not load properly when viewing font awesome fields on taxonomy term pages.
+
 = 1.1.1 =
 This version fixes a JS error caused by 1.1.0 that was causing issues with conditional field select boxes.
 
 = 1.1.0 =
 This version adds support for use in repeater fields and flexible content fields, and also fixes some small bugs.
-

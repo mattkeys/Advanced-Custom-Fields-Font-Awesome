@@ -61,7 +61,7 @@
 					update_preview( this, $(this).val() );
 				});
 
-				$( 'div.field_type-font-awesome select.fa-select2-field' ).each( function() {
+				$( '.field_type-font-awesome select.fa-select2-field' ).each( function() {
 					$(this).select2({
 						width : '100%'
 					});
