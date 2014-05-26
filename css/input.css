@@ -1,0 +1,10 @@
+.select2-drop,
+.select2-chosen {
+  font-family: 'FontAwesome', 'Open Sans', sans-serif;
+}
+
+.fa-select2-field.font-awesome {
+	width: 100%;
+	padding: 2px;
+	resize: none;
+}
