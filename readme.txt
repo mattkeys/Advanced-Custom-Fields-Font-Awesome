@@ -52,6 +52,10 @@ function my_register_fields()
 
 == Changelog ==
 
+= 1.2 =
+* Added support for new icons in FontAwesome 4.1
+* Updated included FontAwesome to version 4.1
+
 = 1.1.2 =
 * Fixed overly specific JS selector which was causing font preview icons to not load when used on taxonomy term pages
 
@@ -68,6 +72,9 @@ function my_register_fields()
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 1.2 =
+Font Awesome version 4.1 support
 
 = 1.1.2 =
 This version fixes an error causing font preview icons to not load properly when viewing font awesome fields on taxonomy term pages.
