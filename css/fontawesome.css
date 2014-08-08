@@ -9,6 +9,10 @@
   padding: 10px;
 }
 
+[data-name="fa_live_preview"] i {
+  font-size: 50px;
+}
+
 @font-face {
   font-family: 'FontAwesome';
   src: url('../font/fontawesome-webfont.eot?v=4.1');

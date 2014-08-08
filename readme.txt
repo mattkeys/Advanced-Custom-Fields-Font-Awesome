@@ -15,35 +15,20 @@ Adds a new 'Font Awesome Icon' field to the popular Advanced Custom Fields plugi
 Add a [Font Awesome](http://fontawesome.io/) icon field type to Advanced Custom Fields.
 
 * Optionally set a default icon
-* Returns Icon Element, or Icon Class, or an Object including the class, element, and unicode value
+* Returns Icon Element, Icon Class, Icon Unicode, or an Object including the element, class, and unicode value
 * Optionally enqueues Font Awesome in footer
 
 = Compatibility =
 
-This add-on will work with:
-
-* version 4 and up
+This ACF field type is compatible with:
+* ACF 5
+* ACF 4
 
 == Installation ==
 
-This add-on can be treated as both a WP plugin and a theme include (Use one or the other, plugin method is best practice).
-
-= Plugin =
-1. Copy the 'acf-font-awesome' folder into your plugins folder
-2. Activate the plugin via the Plugins admin page
-
-= Include =
-1.	Copy the 'acf-font-awesome' folder into your theme folder (can use sub folders). You can place the folder anywhere inside the 'wp-content' directory
-2.	Edit your functions.php file and add the code below (Make sure the path is correct to include the acf-font-awesome.php file)
-
-`
-add_action('acf/register_fields', 'my_register_fields');
-
-function my_register_fields()
-{
-	include_once('acf-font-awesome/acf-font-awesome.php');
-}
-`
+1. Copy the `advanced-custom-fields-font-awesome` folder into your `wp-content/plugins` folder
+2. Activate the Font Awesome plugin via the plugins admin page
+3. Create a new field via ACF and select the Font Awesome type
 
 == Screenshots ==
 
@@ -51,6 +36,9 @@ function my_register_fields()
 2. Searchable list of all icons, including large live preview
 
 == Changelog ==
+
+= 1.3 =
+* Added support for ACF version 5.x
 
 = 1.2 =
 * Added support for new icons in FontAwesome 4.1
@@ -72,6 +60,9 @@ function my_register_fields()
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 1.3 =
+Advanced Custom Fields version 5.x support
 
 = 1.2 =
 Font Awesome version 4.1 support
