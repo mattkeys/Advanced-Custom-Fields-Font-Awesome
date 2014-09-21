@@ -37,6 +37,9 @@ This ACF field type is compatible with:
 
 == Changelog ==
 
+= 1.4 =
+* Updated included FontAwesome to version 4.2
+
 = 1.3 =
 * Added support for ACF version 5.x
 
@@ -60,6 +63,9 @@ This ACF field type is compatible with:
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 1.4 =
+* Updated included FontAwesome to version 4.2 (40 more icons)
 
 = 1.3 =
 Advanced Custom Fields version 5.x support
