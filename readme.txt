@@ -17,6 +17,9 @@ Add a [Font Awesome](http://fontawesome.io/) icon field type to Advanced Custom 
 * Optionally set a default icon
 * Returns Icon Element, Icon Class, Icon Unicode, or an Object including the element, class, and unicode value
 * Optionally enqueues Font Awesome in footer
+* Integrates with the [Better Font Awesome Library](https://github.com/MickeyKay/better-font-awesome-library) by [Mickey Kay](http://www.mickeykaycreative.com) to automatically use the latest version of the Font Awesome icons
+
+Note: It is recommended to let this plugin enqueue the latest version of Font Awesome on your front-end; or include the latest version by some other means; so that available icons in the admin area will be displayed properly on your sites front-end.
 
 = Compatibility =
 
@@ -36,6 +39,9 @@ This ACF field type is compatible with:
 2. Searchable list of all icons, including large live preview
 
 == Changelog ==
+
+= 1.5 =
+* New Feature: Integrated with the [Better Font Awesome Library](https://github.com/MickeyKay/better-font-awesome-library) to automatically use the latest version of the Font Awesome icons
 
 = 1.4 =
 * Updated included FontAwesome to version 4.2
@@ -63,6 +69,9 @@ This ACF field type is compatible with:
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 1.5 =
+This plugin now integrates with the [Better Font Awesome Library](https://github.com/MickeyKay/better-font-awesome-library) to automatically use the latest version of the Font Awesome icons
 
 = 1.4 =
 * Updated included FontAwesome to version 4.2 (40 more icons)
