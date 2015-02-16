@@ -3,7 +3,7 @@ Contributors: mattkeys
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UTNU7YJG2KVPJ
 Tags: Advanced Custom Fields, ACF, Font Awesome, FontAwesome
 Requires at least: 3.5
-Tested up to: 4.1
+Tested up to: 4.0
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -40,6 +40,9 @@ This ACF field type is compatible with:
 
 == Changelog ==
 
+= 1.6 =
+* Misc fixes to JS to properly target ACF fields in the DOM (based on changes to the ACF structure). This should resolve issues with duplicate, or missing select2 fields when picking font awesome icons.
+
 = 1.5 =
 * New Feature: Integrated with the [Better Font Awesome Library](https://github.com/MickeyKay/better-font-awesome-library) to automatically use the latest version of the Font Awesome icons
 
@@ -70,6 +73,9 @@ This ACF field type is compatible with:
 
 == Upgrade Notice ==
 
+= 1.6 =
+Misc fixes to JS to properly target ACF fields in the DOM (based on changes to the ACF structure). This should resolve issues with duplicate, or missing select2 fields when picking font awesome icons. Note: this has been tested only on the latest versions of 4.x and 5.x, if you are not on the latest versions I suggest that you ugprade to them before updating this plugin.
+
 = 1.5 =
 This plugin now integrates with the [Better Font Awesome Library](https://github.com/MickeyKay/better-font-awesome-library) to automatically use the latest version of the Font Awesome icons
 
@@ -78,15 +84,3 @@ This plugin now integrates with the [Better Font Awesome Library](https://github
 
 = 1.3 =
 Advanced Custom Fields version 5.x support
-
-= 1.2 =
-Font Awesome version 4.1 support
-
-= 1.1.2 =
-This version fixes an error causing font preview icons to not load properly when viewing font awesome fields on taxonomy term pages.
-
-= 1.1.1 =
-This version fixes a JS error caused by 1.1.0 that was causing issues with conditional field select boxes.
-
-= 1.1.0 =
-This version adds support for use in repeater fields and flexible content fields, and also fixes some small bugs.
