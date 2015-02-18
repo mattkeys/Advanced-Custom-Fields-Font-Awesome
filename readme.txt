@@ -40,6 +40,9 @@ This ACF field type is compatible with:
 
 == Changelog ==
 
+= 1.6.1 =
+* Fixed conflict with "Better Font Awesome" plugin which in some cases would prevent the enqueuing of the Font Awesome library.
+
 = 1.6 =
 * Misc fixes to JS to properly target ACF fields in the DOM (based on changes to the ACF structure). This should resolve issues with duplicate, or missing select2 fields when picking font awesome icons.
 
@@ -72,6 +75,8 @@ This ACF field type is compatible with:
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 1.6.1 = Fixed conflict with 'better font awesome' plugin.
 
 = 1.6 =
 Misc fixes to JS to properly target ACF fields in the DOM (based on changes to the ACF structure). This should resolve issues with duplicate, or missing select2 fields when picking font awesome icons. Note: this has been tested only on the latest versions of 4.x and 5.x, if you are not on the latest versions I suggest that you ugprade to them before updating this plugin.
