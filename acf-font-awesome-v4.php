@@ -17,7 +17,7 @@ class acf_field_font_awesome extends acf_field
 	*  @date	23/01/13
 	*/
 
-	function init()
+	function __construct()
 	{
 		$this->name = 'font-awesome';
 		$this->label = __('Font Awesome Icon');
@@ -43,10 +43,8 @@ class acf_field_font_awesome extends acf_field
 
 	function get_icons()
 	{
-		if ( ! class_exists( 'Better_Font_Awesome_Library' ) ) {
-			require_once ( dirname( __FILE__ ) . '/better-font-awesome-library/better-font-awesome-library.php' );
-		}
-		
+		require_once ( dirname( __FILE__ ) . '/better-font-awesome-library/better-font-awesome-library.php' );
+
 		$args = array(
 			'version'				=> 'latest',
 			'minified'				=> true,
@@ -389,4 +387,4 @@ class acf_field_font_awesome extends acf_field
 
 }
 
-add_action( 'init', array( new acf_field_font_awesome, 'init' ) );
+new acf_field_font_awesome();

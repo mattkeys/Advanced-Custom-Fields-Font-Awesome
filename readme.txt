@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: Advanced Custom Fields, ACF, Font Awesome, FontAwesome
 Requires at least: 3.5
 Tested up to: 4.0
-Stable tag: 1.6
+Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,8 +40,11 @@ This ACF field type is compatible with:
 
 == Changelog ==
 
+= 1.6.2 =
+* Rolling back changes from 1.6.1 after a number of bugs were reported. Incompatibility issues with Better Font Awesome have been corrected in that plugins code.
+
 = 1.6.1 =
-* Fixed conflict with "Better Font Awesome" plugin which in some cases would prevent the enqueuing of the Font Awesome library.
+* Addressing incompatibility issues between this plugin and the Better Font Awesome plugin
 
 = 1.6 =
 * Misc fixes to JS to properly target ACF fields in the DOM (based on changes to the ACF structure). This should resolve issues with duplicate, or missing select2 fields when picking font awesome icons.
@@ -76,7 +79,11 @@ This ACF field type is compatible with:
 
 == Upgrade Notice ==
 
-= 1.6.1 = Fixed conflict with 'better font awesome' plugin.
+= 1.6.2 =
+Rolling back changes from 1.6.1 after a number of bugs were reported. Incompatibility issues with Better Font Awesome have been corrected in that plugins code.
+
+= 1.6.1 =
+Addressing incompatibility issues between this plugin and the Better Font Awesome plugin
 
 = 1.6 =
 Misc fixes to JS to properly target ACF fields in the DOM (based on changes to the ACF structure). This should resolve issues with duplicate, or missing select2 fields when picking font awesome icons. Note: this has been tested only on the latest versions of 4.x and 5.x, if you are not on the latest versions I suggest that you ugprade to them before updating this plugin.
