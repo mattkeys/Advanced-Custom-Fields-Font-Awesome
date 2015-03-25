@@ -40,6 +40,9 @@ This ACF field type is compatible with:
 
 == Changelog ==
 
+= 1.6.3 =
+* Fixed asset path errors when including this add-on from a theme instead of the plugins directory
+
 = 1.6.2 =
 * Rolling back changes from 1.6.1 after a number of bugs were reported. Incompatibility issues with Better Font Awesome have been corrected in that plugins code.
 
@@ -78,6 +81,9 @@ This ACF field type is compatible with:
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 1.6.3 =
+Fixed asset path errors when including this add-on from a theme instead of the plugins directory
 
 = 1.6.2 =
 Rolling back changes from 1.6.1 after a number of bugs were reported. Incompatibility issues with Better Font Awesome have been corrected in that plugins code.
