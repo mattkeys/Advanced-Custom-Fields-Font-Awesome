@@ -68,6 +68,8 @@ class acf_field_font_awesome extends acf_field
 			$new_icons[ $bfa_prefix . $class ] = $unicode . ' ' . $bfa_prefix . $class;
 		}
 
+		$new_icons = array_merge( array( 'null' => '- Select -' ), $new_icons );
+
 		return $new_icons;
 	}
 
@@ -248,6 +250,8 @@ class acf_field_font_awesome extends acf_field
 		// loop through values and add them as options
 		if( is_array($field['choices']) )
 		{
+			unset( $field['choices']['null'] );
+
 			foreach( $field['choices'] as $key => $value )
 			{
 				$selected = $this->find_selected( $key, $field['value'], $field['save_format'], $field['choices'] );
@@ -268,6 +272,13 @@ class acf_field_font_awesome extends acf_field
 				$search = array( '<i class="fa ', '"></i>' );
 				$string = str_replace( $search, '', $haystack[0] );
 				break;
+
+			case 'unicode':
+				$index = $choices[ $needle ];
+				if ( stristr( $index, $haystack[0] ) ) {
+					return 'selected="selected"';
+				}
+				return '';
 
 			case 'class':
 				$string = $haystack[0];
@@ -358,6 +369,10 @@ class acf_field_font_awesome extends acf_field
 
 	function load_value($value, $post_id, $field)
 	{
+		if ( 'null' == $value ) {
+			return;
+		}
+		
 		switch( $field['save_format'] )
 		{
 			case 'object':

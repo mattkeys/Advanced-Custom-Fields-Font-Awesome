@@ -40,6 +40,11 @@ This ACF field type is compatible with:
 
 == Changelog ==
 
+= 1.7 =
+* Added ability to select no icon by default
+* Better handling of 'null' or 'no selection' items
+* Fixed bug where default icon would not display in admin area if 'unicode' return type was selected 
+
 = 1.6.4 =
 * Misc JS performance improvements
 * Fixed bug where select2 would not initialize on repeater items added mid-rows (using the plus icon at the end of a repeater row)
@@ -86,6 +91,9 @@ This ACF field type is compatible with:
 
 == Upgrade Notice ==
 
+= 1.7 =
+Added ability to select no icon by default and better handling of 'null' or 'no selection' items. Fixed bug where default icon would not display in admin area if 'unicode' return type was selected 
+
 = 1.6.4 =
 Misc JS performance improvements and fixed bug where select2 would not initialize on repeater items added mid-rows (using the plus icon at the end of a repeater row)
 
@@ -97,6 +105,3 @@ Rolling back changes from 1.6.1 after a number of bugs were reported. Incompatib
 
 = 1.6.1 =
 Addressing incompatibility issues between this plugin and the Better Font Awesome plugin
-
-= 1.6 =
-Misc fixes to JS to properly target ACF fields in the DOM (based on changes to the ACF structure). This should resolve issues with duplicate, or missing select2 fields when picking font awesome icons. Note: this has been tested only on the latest versions of 4.x and 5.x, if you are not on the latest versions I suggest that you ugprade to them before updating this plugin.
