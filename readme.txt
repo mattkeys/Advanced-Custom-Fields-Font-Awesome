@@ -40,6 +40,11 @@ This ACF field type is compatible with:
 
 == Changelog ==
 
+= 1.7.1 =
+* Updated Better Font Awesome Library for better compatibility with Better Font Awesome plugin
+* Changed ACF 4/5 detection method for better integration with Better Font Awesome plugin
+* Bugfix wrong preview icon appearing in ACF custom field creator area
+
 = 1.7 =
 * Added ability to select no icon by default
 * Better handling of 'null' or 'no selection' items
@@ -90,6 +95,9 @@ This ACF field type is compatible with:
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 1.7.1 =
+Updated Better Font Awesome Library for better compatibility with Better Font Awesome plugin. Minor JS bug fix in admin area
 
 = 1.7 =
 Added ability to select no icon by default and better handling of 'null' or 'no selection' items. Fixed bug where default icon would not display in admin area if 'unicode' return type was selected 

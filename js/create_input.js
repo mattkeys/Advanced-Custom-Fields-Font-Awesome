@@ -40,12 +40,14 @@
 			version_num = 4;
 		}
 
-		element = $( 'select.fontawesome' );
+		elements = $( 'select.fontawesome' );
 
-		$( element ).select2({
+		$( elements ).select2({
 			width : '100%'
 		});
-		update_preview( element, $(element).val(), version_num );
+		$.each( elements , function( index, el ) {
+			update_preview( el, $(el).val(), version_num );
+		});
 	});
 
 	$(document).on( 'select2-selecting', 'select.fontawesome', function( object ) {

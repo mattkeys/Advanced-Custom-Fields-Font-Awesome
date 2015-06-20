@@ -408,8 +408,5 @@ class acf_field_font_awesome extends acf_field {
 
 }
 
-
 // create field
 new acf_field_font_awesome();
-
-?>
