@@ -40,6 +40,9 @@ This ACF field type is compatible with:
 
 == Changelog ==
 
+= 1.7.2 =
+* Bugfix PHP Notice when trying to access property of 'null' value
+
 = 1.7.1 =
 * Updated Better Font Awesome Library for better compatibility with Better Font Awesome plugin
 * Changed ACF 4/5 detection method for better integration with Better Font Awesome plugin
@@ -95,6 +98,9 @@ This ACF field type is compatible with:
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 1.7.2 =
+Bugfix PHP Notice when trying to access property of 'null' value
 
 = 1.7.1 =
 Updated Better Font Awesome Library for better compatibility with Better Font Awesome plugin. Minor JS bug fix in admin area
