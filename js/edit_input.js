@@ -7,7 +7,8 @@
 		if ( $el.parent('.row-clone').length === 0 && $el.parents('.clones').length === 0 ) {
 			$( 'select.fa-select2-field', $el ).each( function() {
 				$(this).select2({
-					width : '100%'
+					width : '100%',
+					dropdownCssClass : 'fa-select2-drop'
 				});
 				update_preview( this, $(this).val() );
 			});

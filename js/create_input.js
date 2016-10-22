@@ -2,7 +2,7 @@
 
 	var version_num = 5;
 
-	$(document).on( 'change', '.field_type-select select, .field_type select', function() {
+	$(document).on( 'change', '.field_type-select select, .field_type select, .acf-field-select select', function() {
 
 		if ( $(this).val() == 'font-awesome' ) {
 
@@ -22,13 +22,16 @@
 
 				if ( $('.select2-container', font_awesome_form).length === 0 ) {
 					font_awesome_select.select2({
-						width : '100%'
+						width : '100%',
+						dropdownCssClass : 'fa-select2-drop'
 					});
 				} else {
 					$('.select2-container', font_awesome_form).remove();
 					font_awesome_select.select2({
-						width : '100%'
-					});				}
+						width : '100%',
+						dropdownCssClass : 'fa-select2-drop'
+					});
+				}
 			}, 1000);
 		}
 
@@ -43,7 +46,8 @@
 		elements = $( 'select.fontawesome' );
 
 		$( elements ).select2({
-			width : '100%'
+			width : '100%',
+			dropdownCssClass : 'fa-select2-drop'
 		});
 		$.each( elements , function( index, el ) {
 			update_preview( el, $(el).val(), version_num );

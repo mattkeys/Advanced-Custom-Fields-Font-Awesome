@@ -42,32 +42,31 @@ git submodule update --init --recursive
 1. Copy the /better-font-awesome-library folder into your project.
 
 2. Add the following code to your main plugin file or your theme's functions.php file.
-   ```
-   	// Include the main library file. Make sure to modify the path to match your directory structure.
-	require_once ( dirname( __FILE__ ) . '/better-font-awesome-library/better-font-awesome-library.php' );
-
+   ```php
 	add_action( 'init', 'my_prefix_load_bfa' );
-	/**	
+	/**
 	 * Initialize the Better Font Awesome Library.
 	 *
 	 * (see usage notes below on proper hook priority)
 	 */
 	function my_prefix_load_bfa() {
 
+		// Include the main library file. Make sure to modify the path to match your directory structure.
+		require_once ( dirname( __FILE__ ) . '/better-font-awesome-library/better-font-awesome-library.php' );
+
 		// Set the library initialization args (defaults shown).
 		$args = array(
-				'version' => 'latest',
-				'minified' => true,
-				'remove_existing_fa' => false,
-				'load_styles'             => true,
-				'load_admin_styles'       => true,
-				'load_shortcode'          => true,
-				'load_tinymce_plugin'     => true,
+				'version'             => 'latest',
+				'minified'            => true,
+				'remove_existing_fa'  => false,
+				'load_styles'         => true,
+				'load_admin_styles'   => true,
+				'load_shortcode'      => true,
+				'load_tinymce_plugin' => true,
 		);
-		
+
 		// Initialize the Better Font Awesome Library.
 		Better_Font_Awesome_Library::get_instance( $args );
-
 	}
 ```
 
@@ -123,13 +122,13 @@ If either the `$args['load_shortcode']` or `$args['load_tinymce_plugin']` initia
 [icon name="star" class="2x spin" unprefixed_class="my-custom-class"]
 ```
 
-**name**  
+**name**
 The unprefixed icon name (e.g. star). The version-specific prefix will be automatically prepended.
 
-**class**  
+**class**
 Unprefixed [Font Awesome icon classes](http://fortawesome.github.io/Font-Awesome/examples/). The version-specific prefix will be automatically prepended to each class.
 
-**unprefixed_class**  
+**unprefixed_class**
 Any additional classes that you wish to remain unprefixed (e.g. my-custom-class).
 
 #### Shortcode Output ####
@@ -145,7 +144,7 @@ The example shortcode above would output the following depending on which versio
 ```
 
 ## The Better Font Awesome Library Object ##
-The Better Font Awesome Library object can be accessed with the following code:  
+The Better Font Awesome Library object can be accessed with the following code:
 `Better_Font_Awesome_Library::get_instance();`
 
 The object has the following public methods:
@@ -168,7 +167,7 @@ The object has the following public methods:
 (array) Returns all library errors, including API and CDN fetch failures.
 
 #### Example: ####
-```
+```php
 // Initialize the library with custom args.
 Better_Font_Awesome_Library::get_instance( $args );
 
@@ -247,6 +246,13 @@ Applied to the classes that are output on each icon's `<i>` element.
 **Parameters**
 
 * `$class` (string)
+
+#### bfa_icon_tag ####
+Applied to the tag that is output for each icon. Defaults is 'i', which outputs `<i>`.
+
+**Parameters**
+
+* `$tag` (string)
 
 #### bfa_icon ####
 Applied to the entire `<i>` element that is output for each icon.
