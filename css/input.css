@@ -1,0 +1,25 @@
+.fa-live-preview {
+  height: 50px;
+  font-size: 50px;
+  padding: 10px;
+}
+
+[data-name="fa_live_preview"] .acf-input {
+  height: 81px;
+}
+[data-name="fa_live_preview"] i {
+  font-size: 50px;
+}
+
+.fa-field-wrapper .select2-drop,
+.fa-field-wrapper .select2-chosen,
+.select2-container.fontawesome,
+.fa-select2-drop {
+  font-family: 'FontAwesome', 'Open Sans', sans-serif;
+}
+
+.fa-select2-field.font-awesome {
+	width: 100%;
+	padding: 2px;
+	resize: none;
+}
