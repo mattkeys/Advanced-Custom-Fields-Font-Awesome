@@ -33,7 +33,7 @@ class acf_field_font_awesome extends acf_field
 		$this->settings = array(
 			'path' => apply_filters('acf/helpers/get_path', __FILE__),
 			'dir' => apply_filters('acf/helpers/get_dir', __FILE__),
-			'version' => '1.5'
+			'version' => '1.74'
 		);
 
 		add_filter('acf/load_field', array( $this, 'maybe_enqueue_font_awesome' ) );
