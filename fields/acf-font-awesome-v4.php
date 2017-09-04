@@ -268,7 +268,7 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 					break;
 
 				case 'object':
-					$value = $this->icons['details'][ $value ];
+					$value = ( object ) $this->icons['details'][ $value ];
 					break;
 			}
 

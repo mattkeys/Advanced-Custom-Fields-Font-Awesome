@@ -50,6 +50,9 @@ This ACF field type is compatible with:
 
 == Changelog ==
 
+= 2.0.3 =
+* Fixed bug where a field set to return 'Icon Object' would instead return an array
+
 = 2.0.2 =
 * Fixed bug effecting Select fields when used along with a Font Awesome field in a repeater (ACF v5)
 
@@ -128,6 +131,9 @@ This ACF field type is compatible with:
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 2.0.3 =
+* Fixed bug where a field set to return 'Icon Object' would instead return an array
 
 = 2.0.2 =
 * Fixed bug effecting Select fields when used along with a Font Awesome field in a repeater (ACF v5)
