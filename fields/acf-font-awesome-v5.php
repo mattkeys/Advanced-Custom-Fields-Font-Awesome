@@ -28,9 +28,13 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 				'choices'			=>	$this->get_icons('list')
 			);
 
-	    	parent::__construct();
+			parent::__construct();
 
-			add_filter('acf/load_field', array( $this, 'maybe_enqueue_font_awesome' ) );
+			if ( apply_filters( 'ACFFA_always_enqueue_fa', false ) ) {
+				add_action( 'wp_enqueue_scripts', array( $this, 'frontend_enqueue_scripts' ) );
+			} else {
+				add_filter('acf/load_field', array( $this, 'maybe_enqueue_font_awesome' ) );
+			}
 		}
 
 		private function get_icons( $format = 'list' )
@@ -106,16 +110,18 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 				)
 			));
 
-			acf_render_field_setting( $field, array(
-				'label'			=> __( 'Enqueue FontAwesome?', 'acf-font-awesome' ),
-				'instructions'	=> __( 'Set to \'Yes\' to enqueue FA in the footer on any pages using this field.', 'acf-font-awesome' ),
-				'type'			=> 'radio',
-				'name'			=> 'enqueue_fa',
-				'choices'	=>	array(
-					1	=>	__( 'Yes', 'acf-font-awesome' ),
-					0	=>	__( 'No', 'acf-font-awesome' )
-				)
-			));
+			if ( ! apply_filters( 'ACFFA_always_enqueue_fa', false ) ) {
+				acf_render_field_setting( $field, array(
+					'label'			=> __( 'Enqueue FontAwesome?', 'acf-font-awesome' ),
+					'instructions'	=> __( 'Set to \'Yes\' to enqueue FA in the footer on any pages using this field.', 'acf-font-awesome' ),
+					'type'			=> 'radio',
+					'name'			=> 'enqueue_fa',
+					'choices'	=>	array(
+						1	=>	__( 'Yes', 'acf-font-awesome' ),
+						0	=>	__( 'No', 'acf-font-awesome' )
+					)
+				));
+			}
 		}
 
 		public function render_field( $field )

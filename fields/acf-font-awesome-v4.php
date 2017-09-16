@@ -36,7 +36,12 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 
 	    	parent::__construct();
 
-	    	add_filter('acf/load_field', array( $this, 'maybe_enqueue_font_awesome' ) );
+
+			if ( apply_filters( 'ACFFA_always_enqueue_fa', false ) ) {
+				add_action( 'wp_enqueue_scripts', array( $this, 'frontend_enqueue_scripts' ) );
+			} else {
+				add_filter('acf/load_field', array( $this, 'maybe_enqueue_font_awesome' ) );
+			}
 		}
 
 		private function get_icons( $format = 'list' )
@@ -151,26 +156,28 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 				</td>
 			</tr>
 
-			<tr class="field_option field_option_<?php echo $this->name; ?>">
-				<td class="label">
-					<label><?php _e( 'Enqueue FontAwesome?', 'acf-font-awesome' ); ?></label>
-					<p class="description"><?php _e( 'Set to \'Yes\' to enqueue FA in the footer on any pages using this field.', 'acf-font-awesome' ); ?></p>
-				</td>
-				<td>
-					<?php 
-						do_action('acf/create_field', array(
-							'type'	=>	'radio',
-							'name'	=>	'fields['.$key.'][enqueue_fa]',
-							'value'	=>	$field['enqueue_fa'],
-							'choices'	=>	array(
-								1	=>	__( 'Yes', 'acf-font-awesome' ),
-								0	=>	__( 'No', 'acf-font-awesome' ),
-							),
-							'layout'	=>	'horizontal',
-						));
-					?>
-				</td>
-			</tr>
+			<?php if ( ! apply_filters( 'ACFFA_always_enqueue_fa', false ) ) : ?>
+				<tr class="field_option field_option_<?php echo $this->name; ?>">
+					<td class="label">
+						<label><?php _e( 'Enqueue FontAwesome?', 'acf-font-awesome' ); ?></label>
+						<p class="description"><?php _e( 'Set to \'Yes\' to enqueue FA in the footer on any pages using this field.', 'acf-font-awesome' ); ?></p>
+					</td>
+					<td>
+						<?php 
+							do_action('acf/create_field', array(
+								'type'	=>	'radio',
+								'name'	=>	'fields['.$key.'][enqueue_fa]',
+								'value'	=>	$field['enqueue_fa'],
+								'choices'	=>	array(
+									1	=>	__( 'Yes', 'acf-font-awesome' ),
+									0	=>	__( 'No', 'acf-font-awesome' ),
+								),
+								'layout'	=>	'horizontal',
+							));
+						?>
+					</td>
+				</tr>
+			<?php endif; ?>
 			<?php
 		}
 
