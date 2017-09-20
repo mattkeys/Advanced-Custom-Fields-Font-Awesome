@@ -51,6 +51,9 @@ This ACF field type is compatible with:
 
 == Changelog ==
 
+= 2.0.5 =
+* Fixed bug with ACF tabs + FontAwesome fields where Chosen/Select2 would not initialize beyond the first tab shown
+
 = 2.0.4 =
 * Added filter (ACFFA_always_enqueue_fa) to allow FontAwesome to always be enqueued on your sites frontend, even if no ACF FontAwesome fields are in use on the page.
 
@@ -135,6 +138,9 @@ This ACF field type is compatible with:
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 2.0.5 =
+* Fixed bug with ACF tabs + FontAwesome fields where Chosen/Select2 would not initialize beyond the first tab shown
 
 = 2.0.4 =
 * Added filter (ACFFA_always_enqueue_fa) to allow FontAwesome to always be enqueued on your sites frontend, even if no ACF FontAwesome fields are in use on the page.

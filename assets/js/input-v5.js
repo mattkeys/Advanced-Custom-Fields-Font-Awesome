@@ -46,6 +46,18 @@
 		}
 	});
 
+	acf.add_action( 'show_field', function( $el, context ) {
+		if ( 'tab' == context ) {
+			var $fa_fields = $el;
+
+			$fa_fields.each( function( index, fa_field ) {
+				update_preview( $( 'select.fontawesome-edit', fa_field ).val(), fa_field );
+
+				acf.select2.init( $( 'select.fontawesome-edit', fa_field ), select2_init_args( fa_field ), $( fa_field ) );
+			});
+		}
+	});
+
 	acf.add_filter( 'select2_args', function( args, $select, settings, $field ) {
 
 		if ( $select.hasClass('select2-fontawesome') ) {

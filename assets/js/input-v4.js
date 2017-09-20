@@ -50,8 +50,32 @@
 		}
 	});
 
-	$( document ).on( 'acf/field_form-open', function( event, field ) {
+	$( document ).on( 'click', '.acf-tab-button', function( e ) {
+		e.preventDefault();
+		
+		var $wrap	= $( this ).closest('.acf-tab-wrap').parent();
+		var key		= $( this ).attr('data-key');
 
+		$wrap.children('.field_type-tab').each( function() {
+			var $tab = $( this );
+
+			if ( key == $tab.attr('data-field_key') ) {
+				$( this ).nextUntil('.field_type-tab').each( function() {
+					var $select	= $( '.chosen-fontawesome:not(.chosen_initialized)', this );
+
+					if ( $select.length ) {
+						update_preview( $select.val(), this );
+
+						if ( ACFFA.chosen ) {
+							initialize_chosen( $select, true );
+						}
+					}
+				});
+			}
+		});
+	});
+
+	$( document ).on( 'acf/field_form-open', function( event, field ) {
 		var $select	= $( '.chosen-fontawesome:not(.chosen_initialized)', field );
 
 		if ( $select.length ) {
