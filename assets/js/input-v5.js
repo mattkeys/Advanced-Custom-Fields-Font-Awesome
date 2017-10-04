@@ -4,7 +4,7 @@
 		$( '.acf-field-setting-fa_live_preview .acf-input', parent ).html( '<i class="fa ' + value + '" aria-hidden="true"></i>' );
 		$( '.icon_preview', parent ).html( '<i class="fa ' + value + '" aria-hidden="true"></i>' );
 	}
-	
+
 	function select2_init_args( element ) {
 		return {
 			key			: $( element ).data('key'),
@@ -14,50 +14,18 @@
 		}
 	}
 
-	acf.add_action( 'ready', function( $el ) {
+	function select2_init( fa_field ) {
+		var $select = $( fa_field );
+		var parent = $( $select ).closest('.acf-field-font-awesome');
 
-		// Create Field Groups
-		var $field_objects = $('.acf-field-object[data-type="font-awesome"]');
+		$select.addClass('select2_initalized');
 
-		$field_objects.each( function( index, field_object ) {
-			update_preview( $( 'select.fontawesome-create', field_object ).val(), field_object );
-		});
+		update_preview( $select.val(), parent );
 
-		// Edit Field Groups
-		var $fa_fields = $('.acf-field-font-awesome:visible');
+		acf.select2.init( $select, select2_init_args( fa_field ), $( fa_field ) );
+	}
 
-		$fa_fields.each( function( index, fa_field ) {
-			update_preview( $( 'select', fa_field ).val(), fa_field );
-
-			acf.select2.init( $( 'select', fa_field ), select2_init_args( fa_field ), $( fa_field ) );
-		});
-	});
-
-	acf.add_action( 'append', function( $el ) {
-
-		if ( $( 'select.fontawesome-edit', $el ).length ) {
-			var $fa_fields = $el;
-
-			$fa_fields.each( function( index, fa_field ) {
-				update_preview( $( 'select.fontawesome-edit', fa_field ).val(), fa_field );
-
-				acf.select2.init( $( 'select.fontawesome-edit', fa_field ), select2_init_args( fa_field ), $( fa_field ) );
-			});
-		}
-	});
-
-	acf.add_action( 'show_field', function( $el, context ) {
-		if ( 'tab' == context ) {
-			var $fa_fields = $el;
-
-			$fa_fields.each( function( index, fa_field ) {
-				update_preview( $( 'select.fontawesome-edit', fa_field ).val(), fa_field );
-
-				acf.select2.init( $( 'select.fontawesome-edit', fa_field ), select2_init_args( fa_field ), $( fa_field ) );
-			});
-		}
-	});
-
+	// Add our classes to FontAwesome select2 fields
 	acf.add_filter( 'select2_args', function( args, $select, settings, $field ) {
 
 		if ( $select.hasClass('select2-fontawesome') ) {
@@ -68,6 +36,27 @@
 		return args;
 	});
 
+	// Update FontAwesome field previews in field create area
+	acf.add_action( 'ready', function( $el ) {
+		var $field_objects = $('.acf-field-object[data-type="font-awesome"]');
+
+		$field_objects.each( function( index, field_object ) {
+			update_preview( $( 'select.fontawesome-create', field_object ).val(), field_object );
+		});
+	});
+
+	// Update FontAwesome field previews and init select2 in field edit area
+	acf.add_action( 'ready append show_field/type=font-awesome', function( $el ) {
+		var $fa_fields = $( 'select.fontawesome-edit:visible', $el );
+
+		if ( $fa_fields.length ) {
+			$fa_fields.each( function( index, fa_field ) {
+				select2_init( fa_field );
+			});
+		}
+	});
+
+	// Update FontAwesome field previews when value changes
 	acf.add_action( 'change', function( $input ) {
 
 		if ( $input.hasClass('fontawesome-create') ) {

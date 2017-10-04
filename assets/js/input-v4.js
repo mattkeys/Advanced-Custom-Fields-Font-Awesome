@@ -1,9 +1,15 @@
 (function($){
 	
-	function update_preview( value, parent ) {
+	function update_preview( $select_element, parent ) {
+		var value = $select_element.val();
+
+		if ( ! parent ) {
+			var parent = $select_element.closest('.field');
+		}
+
 		$( '.icon_preview', parent ).html( '<i class="fa ' + value + '" aria-hidden="true"></i>' );
 
-		$( '.field_option_font-awesome .fa_live_preview' ).html( '<i class="fa ' + value + '" aria-hidden="true"></i>' );
+		$( '.field_option_font-awesome .fa_live_preview', parent ).html( '<i class="fa ' + value + '" aria-hidden="true"></i>' );
 	}
 
 	function initialize_chosen( $select, allow_deselect ) {
@@ -18,10 +24,10 @@
 	$( document ).on( 'acf/setup_fields', function( e, postbox ) {
 		$( postbox ).find('.field[data-field_type="font-awesome"]').each( function() {
 
-			var $select	= $( 'select:visible', this );
+			var $select	= $( '.chosen-fontawesome:not(.chosen_initialized):visible', this );
 
 			if ( $select.length ) {
-				update_preview( $select.val(), $(this) );
+				update_preview( $select, false );
 
 				if ( ACFFA.chosen ) {
 					initialize_chosen( $select, $select.data('allow_null') );
@@ -29,25 +35,6 @@
 			}
 		});
 	
-	});
-
-	$( document ).on( 'change', '.field_type select', function() {
-		if ( 'font-awesome' == $( this ).val() ) {
-			if ( ACFFA.chosen ) {
-				var font_awesome_form = $( this ).closest( '.field_form' );
-				var ajaxLoadWait = setInterval( function() {
-					if ( $( '.chosen-fontawesome', font_awesome_form ).length ) {
-						clearInterval( ajaxLoadWait );
-
-						var $select	= $( '.chosen-fontawesome:not(.chosen_initialized)', font_awesome_form );
-
-						if ( $select.length ) {
-							initialize_chosen( $select, true );
-						}
-					}
-				}, 100 );
-			}
-		}
 	});
 
 	$( document ).on( 'click', '.acf-tab-button', function( e ) {
@@ -61,29 +48,52 @@
 
 			if ( key == $tab.attr('data-field_key') ) {
 				$( this ).nextUntil('.field_type-tab').each( function() {
-					var $select	= $( '.chosen-fontawesome:not(.chosen_initialized)', this );
-
+					var $select	= $( '.chosen-fontawesome:not(.chosen_initialized):visible', this );
 					if ( $select.length ) {
-						update_preview( $select.val(), this );
+						$.each( $select, function( index, select_element ) {
+							update_preview( $( select_element ), false );
 
-						if ( ACFFA.chosen ) {
-							initialize_chosen( $select, true );
-						}
+							if ( ACFFA.chosen ) {
+								initialize_chosen( $( select_element ), $( select_element ).data('allow_null') );
+							}
+						});
 					}
 				});
 			}
 		});
 	});
 
+	$( document ).on( 'change', '.field_type select', function() {
+		if ( 'font-awesome' == $( this ).val() ) {
+			if ( ACFFA.chosen ) {
+				var font_awesome_form = $( this ).closest( '.field_form' );
+				var ajaxLoadWait = setInterval( function() {
+					if ( $( '.chosen-fontawesome', font_awesome_form ).length ) {
+						clearInterval( ajaxLoadWait );
+
+						var $select	= $( '.chosen-fontawesome:not(.chosen_initialized):visible', font_awesome_form );
+
+						if ( $select.length ) {
+							initialize_chosen( $select, true );
+						}
+					}
+				}, 100 );
+			}
+		}
+	});
+
 	$( document ).on( 'acf/field_form-open', function( event, field ) {
 		var $select	= $( '.chosen-fontawesome:not(.chosen_initialized)', field );
 
 		if ( $select.length ) {
-			update_preview( $select.val(), field );
+			$.each( $select, function( index, select_element ) {
+				var parent = $( select_element ).closest('.field');
+				update_preview( $( select_element ), parent );
 
-			if ( ACFFA.chosen ) {
-				initialize_chosen( $select, true );
-			}
+				if ( ACFFA.chosen ) {
+					initialize_chosen( $( select_element ), true );
+				}
+			});
 		}
 	});
 
@@ -113,7 +123,7 @@
 	});
 
 	$( document ).on( 'change', '.chosen-fontawesome', function( evt, params ) {
-		update_preview( $( this ).val(), $( this ).closest('.field_type-font-awesome') );
+		update_preview( $( this ), false );
 	});
 
 })(jQuery);
