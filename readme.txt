@@ -51,6 +51,9 @@ This ACF field type is compatible with:
 
 == Changelog ==
 
+= 2.0.7 =
+* Fixed bug with FA fields assigned to menu items + further refactoring of JS for ACF v5
+
 = 2.0.6 =
 * Refactored JS to simplify codebase and fix bugs where Chosen or Select2 fields would not initialize in a variety of field/sub-field configurations and display options.
 
@@ -141,6 +144,9 @@ This ACF field type is compatible with:
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 2.0.7 =
+* Fixed bug with FA fields assigned to menu items + further refactoring of JS for ACF v5
 
 = 2.0.6 =
 * Refactored JS to simplify codebase and fix bugs where Chosen or Select2 fields would not initialize in a variety of field/sub-field configurations and display options.
