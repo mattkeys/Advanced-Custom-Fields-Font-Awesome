@@ -5,10 +5,10 @@
 		$( '.icon_preview', parent ).html( '<i class="fa ' + value + '" aria-hidden="true"></i>' );
 	}
 
-	function select2_init_args( element ) {
+	function select2_init_args( element, parent ) {
 		return {
-			key			: $( element ).data('key'),
-			allow_null	: $( 'select', element ).data('allow_null'),
+			key			: $( parent ).data('key'),
+			allow_null	: $( element ).data('allow_null'),
 			ajax		: 1,
 			ajax_action	: 'acf/fields/font-awesome/query'
 		}
@@ -20,7 +20,7 @@
 
 		update_preview( $select.val(), parent );
 
-		acf.select2.init( $select, select2_init_args( fa_field ), $( fa_field ) );
+		acf.select2.init( $select, select2_init_args( fa_field, parent ), $( fa_field ) );
 	}
 
 	acf.add_action( 'select2_init', function( $input, args, settings, $field ) {

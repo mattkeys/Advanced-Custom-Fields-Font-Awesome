@@ -51,6 +51,9 @@ This ACF field type is compatible with:
 
 == Changelog ==
 
+= 2.0.8 =
+* Fixed bug where fields marked to 'allow null' in acf v5 did not show the (x) to remove the selected option on the field
+
 = 2.0.7 =
 * Fixed bug with FA fields assigned to menu items + further refactoring of JS for ACF v5
 
@@ -144,6 +147,9 @@ This ACF field type is compatible with:
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 2.0.8 =
+* Fixed bug where fields marked to 'allow null' in acf v5 did not show the (x) to remove the selected option on the field
 
 = 2.0.7 =
 * Fixed bug with FA fields assigned to menu items + further refactoring of JS for ACF v5
