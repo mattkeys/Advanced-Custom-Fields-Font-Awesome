@@ -51,6 +51,9 @@ This ACF field type is compatible with:
 
 == Changelog ==
 
+= 2.0.9 =
+* Fixed bug effecting null value fields created in 1.x of this plugin would return a string of 'null' instead of boolean false when used in 2.x versions of this plugin.
+
 = 2.0.8 =
 * Fixed bug where fields marked to 'allow null' in acf v5 did not show the (x) to remove the selected option on the field
 
@@ -147,6 +150,9 @@ This ACF field type is compatible with:
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 2.0.9 =
+* Fixed bug effecting null value fields created in 1.x of this plugin would return a string of 'null' instead of boolean false when used in 2.x versions of this plugin.
 
 = 2.0.8 =
 * Fixed bug where fields marked to 'allow null' in acf v5 did not show the (x) to remove the selected option on the field

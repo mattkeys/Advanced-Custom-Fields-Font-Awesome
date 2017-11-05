@@ -187,6 +187,10 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 	
 		public function format_value( $value, $post_id, $field )
 		{
+			if ( 'null' == $value ) {
+				return false;
+			}
+
 			if ( empty( $value ) ) {
 				return $value;
 			}
