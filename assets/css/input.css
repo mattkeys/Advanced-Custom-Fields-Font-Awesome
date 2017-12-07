@@ -1,0 +1,21 @@
+.acf-field-setting-fa_live_preview .acf-input i,
+.acf-input .icon_preview i,
+.field_option_font-awesome .fa_live_preview i {
+	font-size: 50px;
+}
+
+.acf-input .icon_preview i {
+	margin: 0 0 10px 0;
+}
+
+.field_type-font-awesome .icon_preview i {
+	font-size: 50px;
+	margin: 0 0 10px 0;
+}
+
+.field_option_font-awesome .chosen-container,
+.field_type-font-awesome .chosen-container,
+.fa-select2,
+.fa-select2-drop {
+	font-family: FontAwesome,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
