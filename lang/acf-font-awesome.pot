@@ -1,0 +1,94 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Advanced Custom Fields Font Awesome\n"
+"POT-Creation-Date: 2017-08-13 17:23-0400\n"
+"PO-Revision-Date: 2017-08-13 17:24-0400\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.3\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-KeywordsList: ;__;_e\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: assets/css\n"
+"X-Poedit-SearchPathExcluded-1: assets/inc/chosen\n"
+"X-Poedit-SearchPathExcluded-2: assets/js\n"
+"X-Poedit-SearchPathExcluded-3: lang\n"
+
+#: fields/acf-font-awesome-v4.php:23 fields/acf-font-awesome-v5.php:17
+msgid "Font Awesome Icon"
+msgstr ""
+
+#: fields/acf-font-awesome-v4.php:64 fields/acf-font-awesome-v5.php:53
+msgid "Icon Preview"
+msgstr ""
+
+#: fields/acf-font-awesome-v4.php:74 fields/acf-font-awesome-v5.php:61
+msgid "Default Icon"
+msgstr ""
+
+#: fields/acf-font-awesome-v4.php:92 fields/acf-font-awesome-v5.php:74
+msgid "Return Value"
+msgstr ""
+
+#: fields/acf-font-awesome-v4.php:93 fields/acf-font-awesome-v5.php:75
+msgid "Specify the returned value on front end"
+msgstr ""
+
+#: fields/acf-font-awesome-v4.php:102 fields/acf-font-awesome-v5.php:79
+msgid "Icon Element"
+msgstr ""
+
+#: fields/acf-font-awesome-v4.php:103 fields/acf-font-awesome-v5.php:80
+msgid "Icon Class"
+msgstr ""
+
+#: fields/acf-font-awesome-v4.php:104 fields/acf-font-awesome-v5.php:81
+msgid "Icon Unicode"
+msgstr ""
+
+#: fields/acf-font-awesome-v4.php:105 fields/acf-font-awesome-v5.php:82
+msgid "Icon Object"
+msgstr ""
+
+#: fields/acf-font-awesome-v4.php:115 fields/acf-font-awesome-v5.php:87
+msgid "Allow Null?"
+msgstr ""
+
+#: fields/acf-font-awesome-v4.php:124 fields/acf-font-awesome-v4.php:145
+#: fields/acf-font-awesome-v4.php:166 fields/acf-font-awesome-v5.php:92
+#: fields/acf-font-awesome-v5.php:103 fields/acf-font-awesome-v5.php:114
+msgid "Yes"
+msgstr ""
+
+#: fields/acf-font-awesome-v4.php:125 fields/acf-font-awesome-v4.php:146
+#: fields/acf-font-awesome-v4.php:167 fields/acf-font-awesome-v5.php:93
+#: fields/acf-font-awesome-v5.php:104 fields/acf-font-awesome-v5.php:115
+msgid "No"
+msgstr ""
+
+#: fields/acf-font-awesome-v4.php:135 fields/acf-font-awesome-v5.php:98
+msgid "Show Icon Preview"
+msgstr ""
+
+#: fields/acf-font-awesome-v4.php:136 fields/acf-font-awesome-v5.php:99
+msgid ""
+"Set to 'Yes' to include a larger icon preview on any admin pages using this "
+"field."
+msgstr ""
+
+#: fields/acf-font-awesome-v4.php:156 fields/acf-font-awesome-v5.php:109
+msgid "Enqueue FontAwesome?"
+msgstr ""
+
+#: fields/acf-font-awesome-v4.php:157 fields/acf-font-awesome-v5.php:110
+msgid "Set to 'Yes' to enqueue FA in the footer on any pages using this field."
+msgstr ""
+
+#: fields/acf-font-awesome-v4.php:230
+msgid "Cannot find icon"
+msgstr ""
