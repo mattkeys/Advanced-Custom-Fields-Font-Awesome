@@ -33,7 +33,7 @@ class ACFFAL
 
 		if ( $this->override_version ) {
 			$this->current_version = $this->override_version;
-		} else if ( ! $this->current_version ) {
+		} else if ( ! $this->current_version || version_compare( $this->current_version, '5.0.0', '>=' )  ) {
 			$this->current_version = $this->check_latest_version();
 		}
 
