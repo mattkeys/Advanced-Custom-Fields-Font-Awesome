@@ -75,7 +75,7 @@ class ACFFAL
 			$s = wp_unslash( $s );
 		}
 
-		$fa_icons = $this->get_icons();
+		$fa_icons = apply_filters( 'ACFFA_get_icons', array() );
 
 		if ( $fa_icons ) {
 			foreach( $fa_icons['list'] as $k => $v ) {
