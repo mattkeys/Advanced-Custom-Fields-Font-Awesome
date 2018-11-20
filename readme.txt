@@ -14,18 +14,19 @@ Adds a new 'Font Awesome Icon' field to the popular Advanced Custom Fields plugi
 Add a [Font Awesome](http://fontawesome.io/) icon field type to Advanced Custom Fields.
 
 * Optionally set a default icon
+* Specify which FontAwesome icon sets to use (Solid, Regular, Light, Brands) (Applies to FontAwesome v5)
+* Create your own custom filtered list of FontAwesome icons to use with your fields. Use different custom icon sets with different fields
 * Returns Icon Element, Icon Class, Icon Unicode, or an Object including the element, class, and unicode value
-* Optionally enqueues Font Awesome in footer where needed (when a font awesome field is being used on the page)
+* Optionally enqueues Font Awesome in footer where needed (when a FontAwesome field is being used on the page)
 * Integrates with [jsDelivr](https://www.jsdelivr.com/) to automatically load the latest version of [Font Awesome](http://fontawesome.io/)
-* Includes filters to override the which version of FontAwesome is loaded (See Optional Configuration)
 
 Note: It is recommended to let this plugin enqueue the latest version of Font Awesome on your front-end; or include the latest version by some other means; so that available icons in the admin area will be displayed properly on your sites front-end.
 
 = Compatibility =
 
 This ACF field type is compatible with:
-* ACF 5
-* ACF 4
+* ACF 5.7+
+* FontAwesome 4.x and 5.x fonts
 
 == Installation ==
 
@@ -38,11 +39,10 @@ This ACF field type is compatible with:
 === Filters ===
 
 * **ACFFA_always_enqueue_fa**: Return true to always enqueue FontAwesome on the frontend, even if no ACF FontAwesome fields are in use on the page. This will enqueue FontAwesome in the header instead of the footer.
-* **ACFFA_override_version**: Use to override the default FontAwesome icon version (latest). Return any valid version number from [jsDelivr](https://www.jsdelivr.com/projects/fontawesome)
 * **ACFFA_admin_enqueue_fa**: Return false to stop enqueueing FontAwesome in the admin area. Useful if you already have FontAwesome enqueued by some other means.
-* **ACFFA_load_chosen**: Return false to stop loading the [Chosen JS](https://harvesthq.github.io/chosen/) library in the admin area. Used in v4 of ACF only.
 * **ACFFA_get_icons**: Filter the array of icons and icon details loaded from the database
 * **ACFFA_get_fa_url**: Filter the URL used for enqueuing FontAwesome in the frontend and admin areas of the site.
+* **ACFFA_override_major_version**: Filter to manually set the 'major' version of FontAwesome to load (accepts either 4, or 5).
 
 == Screenshots ==
 
@@ -50,6 +50,25 @@ This ACF field type is compatible with:
 2. Searchable list of all icons, including large live preview
 
 == Changelog ==
+
+= 3.0.0-rc1 =
+* Added new 'ACFFA_override_major_version' filter
+* Fixed logic to auto-select FontAwesome 4.x or 5.x depending on if 4.x was being used in a previous version of this plugin
+* Added admin notice to let people know about the FontAwesome Settings page
+
+= 3.0.0-beta3 =
+* Added new 'custom icon set' builder which allows FontAwesome ACF fields to be created with a limited set of icons individually selected from the full list of FontAwesome icons
+* Added field options to FontAwesome v5 fields to limit which of the icon sets ( Brands, Regular, Lite, Solid ) you want to allow in the field
+* Removing support for ACF v4 now that v5 is out with a free version
+* Performance improvements
+
+= 3.0.0-beta2 =
+* Adding support for FontAwesome Pro icons
+
+= 3.0.0-beta1 =
+* Adding support for new FontAwesome 5.x free icon set
+* Adding new FontAwesome Settings admin menu under the ACF primary menu area for global configuration options.
+* Page load performance improvements (don't load icons in field constructor)
 
 = 2.1.2 =
 * Fixed bug where ACFFA_get_icons filter was not used in wp-admin area when retrieving icons.
@@ -159,6 +178,25 @@ This ACF field type is compatible with:
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 3.0.0-rc1 =
+* Added new 'ACFFA_override_major_version' filter
+* Fixed logic to auto-select FontAwesome 4.x or 5.x depending on if 4.x was being used in a previous version of this plugin
+* Added admin notice to let people know about the FontAwesome Settings page
+
+= 3.0.0-beta3 =
+* Added new 'custom icon set' builder which allows FontAwesome ACF fields to be created with a limited set of icons individually selected from the full list of FontAwesome icons
+* Added field options to FontAwesome v5 fields to limit which of the icon sets ( Brands, Regular, Lite, Solid ) you want to allow in the field
+* Removing support for ACF v4 now that v5 is out with a free version
+* Performance improvements
+
+= 3.0.0-beta2 =
+* Adding support for FontAwesome Pro icons
+
+= 3.0.0-beta1 =
+* Adding support for new FontAwesome 5.x free icon set
+* Adding new FontAwesome Settings admin menu under the ACF primary menu area for global configuration options.
+* Page load performance improvements (don't load icons in field constructor)
 
 = 2.1.2 =
 * Fixed bug where ACFFA_get_icons filter was not used in wp-admin area when retrieving icons.

@@ -15,9 +15,8 @@ msgstr ""
 "X-Poedit-KeywordsList: ;__;_e\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: assets/css\n"
-"X-Poedit-SearchPathExcluded-1: assets/inc/chosen\n"
-"X-Poedit-SearchPathExcluded-2: assets/js\n"
-"X-Poedit-SearchPathExcluded-3: lang\n"
+"X-Poedit-SearchPathExcluded-1: assets/js\n"
+"X-Poedit-SearchPathExcluded-2: lang\n"
 
 #: fields/acf-font-awesome-v4.php:23 fields/acf-font-awesome-v5.php:17
 msgid "Font Awesome Icon"
