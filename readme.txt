@@ -42,6 +42,7 @@ This ACF field type is compatible with:
 * **ACFFA_admin_enqueue_fa**: Return false to stop enqueueing FontAwesome in the admin area. Useful if you already have FontAwesome enqueued by some other means.
 * **ACFFA_get_icons**: Filter the array of icons and icon details loaded from the database
 * **ACFFA_get_fa_url**: Filter the URL used for enqueuing FontAwesome in the frontend and admin areas of the site.
+* **ACFFA_override_major_version**: Filter to manually set the 'major' version of FontAwesome to load (accepts either 4, or 5).
 
 == Screenshots ==
 
@@ -49,6 +50,11 @@ This ACF field type is compatible with:
 2. Searchable list of all icons, including large live preview
 
 == Changelog ==
+
+= 3.0.0-rc1 =
+* Added new 'ACFFA_override_major_version' filter
+* Fixed logic to auto-select FontAwesome 4.x or 5.x depending on if 4.x was being used in a previous version of this plugin
+* Added admin notice to let people know about the FontAwesome Settings page
 
 = 3.0.0-beta3 =
 * Added new 'custom icon set' builder which allows FontAwesome ACF fields to be created with a limited set of icons individually selected from the full list of FontAwesome icons
@@ -172,6 +178,11 @@ This ACF field type is compatible with:
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 3.0.0-rc1 =
+* Added new 'ACFFA_override_major_version' filter
+* Fixed logic to auto-select FontAwesome 4.x or 5.x depending on if 4.x was being used in a previous version of this plugin
+* Added admin notice to let people know about the FontAwesome Settings page
 
 = 3.0.0-beta3 =
 * Added new 'custom icon set' builder which allows FontAwesome ACF fields to be created with a limited set of icons individually selected from the full list of FontAwesome icons

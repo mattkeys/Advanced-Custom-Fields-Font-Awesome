@@ -19,7 +19,6 @@ class ACFFA_Loader_4
 	public $api_endpoint		= 'https://data.jsdelivr.com/v1/package/resolve/gh/FortAwesome/Font-Awesome@4';
 	public $cdn_baseurl			= 'https://cdn.jsdelivr.net/fontawesome/';
 	public $cdn_filepath		= '/css/font-awesome.min.css';
-	public $override_version	= false;
 	public $current_version		= false;
 	private $version;
 
@@ -29,17 +28,14 @@ class ACFFA_Loader_4
 		$this->api_endpoint		= apply_filters( 'ACFFA_api_endpoint', $this->api_endpoint );
 		$this->cdn_baseurl		= apply_filters( 'ACFFA_cdn_baseurl', $this->cdn_baseurl );
 		$this->cdn_filepath		= apply_filters( 'ACFFA_cdn_filepath', $this->cdn_filepath );
-		$this->override_version	= apply_filters( 'ACFFA_override_version', false );
 
 		$this->current_version	= get_option( 'ACFFA_current_version' );
 
-		if ( $this->override_version ) {
-			$this->current_version = $this->override_version;
-		} else if ( ! $this->current_version || version_compare( $this->current_version, '5.0.0', '>=' )  ) {
+		if ( ! $this->current_version || version_compare( $this->current_version, '5.0.0', '>=' )  ) {
 			$this->current_version = $this->check_latest_version();
 		}
 
-		if ( ! $this->override_version && ! wp_next_scheduled ( 'ACFFA_refresh_latest_icons' ) ) {
+		if ( ! wp_next_scheduled ( 'ACFFA_refresh_latest_icons' ) ) {
 			wp_schedule_event( time(), 'daily', 'ACFFA_refresh_latest_icons' );
 		}
 
@@ -120,10 +116,6 @@ class ACFFA_Loader_4
 
 	public function refresh_latest_icons()
 	{
-		if ( $this->override_version ) {
-			return;
-		}
-
 		$latest_version = $this->check_latest_version( false );
 
 		if ( ! $this->current_version || ! $latest_version ) {

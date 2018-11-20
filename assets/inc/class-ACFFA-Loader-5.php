@@ -25,7 +25,6 @@ class ACFFA_Loader_5
 	private $free_manifest_url	= 'http://cdn.jsdelivr.net/gh/mattkeys/FontAwesome-Free-Manifest/5.x/manifest.yml';
 	private $pro_manifest_url	= 'http://cdn.jsdelivr.net/gh/mattkeys/FontAwesome-Pro-Manifest/5.x/manifest.yml';
 	private $cdn_filepath		= '/css/all.css';
-	private $override_version	= false;
 	private $current_version	= false;
 	private $pro_icons_enabled	= false;
 	private $active_icon_set	= false;
@@ -51,18 +50,15 @@ class ACFFA_Loader_5
 		$this->cdn_baseurl		= apply_filters( 'ACFFA_cdn_baseurl', $this->cdn_baseurl );
 		$this->manifest_url		= apply_filters( 'ACFFA_manifest_url', $this->manifest_url );
 		$this->cdn_filepath		= apply_filters( 'ACFFA_cdn_filepath', $this->cdn_filepath );
-		$this->override_version	= apply_filters( 'ACFFA_override_version', false );
 
 		$this->current_version	= get_option( 'ACFFA_current_version' );
 		$this->active_icon_set	= get_option( 'ACFFA_active_icon_set' );
 
-		if ( $this->override_version ) {
-			$this->current_version = $this->override_version;
-		} else if ( ! $this->current_version || version_compare( $this->current_version, '5.0.0', '<' ) || ! $this->active_icon_set || ( $this->pro_icons_enabled && 'pro' !== $this->active_icon_set ) || ( ! $this->pro_icons_enabled && 'free' !== $this->active_icon_set ) ) {
+		if ( ! $this->current_version || version_compare( $this->current_version, '5.0.0', '<' ) || ! $this->active_icon_set || ( $this->pro_icons_enabled && 'pro' !== $this->active_icon_set ) || ( ! $this->pro_icons_enabled && 'free' !== $this->active_icon_set ) ) {
 			$this->current_version = $this->check_latest_version();
 		}
 
-		if ( ! $this->override_version && ! wp_next_scheduled ( 'ACFFA_refresh_latest_icons' ) ) {
+		if ( ! wp_next_scheduled ( 'ACFFA_refresh_latest_icons' ) ) {
 			wp_schedule_event( time(), 'daily', 'ACFFA_refresh_latest_icons' );
 		}
 
@@ -157,10 +153,6 @@ class ACFFA_Loader_5
 
 	public function refresh_latest_icons()
 	{
-		if ( $this->override_version ) {
-			return;
-		}
-
 		$latest_version = $this->check_latest_version( false );
 
 		if ( ! $this->current_version || ! $latest_version ) {
