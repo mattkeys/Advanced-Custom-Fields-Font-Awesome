@@ -51,6 +51,10 @@ This ACF field type is compatible with:
 
 == Changelog ==
 
+= 3.0.0-rc2 =
+* Fixed bug with icon set selections not persisting after savings field groups
+* Fixed bug where icon preview was not showing up even when enabled
+
 = 3.0.0-rc1 =
 * Added new 'ACFFA_override_major_version' filter
 * Fixed logic to auto-select FontAwesome 4.x or 5.x depending on if 4.x was being used in a previous version of this plugin
@@ -178,6 +182,10 @@ This ACF field type is compatible with:
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 3.0.0-rc2 =
+* Fixed bug with icon set selections not persisting after savings field groups
+* Fixed bug where icon preview was not showing up even when enabled
 
 = 3.0.0-rc1 =
 * Added new 'ACFFA_override_major_version' filter
