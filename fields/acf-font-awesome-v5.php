@@ -61,7 +61,7 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 				'instructions'	=> __( 'Specify which icon set(s) to load', 'acf-font-awesome' ),
 				'type'			=> 'checkbox',
 				'name'			=> 'icon_sets',
-				'value'			=> ! empty( $field['icon_sets'] ) ? $field['icon_sets'][0] : 'far'
+				'value'			=> ! empty( $field['icon_sets'] ) ? $field['icon_sets'] : 'far'
 			);
 
 			if ( version_compare( ACFFA_MAJOR_VERSION, 5, '>=' ) ) {
@@ -217,6 +217,12 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 					$default_key = key( $default_style_value );
 					$field['choices'][ $default_key ] = $default_value;
 				endif;
+			endif;
+
+			if ( $field['show_preview'] ) :
+				?>
+				<div class="icon_preview"></div>
+				<?php
 			endif;
 
 			acf_render_field( $field );
