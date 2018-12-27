@@ -2,7 +2,7 @@
 Contributors: mattkeys
 Tags: Advanced Custom Fields, ACF, Font Awesome, FontAwesome
 Requires at least: 3.5
-Tested up to: 4.9
+Tested up to: 5.0
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -52,6 +52,7 @@ This ACF field type is compatible with:
 == Changelog ==
 
 = 3.0.0 =
+* NOTE: When upgrading from a previous version of this plugin, the FontAwesome 'major version' will remain at v4 to stay compatible with existing integrations. *HOWEVER* if you are upgrading from a very old version of this plugin, it may not be possible to detect the former installation, and you will need to manually configure this plugin to use FontAwesome v4 in the new settings admin area.
 * Added support for new FontAwesome 5.x free and pro icon sets
 * Added new 'custom icon set' builder which allows FontAwesome ACF fields to be created with a limited set of icons individually selected from the full list of FontAwesome icons. Example: Create a custom icon set limited to just the social media brand icons
 * Added new field options to to limit which of the icon sets ( Brands, Regular, Lite, Solid ) you want to allow in the field (applies to FontAwesome v5 only)
