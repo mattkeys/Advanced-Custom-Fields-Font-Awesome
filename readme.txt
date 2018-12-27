@@ -51,28 +51,13 @@ This ACF field type is compatible with:
 
 == Changelog ==
 
-= 3.0.0-rc2 =
-* Fixed bug with icon set selections not persisting after savings field groups
-* Fixed bug where icon preview was not showing up even when enabled
-
-= 3.0.0-rc1 =
-* Added new 'ACFFA_override_major_version' filter
-* Fixed logic to auto-select FontAwesome 4.x or 5.x depending on if 4.x was being used in a previous version of this plugin
-* Added admin notice to let people know about the FontAwesome Settings page
-
-= 3.0.0-beta3 =
-* Added new 'custom icon set' builder which allows FontAwesome ACF fields to be created with a limited set of icons individually selected from the full list of FontAwesome icons
-* Added field options to FontAwesome v5 fields to limit which of the icon sets ( Brands, Regular, Lite, Solid ) you want to allow in the field
-* Removing support for ACF v4 now that v5 is out with a free version
-* Performance improvements
-
-= 3.0.0-beta2 =
-* Adding support for FontAwesome Pro icons
-
-= 3.0.0-beta1 =
-* Adding support for new FontAwesome 5.x free icon set
+= 3.0.0 =
+* Added support for new FontAwesome 5.x free and pro icon sets
+* Added new 'custom icon set' builder which allows FontAwesome ACF fields to be created with a limited set of icons individually selected from the full list of FontAwesome icons. Example: Create a custom icon set limited to just the social media brand icons
+* Added new field options to to limit which of the icon sets ( Brands, Regular, Lite, Solid ) you want to allow in the field (applies to FontAwesome v5 only)
 * Adding new FontAwesome Settings admin menu under the ACF primary menu area for global configuration options.
 * Page load performance improvements (don't load icons in field constructor)
+* Removing support for ACF v4 now that v5 is out with a free version
 
 = 2.1.2 =
 * Fixed bug where ACFFA_get_icons filter was not used in wp-admin area when retrieving icons.
@@ -183,28 +168,14 @@ This ACF field type is compatible with:
 
 == Upgrade Notice ==
 
-= 3.0.0-rc2 =
-* Fixed bug with icon set selections not persisting after savings field groups
-* Fixed bug where icon preview was not showing up even when enabled
-
-= 3.0.0-rc1 =
-* Added new 'ACFFA_override_major_version' filter
-* Fixed logic to auto-select FontAwesome 4.x or 5.x depending on if 4.x was being used in a previous version of this plugin
-* Added admin notice to let people know about the FontAwesome Settings page
-
-= 3.0.0-beta3 =
-* Added new 'custom icon set' builder which allows FontAwesome ACF fields to be created with a limited set of icons individually selected from the full list of FontAwesome icons
-* Added field options to FontAwesome v5 fields to limit which of the icon sets ( Brands, Regular, Lite, Solid ) you want to allow in the field
-* Removing support for ACF v4 now that v5 is out with a free version
-* Performance improvements
-
-= 3.0.0-beta2 =
-* Adding support for FontAwesome Pro icons
-
-= 3.0.0-beta1 =
-* Adding support for new FontAwesome 5.x free icon set
+= 3.0.0 =
+* NOTE: When upgrading from a previous version of this plugin, the FontAwesome 'major version' will remain at v4 to stay compatible with existing integrations. *HOWEVER* if you are upgrading from a very old version of this plugin, it may not be possible to detect the former installation, and you will need to manually configure this plugin to use FontAwesome v4 in the new settings admin area.
+* Added support for new FontAwesome 5.x free and pro icon sets
+* Added new 'custom icon set' builder which allows FontAwesome ACF fields to be created with a limited set of icons individually selected from the full list of FontAwesome icons. Example: Create a custom icon set limited to just the social media brand icons
+* Added new field options to to limit which of the icon sets ( Brands, Regular, Lite, Solid ) you want to allow in the field (applies to FontAwesome v5 only)
 * Adding new FontAwesome Settings admin menu under the ACF primary menu area for global configuration options.
 * Page load performance improvements (don't load icons in field constructor)
+* Removing support for ACF v4 now that v5 is out with a free version
 
 = 2.1.2 =
 * Fixed bug where ACFFA_get_icons filter was not used in wp-admin area when retrieving icons.
