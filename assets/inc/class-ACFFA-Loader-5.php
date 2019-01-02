@@ -30,7 +30,7 @@ class ACFFA_Loader_5
 	private $active_icon_set	= false;
 	private $version;
 
-	public function init()
+	public function __construct()
 	{
 		$this->version 				= 'v' . ACFFA_MAJOR_VERSION;
 		$acffa_settings				= get_option( 'acffa_settings' );
@@ -321,5 +321,4 @@ class ACFFA_Loader_5
 	}
 }
 
-add_action(	'acf/include_field_types', array( new ACFFA_Loader_5, 'init' ), 5 ); // v5
-add_action(	'acf/register_fields', array( new ACFFA_Loader_5, 'init' ), 5 ); // v4
+new ACFFA_Loader_5();
