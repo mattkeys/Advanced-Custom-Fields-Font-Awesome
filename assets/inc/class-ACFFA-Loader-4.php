@@ -15,14 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class ACFFA_Loader_4
 {
-
 	public $api_endpoint		= 'https://data.jsdelivr.com/v1/package/resolve/gh/FortAwesome/Font-Awesome@4';
 	public $cdn_baseurl			= 'https://cdn.jsdelivr.net/fontawesome/';
 	public $cdn_filepath		= '/css/font-awesome.min.css';
 	public $current_version		= false;
 	private $version;
 
-	public function init()
+	public function __construct()
 	{
 		$this->version 			= 'v' . ACFFA_MAJOR_VERSION;
 		$this->api_endpoint		= apply_filters( 'ACFFA_api_endpoint', $this->api_endpoint );
@@ -247,5 +246,4 @@ class ACFFA_Loader_4
 	}
 }
 
-add_action(	'acf/include_field_types', array( new ACFFA_Loader_4, 'init' ), 5 ); // v5
-add_action(	'acf/register_fields', array( new ACFFA_Loader_4, 'init' ), 5 ); // v4
+new ACFFA_Loader_4();
