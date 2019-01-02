@@ -3,7 +3,7 @@ Contributors: mattkeys
 Tags: Advanced Custom Fields, ACF, Font Awesome, FontAwesome
 Requires at least: 3.5
 Tested up to: 5.0
-Stable tag: 3.0.0
+Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -50,6 +50,9 @@ This ACF field type is compatible with:
 2. Searchable list of all icons, including large live preview
 
 == Changelog ==
+
+= 3.0.2 =
+* Fixed bug causing PHP warning of undefined constant
 
 = 3.0.1 =
 * Fixed bug where the FontAwesome field would not successfully register on sites which force ACF to initialize itself early (usually by calling get_field function in the theme functions.php file)
