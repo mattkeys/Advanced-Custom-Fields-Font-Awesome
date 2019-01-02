@@ -550,4 +550,4 @@ class ACFFA_Admin
 
 }
 
-add_action( 'after_setup_theme', array( new ACFFA_Admin, 'init' ), 10 );
+add_action( 'acf/init', array( new ACFFA_Admin, 'init' ), 10 );
