@@ -300,7 +300,7 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 
 					case 'object':
 						$object_data = array(
-							'element' => '<i class="' . $value . '" aria-hidden="true"></i>',
+							'element' => ( version_compare( ACFFA_MAJOR_VERSION, 5, '<' ) ) ? '<i class="fa ' . $value . '" aria-hidden="true"></i>' : '<i class="' . $value . '" aria-hidden="true"></i>',
 							'class' => $value,
 							'hex' => $icon['hex'],
 							'unicode' => $icon['unicode']
