@@ -260,7 +260,11 @@ class ACFFA_Loader_5
 					$icons['list'][ $prefix ] = array();
 				}
 
-				$icons['list'][ $prefix ][ $prefix . ' fa-' . $icon ] = '<i class="' . $prefix . '">&#x' . $details['unicode'] . ';</i> ' . $icon;
+				if ( 'fad' == $prefix ) {
+					$icons['list'][ $prefix ][ $prefix . ' fa-' . $icon ] = '<i class="' . $prefix . ' fa-' . $icon . '"></i> ' . $icon;
+				} else {
+					$icons['list'][ $prefix ][ $prefix . ' fa-' . $icon ] = '<i class="' . $prefix . '">&#x' . $details['unicode'] . ';</i> ' . $icon;
+				}
 
 				$icons['details'][ $prefix ][ $prefix . ' fa-' . $icon ] = array(
 					'hex'		=> '\\' . $details['unicode'],
@@ -287,6 +291,10 @@ class ACFFA_Loader_5
 				$prefix = 'fal';
 				break;
 
+			case 'duotone':
+				$prefix = 'fad';
+				break;
+
 			case 'regular':
 			default:
 				$prefix = 'far';
@@ -309,6 +317,10 @@ class ACFFA_Loader_5
 
 			case 'fal':
 				$label = __( 'Light', 'acf-font-awesome' );
+				break;
+
+			case 'fad':
+				$label = __( 'Duotone', 'acf-font-awesome' );
 				break;
 
 			case 'far':
