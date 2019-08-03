@@ -51,6 +51,9 @@ This ACF field type is compatible with:
 
 == Changelog ==
 
+= 3.1.1 =
+* Fixed bug where Duotone icons were not available to existing users of this plugin due to cached versions of the icons from before this plugin could properly parse the duotone icons.
+
 = 3.1.0 =
 * Added support for new FontAwesome Duotone icons (FontAwesome Pro subscription required)
 * Added support for ACF 'acf/settings/capability' filter on the settings page
@@ -178,6 +181,9 @@ This ACF field type is compatible with:
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 3.1.1 =
+* Fixed bug where Duotone icons were not available to existing users of this plugin due to cached versions of the icons from before this plugin could properly parse the duotone icons.
 
 = 3.1.0 =
 * Added support for new FontAwesome Duotone icons (FontAwesome Pro subscription required)
