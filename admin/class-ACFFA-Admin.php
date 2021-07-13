@@ -518,7 +518,7 @@ class ACFFA_Admin
 		update_option( 'ACFFA_custom_icon_sets_list', $icon_sets_list, false );
 	}
 
-	private function remove_icon_set( $custom_icon_sets_list = false, $icon_set_name, $list_only = false )
+	private function remove_icon_set( $custom_icon_sets_list, $icon_set_name, $list_only = false )
 	{
 		if ( ! $custom_icon_sets_list ) {
 			$custom_icon_sets_list = get_option( 'ACFFA_custom_icon_sets_list' );
