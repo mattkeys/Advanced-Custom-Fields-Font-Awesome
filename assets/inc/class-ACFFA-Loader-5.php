@@ -276,8 +276,10 @@ class ACFFA_Loader_5
 		return $icons;
 	}
 
-	public function get_prefix( $prefix = 'far', $style )
+	public function get_prefix( $prefix, $style )
 	{
+		$prefix = empty( $prefix ) ? 'far' : $prefix;
+
 		switch ( $style ) {
 			case 'solid':
 				$prefix = 'fas';
@@ -304,8 +306,10 @@ class ACFFA_Loader_5
 		return $prefix;
 	}
 
-	public function get_prefix_label( $label = 'Regular', $prefix )
+	public function get_prefix_label( $label, $prefix )
 	{
+		$label = empty( $label ) ? 'Regular' : $label;
+
 		switch ( $prefix ) {
 			case 'fas':
 				$label = __( 'Solid', 'acf-font-awesome' );

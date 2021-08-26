@@ -2,7 +2,7 @@
 Contributors: mattkeys
 Tags: Advanced Custom Fields, ACF, Font Awesome, FontAwesome
 Requires at least: 3.5
-Tested up to: 5.6
+Tested up to: 5.8
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -50,6 +50,10 @@ This ACF field type is compatible with:
 2. Searchable list of all icons, including large live preview
 
 == Changelog ==
+
+= 3.1.2 =
+* Fixed compatibility issue with ACF 5.10+
+* Fixed deprecated warnings in PHP 8, thanks to Levi Cole for the pull request
 
 = 3.1.1 =
 * Fixed bug where Duotone icons were not available to existing users of this plugin due to cached versions of the icons from before this plugin could properly parse the duotone icons.
@@ -181,6 +185,10 @@ This ACF field type is compatible with:
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 3.1.2 =
+* Fixed compatibility issue with ACF 5.10+
+* Fixed deprecated warnings in PHP 8, thanks to Levi Cole for the pull request
 
 = 3.1.1 =
 * Fixed bug where Duotone icons were not available to existing users of this plugin due to cached versions of the icons from before this plugin could properly parse the duotone icons.

@@ -35,6 +35,12 @@
 		if ( $select.hasClass('select2-fontawesome') ) {
 			args.dropdownCssClass = 'fa-select2-drop fa' + ACFFA.major_version;
 			args.containerCssClass = 'fa-select2 fa' + ACFFA.major_version;
+			args.escapeMarkup = function( markup ) {
+				if (typeof markup !== 'string') {
+					return markup;
+				}
+				return acf.escHtml( markup ); 
+			}
 		}
 
 		return args;
