@@ -56,28 +56,48 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 		
 		public function render_field_settings( $field )
 		{
+			if ( apply_filters( 'ACFFA_show_fontawesome_pro_blurbs', true ) ) {
+				switch( ACFFA_MAJOR_VERSION ) {
+					case '5':
+						$carrot_icon = 'fas fa-carrot';
+						break;
+
+					default:
+						$carrot_icon = 'fa fa-tree';
+						break;
+				}
+				acf_render_field_setting( $field, [
+					'label'			=> __( 'Get FontAwesome Pro', 'acf-font-awesome' ),
+					'message'		=> '<p>' . __( 'Support this plugin and get more icons across more styles plus helpful services, regular updates, a lifetime license, and actual human support.', 'acf-font-awesome' ) . '</p>' . '<a class="get-acfpro-btn" target="_blank" href="https://fontawesome.com/referral?a=0032f3e781"><i class="' . $carrot_icon . '"></i>' . __( 'Upgrade to Font Awesome Pro!', 'acf-font-awesome' ) . '</a>',
+					'type'			=> 'message',
+					'name'			=> 'get-fontawesome-pro',
+					'class'			=> 'get-fontawesome-pro'
+				] );
+			}
+
 			$icon_sets_args = array(
 				'label'			=> __( 'Icon Sets', 'acf-font-awesome' ),
 				'instructions'	=> __( 'Specify which icon set(s) to load', 'acf-font-awesome' ),
 				'type'			=> 'checkbox',
 				'name'			=> 'icon_sets',
-				'value'			=> ! empty( $field['icon_sets'] ) ? $field['icon_sets'] : 'far'
 			);
 
-			if ( version_compare( ACFFA_MAJOR_VERSION, 5, '>=' ) ) {
-				$icon_sets_args['choices'] = array(
+			if ( version_compare( ACFFA_MAJOR_VERSION, 5, '=' ) ) {
+				$icon_sets_args['choices'] = [
 					'fas'		=> __( 'Solid', 'acf-font-awesome' ),
 					'far'		=> __( 'Regular', 'acf-font-awesome' ),
 					'fal'		=> __( 'Light (FontAwesome Pro License Required)', 'acf-font-awesome' ),
 					'fad'		=> __( 'Duotone (FontAwesome Pro License Required)', 'acf-font-awesome' ),
 					'fab'		=> __( 'Brands', 'acf-font-awesome' ),
 					'custom'	=> __( 'Custom Icon Set', 'acf-font-awesome' )
-				);
+				];
+				$icon_sets_args['value'] = ! empty( $field['icon_sets'] ) ? $field['icon_sets'] : 'far';
 			} else {
 				$icon_sets_args['choices'] = array(
 					'all'		=> __( 'All Icons', 'acf-font-awesome' ),
 					'custom'	=> __( 'Custom Icon Set', 'acf-font-awesome' )
 				);
+				$icon_sets_args['value'] = ! empty( $field['icon_sets'] ) ? $field['icon_sets'] : 'all';
 			}
 			acf_render_field_setting( $field, $icon_sets_args );
 
@@ -199,7 +219,8 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 			$field['class'] = $select2_class . ' select2-fontawesome fontawesome-edit';
 
 			$icons = $this->get_icons('list');
-			if ( version_compare( ACFFA_MAJOR_VERSION, 5, '<' ) ) :
+
+			if ( version_compare( ACFFA_MAJOR_VERSION, 4, '=' ) ) :
 				if ( $select_value && isset( $icons[ $select_value ] ) ) :
 					$field['choices'][ $select_value ] = $icons[ $select_value ];
 				elseif ( ( ! $select_value || ! isset( $icons[ $select_value ] ) ) && ! $field['allow_null'] ) :
@@ -207,7 +228,7 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 					$default_key = key( $icons );
 					$field['choices'][ $default_key ] = $default_value;
 				endif;
-			else :
+			elseif ( version_compare( ACFFA_MAJOR_VERSION, 5, '=' ) ) :
 				$prefix = substr( $select_value, 0, 3 );
 				if ( $select_value && isset( $icons[ $prefix ][ $select_value ] ) ) :
 					$field['choices'][ $select_value ] = htmlentities( $icons[ $prefix ][ $select_value ] );
@@ -272,6 +293,11 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 
 			if ( empty( $value ) ) {
 				return $value;
+			}
+
+			$icon_json = json_decode( $value );
+			if ( is_object( $icon_json ) ) {
+				return false;
 			}
 
 			if ( ! $this->icons ) {

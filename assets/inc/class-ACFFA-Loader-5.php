@@ -68,6 +68,7 @@ class ACFFA_Loader_5
 		add_filter( 'ACFFA_get_fa_url', array( $this, 'get_fa_url' ), 5, 1 );
 		add_filter( 'ACFFA_icon_prefix', array( $this, 'get_prefix' ), 5, 2 );
 		add_filter( 'ACFFA_icon_prefix_label', array( $this, 'get_prefix_label' ), 5, 2 );
+		add_filter( 'ACFFA_active_icon_sets', array( $this, 'check_active_icon_sets' ), 5, 1 );
 	}
 
 	public function select2_ajax_request()
@@ -83,28 +84,31 @@ class ACFFA_Loader_5
 
 	private function get_ajax_query( $options = array() )
 	{
-   		$options = acf_parse_args($options, array(
+		$options = acf_parse_args($options, array(
 			'post_id'		=> 0,
 			's'				=> '',
 			'field_key'		=> '',
 			'paged'			=> 0
 		));
 
-   		$results = array();
-   		$s = null;
+		$results = array();
+		$s = null;
 
-   		if ( 'default_value' != $options['field_key'] ) {
+		if ( 'default_value' != $options['field_key'] ) {
 			$field = acf_get_field( $options['field_key'] );
 			if ( ! $field ) return false;
-   		}
+		}
 
 		if ( $options['s'] !== '' ) {
 			$s = strval( $options['s'] );
 			$s = wp_unslash( $s );
 		}
 
-		if ( isset( $field['icon_sets'] ) // Make sure we have an icon set
-			 && in_array( 'custom', $field['icon_sets'] ) // Make sure that icon set is 'custom'
+		$active_icon_sets = isset( $field['icon_sets'] ) ? $field['icon_sets'] : [];
+		$active_icon_sets = apply_filters( 'ACFFA_active_icon_sets', $active_icon_sets );
+
+		if ( isset( $active_icon_sets ) // Make sure we have an icon set
+			 && in_array( 'custom', $active_icon_sets ) // Make sure that icon set is 'custom'
 			 && isset( $field['custom_icon_set'] ) // Make sure a custom set has been chosen
 			 && stristr( $field['custom_icon_set'], 'ACFFA_custom_icon_list_' . $this->version ) // Make sure that chosen custom set matches this version of FontAwesome
 			 && $custom_icon_set = get_option( $field['custom_icon_set'] ) // Make sure we can retrieve the icon set from the DB/cache
@@ -118,7 +122,7 @@ class ACFFA_Loader_5
 
 		if ( $fa_icons ) {
 			foreach ( $fa_icons['list'] as $prefix => $icons ) {
-				if ( ! empty( $field['icon_sets'] ) && ! in_array( 'custom', $field['icon_sets'] ) && ! in_array( $prefix, $field['icon_sets'] ) ) {
+				if ( ! empty( $active_icon_sets ) && ! in_array( 'custom', $active_icon_sets ) && ! in_array( $prefix, $active_icon_sets ) ) {
 					continue;
 				}
 
@@ -334,6 +338,41 @@ class ACFFA_Loader_5
 		}
 
 		return $label;
+	}
+
+	public function check_active_icon_sets( $active_icon_sets )
+	{
+		foreach ( $active_icon_sets as $key => $icon_set ) {
+			switch ( $icon_set ) {
+				case 'solid':
+					unset( $active_icon_sets[ $key ] );
+					$active_icon_sets[] = 'fas';
+					break;
+
+				case 'regular':
+					unset( $active_icon_sets[ $key ] );
+					$active_icon_sets[] = 'far';
+					break;
+
+				case 'light':
+					unset( $active_icon_sets[ $key ] );
+					$active_icon_sets[] = 'fal';
+					break;
+
+				case 'duotone':
+					unset( $active_icon_sets[ $key ] );
+					$active_icon_sets[] = 'fad';
+					break;
+
+				case 'brands':
+					unset( $active_icon_sets[ $key ] );
+					$active_icon_sets[] = 'fab';
+					break;
+
+			}
+		}
+
+		return $active_icon_sets;
 	}
 }
 

@@ -9,6 +9,12 @@ delete_option( 'ACFFA_cdn_error' );
 delete_option( 'ACFFA_icon_data' );
 delete_option( 'ACFFA_current_version' );
 delete_option( 'ACFFA_active_icon_set' );
+delete_option( 'ACFFA_latest_version' );
+delete_option( 'ACFFA_latest_version_timestamp' );
+delete_option( 'ACFFA_last_api_call_status' );
+delete_option( 'ACFFA_kits' );
+delete_transient( 'ACFFA_search_config' );
+delete_transient( 'ACFFA_access_token' );
 
 $ACFFA_custom_icon_sets_list = get_option( 'ACFFA_custom_icon_sets_list' );
 if ( $ACFFA_custom_icon_sets_list ) {

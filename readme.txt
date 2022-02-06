@@ -2,7 +2,7 @@
 Contributors: mattkeys
 Tags: Advanced Custom Fields, ACF, Font Awesome, FontAwesome
 Requires at least: 3.5
-Tested up to: 5.8
+Tested up to: 5.9
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -13,20 +13,19 @@ Adds a new 'Font Awesome Icon' field to the popular Advanced Custom Fields plugi
 
 Add a [Font Awesome](http://fontawesome.io/) icon field type to Advanced Custom Fields.
 
-* Optionally set a default icon
-* Specify which FontAwesome icon sets to use (Solid, Regular, Light, Brands) (Applies to FontAwesome v5)
+* Specify which FontAwesome icon sets to use (Solid, Regular, Light, Thin, Duotone, Brands, and Custom Upload Icons) (Some features only available with FontAwesome 5.x or 6.x icons)
 * Create your own custom filtered list of FontAwesome icons to use with your fields. Use different custom icon sets with different fields
-* Returns Icon Element, Icon Class, Icon Unicode, or an Object including the element, class, and unicode value
-* Optionally enqueues Font Awesome in footer where needed (when a FontAwesome field is being used on the page)
-* Integrates with [jsDelivr](https://www.jsdelivr.com/) to automatically load the latest version of [Font Awesome](http://fontawesome.io/)
+* Returns Icon Element, Icon Class, Icon Unicode, or an Object including the element, class, unicode value, and SVG data (if applicable)
+* Optionally enqueues Font Awesome in footer where needed (when a FontAwesome field is being used on the page))
+* Integrates with the [FontAwesome GraphQL](https://fontawesome.com/v6.0/docs/apis/graphql/get-started) for loading your [FontAwesome Kits](https://fontawesome.com/v6.0/docs/web/setup/use-kit), searching for icons, and loading the latest version of FontAwesome
 
-Note: It is recommended to let this plugin enqueue the latest version of Font Awesome on your front-end; or include the latest version by some other means; so that available icons in the admin area will be displayed properly on your sites front-end.
+Note: It is recommended to let this plugin enqueue the latest version of Font Awesome on your front-end; or include the latest version yourself using your [FontAwesome Kit](https://fontawesome.com/v6.0/docs/web/setup/use-kit); so that available icons in the admin area will be displayed properly on your sites front-end.
 
 = Compatibility =
 
 This ACF field type is compatible with:
 * ACF 5.7+
-* FontAwesome 4.x and 5.x fonts
+* FontAwesome 4.x and 5.x and 6.x fonts
 
 == Installation ==
 
@@ -40,9 +39,9 @@ This ACF field type is compatible with:
 
 * **ACFFA_always_enqueue_fa**: Return true to always enqueue FontAwesome on the frontend, even if no ACF FontAwesome fields are in use on the page. This will enqueue FontAwesome in the header instead of the footer.
 * **ACFFA_admin_enqueue_fa**: Return false to stop enqueueing FontAwesome in the admin area. Useful if you already have FontAwesome enqueued by some other means.
-* **ACFFA_get_icons**: Filter the array of icons and icon details loaded from the database
+* **ACFFA_get_icons**: (Applies to FontAwesome 4.x and 5.x icons only) Filter the array of icons and icon details loaded from the database
 * **ACFFA_get_fa_url**: Filter the URL used for enqueuing FontAwesome in the frontend and admin areas of the site.
-* **ACFFA_override_major_version**: Filter to manually set the 'major' version of FontAwesome to load (accepts either 4, or 5). NOTE: This filter must be registered before any calls to ACF get_field() function are made.
+* **ACFFA_override_major_version**: Filter to manually set the 'major' version of FontAwesome to load (accepts either 4, 5, or 6). NOTE: This filter must be registered before any calls to ACF get_field() function are made.
 
 == Screenshots ==
 
@@ -50,6 +49,12 @@ This ACF field type is compatible with:
 2. Searchable list of all icons, including large live preview
 
 == Changelog ==
+
+= 4.0.0 =
+* Added support for FontAwesome 6 icons
+* Added support for FontAwesome Kits including Custom Uploaded Icons
+* Now utilizes the FontAwesome GraphQL API for quicker searching, fuzzy matching
+* Added new compatibility mode to make updating from v4 and v5 icons easier
 
 = 3.1.2 =
 * Fixed compatibility issue with ACF 5.10+
@@ -185,6 +190,12 @@ This ACF field type is compatible with:
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 4.0.0 =
+* Added support for FontAwesome 6 icons
+* Added support for FontAwesome Kits including Custom Uploaded Icons
+* Now utilizes the FontAwesome GraphQL API for quicker searching, fuzzy matching
+* Added new compatibility mode to make updating from v4 and v5 icons easier
 
 = 3.1.2 =
 * Fixed compatibility issue with ACF 5.10+

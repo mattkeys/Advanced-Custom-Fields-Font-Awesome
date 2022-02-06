@@ -11,21 +11,32 @@
 class ACFFA_Admin
 {
 
+
 	private $version;
 
 	public function init()
 	{
 		$this->version = 'v' . ACFFA_MAJOR_VERSION;
 
-		add_action( 'admin_notices', array( $this, 'show_upgrade_notice' ) );
-		add_action( 'admin_notices', array( $this, 'maybe_notify_cdn_error' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-		add_filter( 'plugin_action_links', array( $this, 'add_settings_link' ), 10, 2 );
-		add_action( 'admin_menu', array( $this, 'add_settings_page' ), 100 );
-		add_action( 'admin_init', array( $this, 'register_settings' ) );
-		add_filter( 'pre_update_option_acffa_settings', array( $this, 'intercept_icon_set_save' ), 10, 2 );
-		add_filter( 'pre_update_option_acffa_settings', array( $this, 'maybe_refresh_icons' ), 20, 2 );
-		add_action( 'wp_ajax_ACFFA_delete_icon_set', array( $this, 'ajax_remove_icon_set' ) );
+		add_action( 'admin_notices', [ $this, 'show_upgrade_notice' ] );
+		add_action( 'admin_notices', [ $this, 'maybe_notify_cdn_error' ] );
+		add_filter( 'plugin_action_links', [ $this, 'add_settings_link' ], 10, 2 );
+		add_action( 'admin_menu', [ $this, 'add_settings_page' ], 100 );
+		add_action( 'admin_init', [ $this, 'register_settings' ] );
+		add_filter( 'pre_update_option_acffa_settings', [ $this, 'intercept_icon_set_save' ], 10, 2 );
+		add_filter( 'pre_update_option_acffa_settings', [ $this, 'maybe_refresh_icons' ], 20, 2 );
+		add_filter( 'pre_update_option_acffa_settings', [ $this, 'revoke_access_token' ], 20, 2 );
+		add_filter( 'pre_update_option_acffa_settings', [ $this, 'clear_search_config_cache' ], 20, 2 );
+		add_filter( 'pre_update_option_acffa_settings', [ $this, 'get_fontawesome_kits' ], 25, 2 );
+		add_action( 'wp_ajax_ACFFA_delete_icon_set', [ $this, 'ajax_remove_icon_set' ] );
+		add_filter( 'ACFFA_show_fontawesome_pro_blurbs', [ $this, 'hide_fontawesome_pro_blurbs' ], 5, 1 );
+
+		if ( version_compare( ACFFA_MAJOR_VERSION, 6, '=' ) ) {
+			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_acf_select2' ] );
+			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts_v6' ] );
+		} else {
+			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts_v5' ] );
+		}
 	}
 
 	public function show_upgrade_notice()
@@ -58,23 +69,122 @@ class ACFFA_Admin
 		<?php
 	}
 
-	public function enqueue_scripts( $hook )
+	public function enqueue_acf_select2( $hook )
 	{
 		if ( 'custom-fields_page_fontawesome-settings' != $hook ) {
 			return;
 		}
 
-		wp_register_style( 'font-awesome', apply_filters( 'ACFFA_get_fa_url', '' ) );
-		wp_enqueue_style( 'multi-select-css', ACFFA_PUBLIC_PATH . 'assets/inc/multi-select/multi-select.css', array( 'font-awesome' ) );
+		// globals
+		global $wp_scripts, $wp_styles;
 
-		wp_register_script( 'quicksearch-js', ACFFA_PUBLIC_PATH . 'assets/inc/quicksearch/jquery.quicksearch.js', array( 'jquery' ), '1.0.0', true );
-		wp_register_script( 'multi-select-js', ACFFA_PUBLIC_PATH . 'assets/inc/multi-select/jquery.multi-select.js', array( 'jquery' ), '0.9.12', true );
-		wp_enqueue_script( 'acffa-settings', ACFFA_PUBLIC_PATH . 'assets/js/settings.js', array( 'multi-select-js', 'quicksearch-js' ), '1.0.0', true );
-		wp_localize_script( 'acffa-settings', 'ACFFA', array(
+		// vars
+		$min     = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$major   = acf_get_setting( 'select2_version' );
+		$version = '';
+		$script  = '';
+		$style   = '';
+
+		// attempt to find 3rd party Select2 version
+		// - avoid including v3 CSS when v4 JS is already enququed
+		if ( isset( $wp_scripts->registered['select2'] ) ) {
+
+			$major = (int) $wp_scripts->registered['select2']->ver;
+
+		}
+
+		// v4
+		if ( $major == 4 ) {
+
+			$version = '4.0.13';
+			$script  = acf_get_url( "assets/inc/select2/4/select2.full{$min}.js" );
+			$style   = acf_get_url( "assets/inc/select2/4/select2{$min}.css" );
+
+			// v3
+		} else {
+
+			$version = '3.5.2';
+			$script  = acf_get_url( "assets/inc/select2/3/select2{$min}.js" );
+			$style   = acf_get_url( 'assets/inc/select2/3/select2.css' );
+
+		}
+
+		// enqueue
+		wp_enqueue_script( 'select2', $script, [ 'jquery' ], $version );
+		wp_enqueue_style( 'select2', $style, '', $version );
+
+		// localize
+		acf_localize_data(
+			[
+				'select2L10n' => [
+					'matches_1'            => _x( 'One result is available, press enter to select it.', 'Select2 JS matches_1', 'acf' ),
+					'matches_n'            => _x( '%d results are available, use up and down arrow keys to navigate.', 'Select2 JS matches_n', 'acf' ),
+					'matches_0'            => _x( 'No matches found', 'Select2 JS matches_0', 'acf' ),
+					'input_too_short_1'    => _x( 'Please enter 1 or more characters', 'Select2 JS input_too_short_1', 'acf' ),
+					'input_too_short_n'    => _x( 'Please enter %d or more characters', 'Select2 JS input_too_short_n', 'acf' ),
+					'input_too_long_1'     => _x( 'Please delete 1 character', 'Select2 JS input_too_long_1', 'acf' ),
+					'input_too_long_n'     => _x( 'Please delete %d characters', 'Select2 JS input_too_long_n', 'acf' ),
+					'selection_too_long_1' => _x( 'You can only select 1 item', 'Select2 JS selection_too_long_1', 'acf' ),
+					'selection_too_long_n' => _x( 'You can only select %d items', 'Select2 JS selection_too_long_n', 'acf' ),
+					'load_more'            => _x( 'Loading more results&hellip;', 'Select2 JS load_more', 'acf' ),
+					'searching'            => _x( 'Searching&hellip;', 'Select2 JS searching', 'acf' ),
+					'load_fail'            => _x( 'Loading failed', 'Select2 JS load_fail', 'acf' ),
+				],
+			]
+		);
+	}
+
+	public function enqueue_scripts_v6( $hook )
+	{
+		if ( 'custom-fields_page_fontawesome-settings' != $hook ) {
+			return;
+		}
+
+		$options = get_option( 'acffa_settings' );
+
+		$fa_url = apply_filters( 'ACFFA_get_fa_url', '' );
+		if ( stristr( $fa_url, 'https://kit.fontawesome.com/' ) ) {
+			wp_enqueue_script( 'acffa_font-awesome-kit', $fa_url );
+		} else {
+			wp_enqueue_style( 'acffa_font-awesome', $fa_url );
+		}
+
+		wp_enqueue_style( 'acffa-settings', ACFFA_PUBLIC_PATH . 'assets/css/settings.css' );
+		wp_enqueue_script( 'acffa-settings', ACFFA_PUBLIC_PATH . 'assets/js/settings-v6.js', [ 'select2', 'wp-util' ], '1.0.0', true );
+		wp_localize_script( 'acffa-settings', 'ACFFA', [
+			'search_string'			=> __( 'Add New Icon', 'acf-font-awesome' ),
+			'confirm_delete'		=> __( 'Are you sure you want to delete this icon set?', 'acf-font-awesome' ),
+			'remove_icon'			=> __( 'Remove this icon from this set?', 'acf-font-awesome' ),
+			'delete_fail'			=> __( 'There was an error while trying to delete the icon set, please refresh the page and try again.', 'acf-font-awesome' ),
+			'acffa_major_version'	=> isset( $options['acffa_major_version'] ) ? $options['acffa_major_version'] : '',
+			'acffa_kit'				=> isset( $options['acffa_kit'] ) ? $options['acffa_kit'] : '',
+			'acf_nonce'				=> wp_create_nonce( 'acf_nonce' ),
+			'kits'					=> get_option( 'ACFFA_kits', [] ),
+			'api_key_status'		=> get_option( 'ACFFA_last_api_call_status', 'na' )
+		] );
+
+		add_action( 'admin_footer', [ $this, 'js_templates' ] );
+	}
+
+	public function enqueue_scripts_v5( $hook )
+	{
+		if ( 'custom-fields_page_fontawesome-settings' != $hook ) {
+			return;
+		}
+
+		wp_enqueue_style( 'acffa-settings', ACFFA_PUBLIC_PATH . 'assets/css/settings.css' );
+
+		wp_register_style( 'font-awesome', apply_filters( 'ACFFA_get_fa_url', '' ) );
+		wp_enqueue_style( 'multi-select-css', ACFFA_PUBLIC_PATH . 'assets/inc/multi-select/multi-select.css', [ 'font-awesome' ] );
+
+		wp_register_script( 'quicksearch-js', ACFFA_PUBLIC_PATH . 'assets/inc/quicksearch/jquery.quicksearch.js', [ 'jquery' ], '1.0.0', true );
+		wp_register_script( 'multi-select-js', ACFFA_PUBLIC_PATH . 'assets/inc/multi-select/jquery.multi-select.js', [ 'jquery' ], '0.9.12', true );
+		wp_enqueue_script( 'acffa-settings', ACFFA_PUBLIC_PATH . 'assets/js/settings-v5.js', [ 'multi-select-js', 'quicksearch-js' ], '1.0.0', true );
+		wp_localize_script( 'acffa-settings', 'ACFFA', [
 			'search_string'		=> __( 'Search List', 'acf-font-awesome' ),
 			'confirm_delete'	=> __( 'Are you sure you want to delete this icon set?', 'acf-font-awesome' ),
 			'delete_fail'		=> __( 'There was an error while trying to delete the icon set, please refresh the page and try again.', 'acf-font-awesome' )
-		));
+		] );
 	}
 
 	public function add_settings_link( $links, $file )
@@ -85,6 +195,10 @@ class ACFFA_Admin
 
 		array_unshift( $links, '<a href="' . esc_url( admin_url( '/edit.php?post_type=acf-field-group&page=fontawesome-settings' ) ) . '">' . esc_html__( 'Settings', 'acf-font-awesome' ) . '</a>' );
 
+		if ( apply_filters( 'ACFFA_show_fontawesome_pro_blurbs', true ) ) {
+			$links[] = '<a target="_blank" style="color:#20c997;" href="https://fontawesome.com/referral?a=0032f3e781">' . __( 'Get Font Awesome Pro!', 'acf-font-awesome' ) . '</a>';
+		}
+
 		return $links;
 	}
 
@@ -94,11 +208,11 @@ class ACFFA_Admin
 
 		add_submenu_page(
 			'edit.php?post_type=acf-field-group',
-			'FontAwesome Settings',
+			'FontAwesome for Advanced Custom Fields',
 			'FontAwesome Settings',
 			$capability,
 			'fontawesome-settings',
-			array( $this, 'fontawesome_settings' )
+			[ $this, 'fontawesome_settings' ]
 		);
 	}
 
@@ -113,6 +227,36 @@ class ACFFA_Admin
 		?>
 		<div class="wrap">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+			<?php
+				if ( apply_filters( 'ACFFA_show_fontawesome_pro_blurbs', true ) ) :
+					switch( ACFFA_MAJOR_VERSION ) {
+						case '6':
+							$fortawesome = 'fa-solid fa-font-awesome';
+							$carrot_icon = 'fa-solid fa-carrot';
+							break;
+
+						case '5':
+							$fortawesome = 'fab fa-font-awesome-flag';
+							$carrot_icon = 'fas fa-carrot';
+							break;
+
+						default:
+							$fortawesome = 'fa fa-font-awesome';
+							$carrot_icon = 'fa fa-tree';
+							break;
+					}
+					?>
+					<div class="get-fontawesome-pro">
+						<div class="title-button-wrap">
+							<i class="<?php echo $fortawesome; ?>"></i>
+							<h3><?php _e( 'Get more icons, styles, tools, & tech support. Upgrade to Font Awesome Pro!', 'acf-font-awesome' ); ?></h3>
+							<a target="_blank" href="https://fontawesome.com/referral?a=0032f3e781"><i class="<?php echo $carrot_icon; ?>"></i><?php _e( 'Get More with Pro', 'acf-font-awesome' ); ?></a>
+						</div>
+						<p><?php _e( 'A subscription to a Font Awesome Pro Plan gives you access to 7,000+ icons, all 5 icon styles, handy services and tools, software and icon updates, a lifetime license to use Pro icons, and actual human support. Signing up with the button above helps to support development on this plugin.', 'acf-font-awesome' ); ?></p>
+					</div>
+					<?php
+				endif;
+			?>
 			<form action="options.php" method="post">
 				<?php
 					settings_fields( 'acffa' );
@@ -131,95 +275,143 @@ class ACFFA_Admin
 		register_setting(
 			'acffa',
 			'acffa_settings',
-			array(
-				'sanitize_callback'	=> array( $this, 'sanitize_new_icon_set' )
-			)
+			[
+				'sanitize_callback'	=> [ $this, 'sanitize_new_icon_set' ]
+			]
 		);
 
 		add_settings_section(
 			'acffa_section_developers',
-			__( 'Major Version', 'acf-font-awesome' ),
-			array( $this, 'acffa_section_developers_cb' ),
+			__( 'Settings', 'acf-font-awesome' ),
+			[ $this, 'acffa_section_developers_cb' ],
 			'acffa'
 		);
 
 		add_settings_field(
 			'acffa_major_version',
-			__( 'Version', 'acf-font-awesome' ),
-			array( $this, 'acffa_major_version_cb' ),
+			__( 'FontAwesome Version', 'acf-font-awesome' ),
+			[ $this, 'acffa_major_version_cb' ],
 			'acffa',
 			'acffa_section_developers',
-			array(
+			[
 				'label_for'	=> 'acffa_major_version',
 				'class'		=> 'acffa_row'
-			)
+			]
+		);
+
+		add_settings_field(
+			'acffa_v5_compatibility_mode',
+			__( 'Compatibility Mode', 'acf-font-awesome' ),
+			[ $this, 'acffa_v5_compatibility_mode_cb' ],
+			'acffa',
+			'acffa_section_developers',
+			[
+				'label_for'	=> 'acffa_v5_compatibility_mode',
+				'class'		=> 'acffa_row v5_compatibility_mode'
+			]
 		);
 
 		add_settings_field(
 			'acffa_pro_cdn',
 			__( 'Enable Pro Icons?', 'acf-font-awesome' ),
-			array( $this, 'acffa_pro_cdn_cb' ),
+			[ $this, 'acffa_pro_cdn_cb' ],
 			'acffa',
 			'acffa_section_developers',
-			array(
+			[
 				'label_for'	=> 'acffa_pro_cdn',
 				'class'		=> 'acffa_row pro_icons'
-			)
+			]
+		);
+
+		add_settings_field(
+			'acffa_api_key',
+			__( 'FontAwesome API Token', 'acf-font-awesome' ),
+			[ $this, 'acffa_api_key_cb' ],
+			'acffa',
+			'acffa_section_developers',
+			[
+				'label_for'	=> 'acffa_api_key',
+				'class'		=> 'acffa_row api_key'
+			]
+		);
+
+		add_settings_field(
+			'acffa_kit',
+			__( 'FontAwesome Kit', 'acf-font-awesome' ),
+			[ $this, 'acffa_kit_cb' ],
+			'acffa',
+			'acffa_section_developers',
+			[
+				'label_for'	=> 'acffa_kit',
+				'class'		=> 'acffa_row kit'
+			]
+		);
+
+		add_settings_field(
+			'acffa_kit_has_pro',
+			'Has Pro Kit',
+			[ $this, 'acffa_kit_has_pro_cb' ],
+			'acffa',
+			'acffa_section_developers',
+			[
+				'label_for'	=> 'acffa_kit_has_pro',
+				'class'		=> 'acffa_row hidden'
+			]
 		);
 
 		add_settings_field(
 			'acffa_plugin_version',
 			'Plugin Version',
-			array( $this, 'acffa_plugin_version_cb' ),
+			[ $this, 'acffa_plugin_version_cb' ],
 			'acffa',
 			'acffa_section_developers',
-			array(
+			[
 				'label_for'	=> 'acffa_plugin_version',
 				'class'		=> 'acffa_row hidden'
-			)
+			]
 		);
 
 		add_settings_section(
 			'acffa_section_icon_set_builder',
 			__( 'Icon Set Builder', 'acf-font-awesome' ),
-			array( $this, 'acffa_section_icon_set_builder_cb' ),
+			[ $this, 'acffa_section_icon_set_builder_cb' ],
 			'acffa'
 		);
 
 		add_settings_field(
 			'acffa_new_icon_set_label',
 			__( 'New Icon Set Label', 'acf-font-awesome' ),
-			array( $this, 'acffa_new_icon_set_label_cb' ),
+			[ $this, 'acffa_new_icon_set_label_cb' ],
 			'acffa',
 			'acffa_section_icon_set_builder',
-			array(
+			[
 				'label_for'	=> 'acffa_new_icon_set_label',
 				'class'		=> 'acffa_row custom-icon-set'
-			)
+			]
 		);
 
 		add_settings_field(
 			'acffa_new_icon_set',
 			__( 'New Icon Set', 'acf-font-awesome' ),
-			array( $this, 'acffa_new_icon_set_cb' ),
+			[ $this, 'acffa_new_icon_set_cb' ],
 			'acffa',
 			'acffa_section_icon_set_builder',
-			array(
+			[
 				'label_for'	=> 'acffa_new_icon_set',
 				'class'		=> 'acffa_row custom-icon-set'
-			)
+			]
 		);
 
 		add_settings_field(
 			'acffa_existing_icon_sets',
 			__( 'Existing Icon Sets', 'acf-font-awesome' ),
-			array( $this, 'acffa_existing_icon_sets_cb' ),
+			[ $this, 'acffa_existing_icon_sets_cb' ],
 			'acffa',
 			'acffa_section_icon_set_builder',
-			array(
+			[
 				'label_for'	=> 'acffa_existing_icon_sets',
 				'class'		=> 'acffa_row custom-icon-set'
-			)
+			]
 		);
 	}
 
@@ -249,21 +441,17 @@ class ACFFA_Admin
 		return $data;
 	}
 
-	public function acffa_section_developers_cb( $args )
-	{
-		?>
-		<p id="<?php echo esc_attr( $args['id'] ); ?>">
-			<?php _e( 'FontAwesome underwent big changes with the release of version 5. It is best to choose a version and stick with it.', 'acf-font-awesome' ); ?><br>
-			<em><?php _e( 'Any icon selections saved prior to switching versions will need to be re-selected and re-saved after switching.', 'acf-font-awesome' ); ?></em>
-		</p>
-		<?php
-	}
+	public function acffa_section_developers_cb( $args ) {}
 
 	public function acffa_major_version_cb( $args )
 	{
 		$options = get_option( 'acffa_settings' );
 		$attributes = defined( 'ACFFA_OVERRIDE_MAJOR_VERSION' ) ? 'disabled' : false;
 		?>
+		<p>
+			<?php _e( 'IMPORTANT: This plugin has undergone major changes between FontAwesome versions. Switching to a new version may require you to reselect some/all icons that you have previously selected using this plugin. Switching to v6 has introduced a new "v5 Compatibility Mode" that aims to make this migration easier.', 'acf-font-awesome' ); ?>
+		</p>
+		<br>
 		<select <?php echo $attributes; ?> id="<?php echo esc_attr( $args['label_for'] ); ?>" name="acffa_settings[<?php echo esc_attr( $args['label_for'] ); ?>]">
 			<option value="4" <?php echo isset( $options[ $args[ 'label_for'] ] ) ? ( selected( $options[ $args[ 'label_for'] ], 4, false ) ) : ( '' ); ?>>
 			<?php _e( '4.x', 'acf-font-awesome' ); ?>
@@ -271,15 +459,34 @@ class ACFFA_Admin
 			<option value="5" <?php echo isset( $options[ $args[ 'label_for'] ] ) ? ( selected( $options[ $args[ 'label_for'] ], 5, false ) ) : ( '' ); ?>>
 			<?php _e( '5.x', 'acf-font-awesome' ); ?>
 			</option>
+			<option value="6" <?php echo isset( $options[ $args[ 'label_for'] ] ) ? ( selected( $options[ $args[ 'label_for'] ], 6, false ) ) : ( '' ); ?>>
+			<?php _e( '6.x', 'acf-font-awesome' ); ?>
+			</option>
 		</select>
 		<?php
 		if ( defined( 'ACFFA_OVERRIDE_MAJOR_VERSION' ) ) :
 			?>
 			<p>
-				<em><?php _e( 'The major version is manually set with the "ACFFA_override_major_version" filter, and cannot be modified from this screen. Please remove or update the filter to make changes.', 'acf-font-awesome' ); ?></em>
+				<em><?php _e( 'The FontAwesome version is manually set with the "ACFFA_override_major_version" filter, and cannot be modified from this screen. Please remove or update the filter to make changes.', 'acf-font-awesome' ); ?></em>
 			</p>
 			<?php
 		endif;
+	}
+
+	public function acffa_v5_compatibility_mode_cb( $args )
+	{
+		$options = get_option( 'acffa_settings' );
+		?>
+		<p>
+			<?php _e( 'Attempt to automatically migrate any older FontAwesome icon selections made using this plugin to their FontAwesome v6 equivalents.', 'acf-font-awesome' ); ?><br>
+			<em><?php _e( 'NOTE: This is only able to automatically migrate FontAwesome free icons. Pro icons will need to be manually reselected.', 'acf-font-awesome' ); ?></em>
+		</p>
+		<br>
+		<p>
+			<input type="checkbox" value="1" id="<?php echo esc_attr( $args['label_for'] ); ?>" name="acffa_settings[<?php echo esc_attr( $args['label_for'] ); ?>]" <?php echo isset( $options[ $args[ 'label_for'] ] ) ? ( checked( $options[ $args[ 'label_for'] ] ) ) : ( '' ); ?> />
+			<label for="<?php echo esc_attr( $args['label_for'] ); ?>"><?php _e( 'Enable Compatibility Mode <em>(Recommended only for users with existing FontAwesome 4.x/5.x icon selections)</em>', 'acf-font-awesome' ); ?></label>
+		</p>
+		<?php
 	}
 
 	public function acffa_pro_cdn_cb( $args )
@@ -295,6 +502,71 @@ class ACFFA_Admin
 			<input type="checkbox" value="1" id="<?php echo esc_attr( $args['label_for'] ); ?>" name="acffa_settings[<?php echo esc_attr( $args['label_for'] ); ?>]" <?php echo isset( $options[ $args[ 'label_for'] ] ) ? ( checked( $options[ $args[ 'label_for'] ] ) ) : ( '' ); ?> />
 			<label for="<?php echo esc_attr( $args['label_for'] ); ?>"><?php _e( 'I have enabled this domain for CDN use. Turn on the pro icons!', 'acf-font-awesome' ); ?></label>
 		</p>
+		<?php
+	}
+
+	public function acffa_api_key_cb( $args )
+	{
+		$options = get_option( 'acffa_settings' );
+		?>
+		<p>
+			<?php _e( 'You can create an API token from your <a target="_blank" href="https://fontawesome.com/account/#api-tokens">FontAwesome Account</a> page', 'acf-font-awesome' ); ?><br>
+		</p>
+		<br>
+		<p>
+			<input type="text" class="regular-text code" value="<?php echo isset( $options[ $args[ 'label_for'] ] ) ? ( esc_attr( $options[ $args[ 'label_for'] ] ) ) : ''; ?>" id="<?php echo esc_attr( $args['label_for'] ); ?>" name="acffa_settings[<?php echo esc_attr( $args['label_for'] ); ?>]" />
+			<br>
+			<span class="validation-label"><?php _e( 'Token Validation:', 'acf-font-awesome' ); ?></span>
+			<span class="validation-result">
+				<span class="empty"><?php _e( 'Please add your API token above.', 'acf-font-awesome' ); ?></span>
+				<span class="save"><?php _e( 'Save settings to validate token.', 'acf-font-awesome' ); ?></span>
+				<span class="success"><?php _e( 'Token successfully validated.', 'acf-font-awesome' ); ?></span>
+				<span class="error"><?php _e( 'Could not validate token. Please verify the token has been correctly entered.', 'acf-font-awesome' ); ?></span>
+			</span>
+		</p>
+		<?php
+	}
+
+	public function acffa_kit_cb( $args )
+	{
+		$options = get_option( 'acffa_settings' );
+		?>
+		<p>
+			<?php _e( 'FontAwesome kits are required for using FontAwesome Pro icons. Enter your API token above to select your kit.', 'acf-font-awesome' ); ?><br>
+		</p>
+		<br>
+
+		<table class="widefat" id="available_kits">
+			<thead>
+				<tr>
+					<td><?php _e( 'Select', 'acf-font-awesome' ); ?></td>
+					<td><?php _e( 'Kit Name', 'acf-font-awesome' ); ?></td>
+					<td><?php _e( 'Token', 'acf-font-awesome' ); ?></td>
+					<td><?php _e( 'Status', 'acf-font-awesome' ); ?></td>
+					<td><?php _e( 'License', 'acf-font-awesome' ); ?></td>
+					<td><?php _e( 'Technology', 'acf-font-awesome' ); ?></td>
+					<td><?php _e( 'Custom Icon(s)', 'acf-font-awesome' ); ?></td>
+					<td><?php _e( 'Version', 'acf-font-awesome' ); ?></td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="no_kits_found">
+					<td><input type="radio" name="acffa_settings[acffa_kit]" checked value=""></td>
+					<td colspan="7">
+						<?php _e( 'No Kits Found. <a target="_blank" href="https://fontawesome.com/kits">Create a new kit</a>', 'acf-font-awesome' ); ?>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p><?php _e( 'Make changes to your kits on <a target="_blank" href="https://fontawesome.com/kits">fontawesome.com/kits</a>', 'acf-font-awesome' ); ?></p>
+		<?php
+	}
+
+	public function acffa_kit_has_pro_cb( $args )
+	{
+		$options = get_option( 'acffa_settings' );
+		?>
+		<input type="hidden" value="<?php echo isset( $options[ $args[ 'label_for'] ] ) ? ( esc_attr( $options[ $args[ 'label_for'] ] ) ) : ''; ?>" id="<?php echo esc_attr( $args['label_for'] ); ?>" name="acffa_settings[<?php echo esc_attr( $args['label_for'] ); ?>]" />
 		<?php
 	}
 
@@ -330,42 +602,50 @@ class ACFFA_Admin
 
 	public function acffa_new_icon_set_cb( $args )
 	{
-		$options = get_option( 'acffa_settings' );
-		?>
-		<select multiple="multiple" id="<?php echo esc_attr( $args['label_for'] ); ?>" name="acffa_settings[<?php echo esc_attr( $args['label_for'] ); ?>][]">
+		if ( version_compare( ACFFA_MAJOR_VERSION, 6, '=' ) ) {
+			?>
+			<div class="selected-icons"></div>
+			<select multiple id="<?php echo esc_attr( $args['label_for'] ); ?>" name="acffa_settings[<?php echo esc_attr( $args['label_for'] ); ?>][]"></select>
+			<select id="icon_chooser"></select>
 			<?php
-				$fa_icons = apply_filters( 'ACFFA_get_icons', array() );
-				if ( $fa_icons ) {
-					if ( version_compare( ACFFA_MAJOR_VERSION, 5, '>=' ) ) {
-						foreach ( $fa_icons['list'] as $prefix => $icons ) {
-							$optgroup_label = apply_filters( 'ACFFA_icon_prefix_label', 'Regular', $prefix );
-							echo '<optgroup label="' . $optgroup_label . '">';
+		} else {
+			$options = get_option( 'acffa_settings' );
+			?>
+			<select multiple="multiple" id="<?php echo esc_attr( $args['label_for'] ); ?>" name="acffa_settings[<?php echo esc_attr( $args['label_for'] ); ?>][]">
+				<?php
+					$fa_icons = apply_filters( 'ACFFA_get_icons', array() );
+					if ( $fa_icons ) {
+						if ( version_compare( ACFFA_MAJOR_VERSION, 5, '=' ) ) {
+							foreach ( $fa_icons['list'] as $prefix => $icons ) {
+								$optgroup_label = apply_filters( 'ACFFA_icon_prefix_label', 'Regular', $prefix );
+								echo '<optgroup label="' . $optgroup_label . '">';
 
-							foreach( $icons as $k => $v ) {
-								$value = str_replace( array( 'fas ', 'far ', 'fab ', 'fal ', 'fad ', 'fa-' ), '', $k );
+								foreach( $icons as $k => $v ) {
+									$value = str_replace( array( 'fas ', 'far ', 'fab ', 'fal ', 'fad ', 'fa-' ), '', $k );
+									?>
+									<option value="<?php echo $k; ?>"><?php echo $value; ?></option>
+									<?php
+								}
+
+								echo '</optgroup>';
+							}
+						} else {
+							foreach ( $fa_icons['list'] as $k => $v ) {
+								$value = str_replace( array( 'fa-' ), '', $k );
 								?>
 								<option value="<?php echo $k; ?>"><?php echo $value; ?></option>
 								<?php
 							}
-
-							echo '</optgroup>';
 						}
 					} else {
-						foreach ( $fa_icons['list'] as $k => $v ) {
-							$value = str_replace( array( 'fa-' ), '', $k );
-							?>
-							<option value="<?php echo $k; ?>"><?php echo $value; ?></option>
-							<?php
-						}
+						?>
+						<option value=""><?php _e( 'No Icons Found', 'acf-font-awesome' ); ?></option>
+						<?php
 					}
-				} else {
-					?>
-					<option value=""><?php _e( 'No Icons Found', 'acf-font-awesome' ); ?></option>
-					<?php
-				}
-			?>
-		</select>
-		<?php
+				?>
+			</select>
+			<?php
+		}
 	}
 
 	public function acffa_existing_icon_sets_cb( $args )
@@ -387,7 +667,28 @@ class ACFFA_Admin
 					<span><strong><?php echo esc_html( $icon_set_label ); ?></strong> <span class="actions">( <a href="#" class="edit-icon-set"><?php _e( 'Load For Editing', 'acf-font-awesome' ); ?></a> | <a href="#" class="view-icon-list"><?php _e( 'Toggle Icon List', 'acf-font-awesome' ); ?></a> | <a href="#" class="delete-icon-set" data-icon-set-name="<?php echo esc_html( $icon_set_name ); ?>" data-nonce="<?php echo wp_create_nonce( 'acffa_delete_set_' . $icon_set_name ); ?>"><?php _e( 'Delete Icon Set', 'acf-font-awesome' ); ?></a> )</span></span>
 					<ul class="icon-list">
 						<?php
-							if ( version_compare( ACFFA_MAJOR_VERSION, 5, '>=' ) ) {
+							if ( version_compare( ACFFA_MAJOR_VERSION, 6, '=' ) ) {
+								foreach ( $icon_set as $prefix => $icons ) {
+									?>
+									<li>
+										<span class="style"><?php echo apply_filters( 'ACFFA_icon_prefix_label', 'Regular', $prefix ); ?></span>
+										<ul>
+											<?php
+												foreach ( $icons as $id => $icon_json ) {
+													$icon_info = json_decode( $icon_json );
+
+													if ( 'fak' == $icon_info->style ) {
+														echo '<li class="icon" data-icon-json="' . htmlentities( $icon_json ) . '"><i class="' . $icon_info->style . ' fa-' . $icon_info->id . ' fa-fw"></i>' . $icon_info->label . '</li>';
+													} else {
+														echo '<li class="icon" data-icon-json="' . htmlentities( $icon_json ) . '"><i class="fa-' . $icon_info->style . ' fa-' . $icon_info->id . ' fa-fw"></i>' . $icon_info->label . '</li>';
+													}
+												}
+											?>
+										</ul>
+									</li>
+									<?php
+								}
+							} else if ( version_compare( ACFFA_MAJOR_VERSION, 5, '=' ) ) {
 								foreach ( $icon_set as $prefix => $icons ) {
 									?>
 									<li>
@@ -443,6 +744,10 @@ class ACFFA_Admin
 
 	public function maybe_refresh_icons( $new_value, $old_value )
 	{
+		if ( version_compare( ACFFA_MAJOR_VERSION, 6, '=' ) ) {
+			return $new_value;
+		}
+
 		unset( $new_value['acffa_new_icon_set_label'] );
 		unset( $new_value['acffa_new_icon_set'] );
 
@@ -467,19 +772,95 @@ class ACFFA_Admin
 		return $new_value;
 	}
 
+	public function revoke_access_token( $new_value, $old_value )
+	{
+		$old_api_key = isset( $old_value['acffa_api_key'] ) ? $old_value['acffa_api_key'] : false;
+		$new_api_key = isset( $new_value['acffa_api_key'] ) ? $new_value['acffa_api_key'] : false;
+
+		if ( $old_api_key != $new_api_key ) {
+			delete_transient( 'ACFFA_access_token' );
+			delete_transient( 'ACFFA_search_config' );
+			update_option( 'ACFFA_last_api_call_status', 'na' );
+			update_option( 'ACFFA_kits', [] );
+		}
+
+		return $new_value;
+	}
+
+	public function clear_search_config_cache( $new_value, $old_value )
+	{
+		$old_kit_id = isset( $old_value['acffa_kit'] ) ? $old_value['acffa_kit'] : false;
+		$new_kit_id = isset( $new_value['acffa_kit'] ) ? $new_value['acffa_kit'] : false;
+
+		if ( $old_kit_id != $new_kit_id ) {
+			delete_transient( 'ACFFA_search_config' );
+		}
+
+		return $new_value;
+	}
+
+	public function get_fontawesome_kits( $new_value, $old_value )
+	{
+		if ( version_compare( ACFFA_MAJOR_VERSION, 6, '!=' ) ) {
+			return $new_value;
+		}
+
+		if ( ! isset( $new_value['acffa_api_key'] ) || empty( $new_value['acffa_api_key'] ) ) {
+			return $new_value;
+		}
+
+		$access_token = apply_filters( 'ACFFA_fontawesome_access_token', false, $new_value['acffa_api_key'] );
+
+		if ( ! $access_token ) {
+			return $new_value;
+		}
+
+		$remote_get = wp_remote_post( 'https://api.fontawesome.com', [
+			'headers'	=> [
+				'Content-Type'	=> 'application/json',
+				'Authorization'	=> 'Bearer ' . $access_token,
+			],
+			'body'			=> '{
+				"query" : "query { me { kits { name token status licenseSelected technologySelected version iconUploads { name } } } }" 
+			}'
+		] );
+
+		if ( ! is_wp_error( $remote_get ) ) {
+			$response_json = wp_remote_retrieve_body( $remote_get );
+
+			if ( $response_json ) {
+				$response = json_decode( $response_json );
+
+				if ( isset( $response->data->me->kits ) && ! empty( $response->data->me->kits ) ) {
+					update_option( 'ACFFA_kits', $response->data->me->kits );
+				}
+			}
+		}
+
+		return $new_value;
+	}
+
 	private function save_new_icon_set( $label, $icons )
 	{
-		$new_icon_set = array();
+		$new_icon_set = [];
 
-		$fa_icons = apply_filters( 'ACFFA_get_icons', array() );
+		$fa_icons = apply_filters( 'ACFFA_get_icons', [] );
 
-		if ( version_compare( ACFFA_MAJOR_VERSION, 5, '>=' ) ) {
+		if ( version_compare( ACFFA_MAJOR_VERSION, 6, '=' ) ) {
+			foreach( $icons as $icon ) {
+				$icon_details = json_decode( $icon );
+				if ( ! isset( $new_icon_set[ $icon_details->style ] ) ) {
+					$new_icon_set[ $icon_details->style ] = [];
+				}
+				$new_icon_set[ $icon_details->style ][ $icon_details->id ] = $icon;
+			}
+		} else if ( version_compare( ACFFA_MAJOR_VERSION, 5, '=' ) ) {
 			foreach( $icons as $icon ) {
 				$prefix = substr( $icon, 0, 3 );
 
 				if ( isset( $fa_icons['list'][ $prefix ][ $icon ] ) ) {
 					if ( ! isset( $new_icon_set[ $prefix ] ) ) {
-						$new_icon_set[ $prefix ] = array();
+						$new_icon_set[ $prefix ] = [];
 					}
 					$new_icon_set[ $prefix ][ $icon ] = $fa_icons['list'][ $prefix ][ $icon ];
 				}
@@ -504,11 +885,11 @@ class ACFFA_Admin
 		$icon_sets_list = get_option( 'ACFFA_custom_icon_sets_list' );
 
 		if ( ! $icon_sets_list ) {
-			$icon_sets_list = array();
+			$icon_sets_list = [];
 		}
 
 		if ( ! isset( $icon_sets_list[ $this->version ] ) ) {
-			$icon_sets_list[ $this->version ] = array();
+			$icon_sets_list[ $this->version ] = [];
 		}
 
 		if ( ! isset( $icon_sets_list[ $this->version ][ 'ACFFA_custom_icon_list_' . $option_name ] ) ) {
@@ -550,6 +931,22 @@ class ACFFA_Admin
 		wp_die( 'success' );
 	}
 
+	public function hide_fontawesome_pro_blurbs( $show_blurbs )
+	{
+		$acffa_settings = get_option( 'acffa_settings' );
+
+		if ( isset( $acffa_settings['acffa_kit_has_pro'] ) && $acffa_settings['acffa_kit_has_pro'] ) {
+			$show_blurbs = false;
+		}
+
+		return $show_blurbs;
+	}
+
+	public function js_templates()
+	{
+		include_once ACFFA_DIRECTORY . '/assets/js/templates/tmpl-fa-kit.php';
+	}
+
 }
 
-add_action( 'acf/init', array( new ACFFA_Admin, 'init' ), 10 );
+add_action( 'acf/init', [ new ACFFA_Admin, 'init' ], 10 );

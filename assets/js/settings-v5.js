@@ -4,9 +4,22 @@
 	function evaluate_pro_visibility() {
 		selected_major_version = $('#acffa_major_version').val();
 
-		if ( 5 == selected_major_version ) {
+		if ( selected_major_version == 6 ) {
+			$('.acffa_row.api_key').show();
+			$('.acffa_row.kit').show();
+			$('.acffa_row.v5_compatibility_mode').show();
+			$('.acffa_row.pro_icons').hide();
+			$('.acffa_row.api_key .validation-result span').hide();
+			$('.acffa_row.api_key .validation-result span.save').show();
+		} else if ( selected_major_version == 5 ) {
+			$('.acffa_row.api_key').hide();
+			$('.acffa_row.kit').hide();
+			$('.acffa_row.v5_compatibility_mode').hide();
 			$('.acffa_row.pro_icons').show();
 		} else {
+			$('.acffa_row.api_key').hide();
+			$('.acffa_row.kit').hide();
+			$('.acffa_row.v5_compatibility_mode').hide();
 			$('.acffa_row.pro_icons').hide();
 			$('#pro_icons').prop( 'checked', false );
 		}

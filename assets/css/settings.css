@@ -1,0 +1,126 @@
+#acffa_api_key {
+	margin-bottom: 5px;
+}
+.acffa_row.api_key .validation-label {
+	font-weight: bold;
+}
+.acffa_row.api_key .validation-result span:not(.empty) {
+	display: none;
+}
+.acffa_row.api_key .validation-result span.success {
+	color: #007017;
+}
+.acffa_row.api_key .validation-result span.error {
+	color: #d63638;
+}
+.acffa_row.api_key .validation-result span.save,
+.acffa_row.api_key .validation-result span.empty {
+	color: #dba617;
+}
+.acffa_row.api_key, .acffa_row.kit {
+	display: none;
+}
+#available_kits .no_kits_found {
+	display: none;
+}
+select#acffa_new_icon_set {
+	display: none;
+}
+.selected-icons {
+	margin-bottom: 8px;
+}
+.selected-icons .new-icon {
+	cursor: pointer;
+}
+.existing-custom-icon-sets .icon-list {
+	display: none;
+	background: white;
+	padding: 8px;
+	margin: 8px 0;
+	border: 1px solid #c3c4c7;
+	box-shadow: 0 1px 1px rgb(0 0 0 / 4%);
+}
+.existing-custom-icon-sets .icon-list .style {
+	font-weight: bold;
+	font-style: italic;
+}
+.existing-custom-icon-sets .icon-list ul {
+	padding-left:  20px;
+}
+.get-fontawesome-pro {
+	padding: 30px 40px;
+	border-radius: 10px;
+	background: #1864ab;
+	font-family: Helvetica,Arial,sans-serif;
+	color: #f8f9fa;
+	margin: 10px 0;
+}
+@media screen and (max-width: 375px) {
+	.get-fontawesome-pro {
+		padding: 20px 20px;
+	}
+}
+
+.get-fontawesome-pro .title-button-wrap {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+.get-fontawesome-pro .title-button-wrap a {
+	display: block;
+	flex: 0 0 220px;
+	margin: auto;
+	align-self: center;
+	background-color: #20c997;
+	color: #f8f9fa;
+	transition: all .1s ease-in;
+	box-shadow: inset 0 1px 0 rgb(255 255 255 / 1%), 0 1px 1px rgb(0 0 0 / 5%);
+	border-top-width: 0.0625rem;
+	border-bottom-width: calc(0.2rem + 0.0625rem);
+	text-decoration: none;
+	font-size: 20px;
+	line-height: 50px;
+	padding: 10px 20px;
+	border-radius: 8px;
+}
+.get-fontawesome-pro .title-button-wrap a i {
+	color: #f8f9fa;
+	opacity: 0.5;
+	font-size: 40px;
+	line-height: 1;
+	vertical-align: middle;
+	padding-right: 10px;
+}
+
+.get-fontawesome-pro .title-button-wrap a:hover {
+	background-color: #12b886;
+}
+.get-fontawesome-pro i {
+	align-self: center;
+	color: #63e6be;
+	flex: 0 0 85px;
+	font-size: 60px;
+}
+@media screen and (max-width: 500px) {
+	.get-fontawesome-pro i {
+		flex: 0 0 50px;
+		font-size: 36px;
+	}
+}
+.get-fontawesome-pro h3 {
+	flex: 1;
+	min-width: 240px;
+	padding-right: 20px;
+	color: #f8f9fa;
+	font-size: 30px;
+	font-weight: 300;
+	line-height: 1.1;
+}
+@media screen and (max-width: 500px) {
+	.get-fontawesome-pro h3 {
+		font-size: 28px
+	}
+}
+.get-fontawesome-pro p {
+	font-size: 16px;
+}
