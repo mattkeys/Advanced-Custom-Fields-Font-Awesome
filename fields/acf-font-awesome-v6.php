@@ -260,22 +260,21 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 
 		public function input_admin_enqueue_scripts()
 		{
-			$url			= $this->settings['url'];
 			$version		= $this->settings['version'];
 			$options		= get_option( 'acffa_settings' );
-			$latest_version	= apply_filters( 'ACFFA_get_latest_version', '6.0.0-beta3' );
+			$latest_version	= apply_filters( 'ACFFA_get_latest_version', '6.0.0' );
 
 			if ( isset( $options['acffa_v5_compatibility_mode'] ) && $options['acffa_v5_compatibility_mode'] ) {
 				wp_enqueue_script( 'acffa_fontawesome-js-api', "https://use.fontawesome.com/releases/v$latest_version/js/all.js", [], $latest_version );
 			}
-			wp_enqueue_script( 'acf-input-font-awesome', "{$url}assets/js/input-v6.js", [ 'acf-input' ], $version );
+			wp_enqueue_script( 'acf-input-font-awesome', ACFFA_PUBLIC_PATH . "assets/js/input-v6.js", [ 'acf-input' ], $version );
 			wp_localize_script( 'acf-input-font-awesome', 'ACFFA', [
 				'major_version'		=> ACFFA_MAJOR_VERSION,
 				'v5_compat_mode'	=> isset( $options['acffa_v5_compatibility_mode'] ) && $options['acffa_v5_compatibility_mode'] ? true : false
 			] );
 
-			wp_enqueue_style( 'acf-input-microtip', "{$url}assets/inc/microtip/microtip.min.css", [], '1.0.0' );
-			wp_enqueue_style( 'acf-input-font-awesome', "{$url}assets/css/input.css", [ 'acf-input' ], $version );
+			wp_enqueue_style( 'acf-input-microtip', ACFFA_PUBLIC_PATH . "assets/inc/microtip/microtip.min.css", [], '1.0.0' );
+			wp_enqueue_style( 'acf-input-font-awesome', ACFFA_PUBLIC_PATH . "assets/css/input.css", [ 'acf-input' ], $version );
 
 			if ( apply_filters( 'ACFFA_admin_enqueue_fa', true ) ) {
 				$fa_url = apply_filters( 'ACFFA_get_fa_url', '' );
@@ -302,7 +301,7 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 			if ( stristr( $fa_url, 'https://kit.fontawesome.com/' ) ) {
 				wp_enqueue_script( 'acffa_font-awesome-kit', $fa_url );
 			} else {
-				$latest_version	= apply_filters( 'ACFFA_get_latest_version', '6.0.0-beta3' );
+				$latest_version	= apply_filters( 'ACFFA_get_latest_version', '6.0.0' );
 				wp_enqueue_style( 'acffa_font-awesome', $fa_url, [], $latest_version );
 			}
 		}

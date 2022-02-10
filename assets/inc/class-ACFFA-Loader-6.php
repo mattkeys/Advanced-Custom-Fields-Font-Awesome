@@ -361,7 +361,7 @@ class ACFFA_Loader_6
 			return 'https://kit.fontawesome.com/' . $this->kit_token . '.js';
 		} else {
 			$cdn_baseurl	= 'https://use.fontawesome.com/releases/v';
-			$latest_version	= apply_filters( 'ACFFA_get_latest_version', '6.0.0-beta3' );
+			$latest_version	= apply_filters( 'ACFFA_get_latest_version', '6.0.0' );
 			$cdn_filepath	= '/css/all.css';
 
 			return $cdn_baseurl . $latest_version . $cdn_filepath;
@@ -463,7 +463,7 @@ class ACFFA_Loader_6
 	private function maybe_recheck_latest_version()
 	{
 		if ( ( time() - $this->latest_version_timestamp ) > HOUR_IN_SECONDS ) {
-			$latest_version	= apply_filters( 'ACFFA_get_latest_version', '6.0.0-beta3', true );
+			$latest_version	= apply_filters( 'ACFFA_get_latest_version', '6.0.0', true );
 		}
 	}
 }

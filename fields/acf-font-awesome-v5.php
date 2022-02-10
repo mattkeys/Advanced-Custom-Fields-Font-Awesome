@@ -252,16 +252,15 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 
 		public function input_admin_enqueue_scripts()
 		{
-			$url = $this->settings['url'];
 			$version = $this->settings['version'];
 			
-			wp_register_script( 'acf-input-font-awesome', "{$url}assets/js/input-v5.js", array('acf-input'), $version );
+			wp_register_script( 'acf-input-font-awesome', ACFFA_PUBLIC_PATH . "assets/js/input-v5.js", array('acf-input'), $version );
 			wp_localize_script( 'acf-input-font-awesome', 'ACFFA', array(
 				'major_version' => ACFFA_MAJOR_VERSION
 			));
 			wp_enqueue_script('acf-input-font-awesome');
 
-			wp_register_style( 'acf-input-font-awesome', "{$url}assets/css/input.css", array('acf-input'), $version );
+			wp_register_style( 'acf-input-font-awesome', ACFFA_PUBLIC_PATH . "assets/css/input.css", array('acf-input'), $version );
 			wp_enqueue_style('acf-input-font-awesome');
 
 			if ( apply_filters( 'ACFFA_admin_enqueue_fa', true ) ) {

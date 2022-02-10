@@ -1,3 +1,4 @@
+
 === Advanced Custom Fields: Font Awesome Field ===
 Contributors: mattkeys
 Tags: Advanced Custom Fields, ACF, Font Awesome, FontAwesome
@@ -29,9 +30,40 @@ This ACF field type is compatible with:
 
 == Installation ==
 
+Typical Installation:
+
 1. Copy the `advanced-custom-fields-font-awesome` folder into your `wp-content/plugins` folder
 2. Activate the Font Awesome plugin via the plugins admin page
 3. Create a new field via ACF and select the Font Awesome type
+
+Theme Installation:
+
+If you are a theme author who wants to bundle this plugin with your theme, starting in version 4.0.1 this plugin has been designed to work from within a theme directory.
+
+It is still more ideal to use something like [TGM Plugin Activation](http://tgmpluginactivation.com/) to include required/recommended plugins with your theme. However if you choose to bundle this plugin please follow these instructions:
+
+1. Copy the 'advanced-custom-fields-font-awesome' folder into your theme folder. Preferably into a path like 'includes/advanced-custom-fields-font-awesome'
+2. Include the plugin from your theme functions.php. Example: `include_once( get_stylesheet_directory() . '/includes/advanced-custom-fields-font-awesome/acf-font-awesome.php' );
+`
+
+***Plugins included this way are not able to receive regular plugin updates. It is up to theme developer to instead release these plugin updates to their users.***
+
+However this plugin does attempt to let the user know if they are on an out of date version of the plugin. Out of date theme installations show an admin notification message at the top of the WordPress admin plugins page. The message is as follows:
+
+> There is a new version of Advanced Custom Fields: Font Awesome available. Installed Version: {current_version}, Latest Version: {latest_version}
+> 
+> It looks like this plugin is bundled with your theme: ({theme_name}) and is not able to receive updates. It is recommended that you contact  your theme author for updates. Alternatively you can install this plugin through the WordPress Plugin Repository to get the latest version.
+
+If the user installs this plugin from the plugin repository, that version of the plugin will override the one installed in their theme directory.
+
+This notification message is filterable so you can customize it to better represent how you handle plugin updates for your theme users. See example below:
+
+    function my_acffa_update_message( $out_of_date_message, $current_version, $latest_version ) {
+    	// Customize the message here
+    	return $out_of_date_message;
+    }
+    add_filter( 'ACFFA_theme_install_update_message', 'my_acffa_update_message', 10, 3 );
+
 
 == Optional Configuration ==
 
@@ -49,6 +81,11 @@ This ACF field type is compatible with:
 2. Searchable list of all icons, including large live preview
 
 == Changelog ==
+
+= 4.0.1 =
+* Fixed bug where FontAwesome settings page would not properly load CSS/JS assets on internationalized WordPress installations.
+* Added support for theme authors to bundle this plugin with a theme ( see install instructions )
+* Increased 'fallback' FontAwesome 6 version number to match the 6.0.0 release
 
 = 4.0.0 =
 * Added support for FontAwesome 6 icons
@@ -191,34 +228,14 @@ This ACF field type is compatible with:
 
 == Upgrade Notice ==
 
+= 4.0.1 =
+* Fixed bug where FontAwesome settings page would not properly load CSS/JS assets on internationalized WordPress installations.
+* Added support for theme authors to bundle this plugin with a theme ( see install instructions )
+* Increased 'fallback' FontAwesome 6 version number to match the 6.0.0 release
+
 = 4.0.0 =
 * Added support for FontAwesome 6 icons
 * Added support for FontAwesome Kits including Custom Uploaded Icons
 * Now utilizes the FontAwesome GraphQL API for quicker searching, fuzzy matching
 * Added new compatibility mode to make updating from v4 and v5 icons easier
 
-= 3.1.2 =
-* Fixed compatibility issue with ACF 5.10+
-* Fixed deprecated warnings in PHP 8, thanks to Levi Cole for the pull request
-
-= 3.1.1 =
-* Fixed bug where Duotone icons were not available to existing users of this plugin due to cached versions of the icons from before this plugin could properly parse the duotone icons.
-
-= 3.1.0 =
-* Added support for new FontAwesome Duotone icons (FontAwesome Pro subscription required)
-* Added support for ACF 'acf/settings/capability' filter on the settings page
-
-= 3.0.2 =
-* Fixed bug causing PHP warning of undefined constant
-
-= 3.0.1 =
-* Fixed bug where the FontAwesome field would not successfully register on sites which force ACF to initialize itself early (usually by calling get_field function in the theme functions.php file)
-
-= 3.0.0 =
-* NOTE: When upgrading from a previous version of this plugin, the FontAwesome 'major version' will remain at v4 to stay compatible with existing integrations. *HOWEVER* if you are upgrading from a very old version of this plugin, it may not be possible to detect the former installation, and you will need to manually configure this plugin to use FontAwesome v4 in the new settings admin area.
-* Added support for new FontAwesome 5.x free and pro icon sets
-* Added new 'custom icon set' builder which allows FontAwesome ACF fields to be created with a limited set of icons individually selected from the full list of FontAwesome icons. Example: Create a custom icon set limited to just the social media brand icons
-* Added new field options to to limit which of the icon sets ( Brands, Regular, Lite, Solid ) you want to allow in the field (applies to FontAwesome v5 only)
-* Adding new FontAwesome Settings admin menu under the ACF primary menu area for global configuration options.
-* Page load performance improvements (don't load icons in field constructor)
-* Removing support for ACF v4 now that v5 is out with a free version
