@@ -270,7 +270,6 @@ class ACFFA_Loader_7
 
 			if ( $response_json ) {
 				$response = json_decode( $response_json );
-				ray($response);
 
 				$sorted_icons = [];
 				if ( isset( $response->data->search ) && ! empty( $response->data->search ) ) {
