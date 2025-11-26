@@ -30,7 +30,7 @@ class ACFFA_Admin
 		add_action( 'wp_ajax_ACFFA_delete_icon_set', [ $this, 'ajax_remove_icon_set' ] );
 		add_filter( 'ACFFA_show_fontawesome_pro_blurbs', [ $this, 'hide_fontawesome_pro_blurbs' ], 5, 1 );
 
-		if ( version_compare( ACFFA_MAJOR_VERSION, 6, '=' ) ) {
+		if ( version_compare( ACFFA_MAJOR_VERSION, 6, '>=' ) ) {
 			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_acf_select2' ] );
 			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts_v6' ] );
 		} else {
@@ -243,6 +243,7 @@ class ACFFA_Admin
 				if ( apply_filters( 'ACFFA_show_fontawesome_pro_blurbs', true ) ) :
 					switch( ACFFA_MAJOR_VERSION ) {
 						case '6':
+            case '7':
 							$fortawesome = 'fa-solid fa-font-awesome';
 							$carrot_icon = 'fa-solid fa-carrot';
 							break;
@@ -478,6 +479,9 @@ class ACFFA_Admin
 			<option value="6" <?php echo isset( $options[ $args[ 'label_for'] ] ) ? ( selected( $options[ $args[ 'label_for'] ], 6, false ) ) : ( '' ); ?>>
 			<?php _e( '6.x', 'acf-font-awesome' ); ?>
 			</option>
+      <option value="7" <?php echo isset( $options[ $args[ 'label_for'] ] ) ? ( selected( $options[ $args[ 'label_for'] ], 7, false ) ) : ( '' ); ?>>
+      <?php _e( '7.x', 'acf-font-awesome' ); ?>
+      </option>
 		</select>
 		<?php
 		if ( defined( 'ACFFA_OVERRIDE_MAJOR_VERSION' ) ) :
@@ -634,7 +638,7 @@ class ACFFA_Admin
 
 	public function acffa_new_icon_set_cb( $args )
 	{
-		if ( version_compare( ACFFA_MAJOR_VERSION, 6, '=' ) ) {
+		if ( version_compare( ACFFA_MAJOR_VERSION, 6, '>=' ) ) {
 			?>
 			<div class="selected-icons"></div>
 			<select multiple id="<?php echo esc_attr( $args['label_for'] ); ?>" name="acffa_settings[<?php echo esc_attr( $args['label_for'] ); ?>][]"></select>
@@ -700,7 +704,7 @@ class ACFFA_Admin
 					<span><strong><?php echo esc_html( $icon_set_label ); ?></strong> <span class="actions">( <a href="#" class="edit-icon-set"><?php _e( 'Load For Editing', 'acf-font-awesome' ); ?></a> | <a href="#" class="view-icon-list"><?php _e( 'Toggle Icon List', 'acf-font-awesome' ); ?></a> | <a href="#" class="delete-icon-set" data-icon-set-name="<?php echo esc_html( $icon_set_name ); ?>" data-nonce="<?php echo wp_create_nonce( 'acffa_delete_set_' . $icon_set_name ); ?>"><?php _e( 'Delete Icon Set', 'acf-font-awesome' ); ?></a> )</span></span>
 					<ul class="icon-list">
 						<?php
-							if ( version_compare( ACFFA_MAJOR_VERSION, 6, '=' ) ) {
+							if ( version_compare( ACFFA_MAJOR_VERSION, 6, '>=' ) ) {
 								foreach ( $icon_set as $family_style => $icons ) {
 									?>
 									<li>
@@ -773,7 +777,7 @@ class ACFFA_Admin
 
 	public function maybe_refresh_icons( $new_value, $old_value )
 	{
-		if ( version_compare( ACFFA_MAJOR_VERSION, 6, '=' ) ) {
+		if ( version_compare( ACFFA_MAJOR_VERSION, 6, '>=' ) ) {
 			return $new_value;
 		}
 
@@ -894,7 +898,7 @@ class ACFFA_Admin
 
 		$fa_icons = apply_filters( 'ACFFA_get_icons', [] );
 
-		if ( version_compare( ACFFA_MAJOR_VERSION, 6, '=' ) ) {
+		if ( version_compare( ACFFA_MAJOR_VERSION, 6, '>=' ) ) {
 			foreach( $icons as $icon ) {
 				$icon_details	= json_decode( $icon );
 				$family			= isset( $icon_details->family ) ? $icon_details->family : apply_filters( 'ACFFA_default_family_by_style', 'classic', $icon_details->style );
