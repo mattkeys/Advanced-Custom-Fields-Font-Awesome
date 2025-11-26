@@ -818,7 +818,7 @@ class ACFFA_Admin
 
 	public function check_kits_settings( $new_value, $old_value )
 	{
-		if ( version_compare( ACFFA_MAJOR_VERSION, 6, '!=' ) ) {
+		if ( version_compare( ACFFA_MAJOR_VERSION, 6, '<' ) ) {
 			return $new_value;
 		}
 
