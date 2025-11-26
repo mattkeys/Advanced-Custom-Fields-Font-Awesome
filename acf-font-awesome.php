@@ -87,8 +87,10 @@ if ( ! class_exists('acf_plugin_font_awesome') ) :
 
 			if ( version_compare( $acffa_major_version, 6, '<' ) ) {
 				include_once('fields/acf-font-awesome-v5.php');
-			} else {
+			} elseif (version_compare( $acffa_major_version, 7, '<' ) ) {
 				include_once('fields/acf-font-awesome-v6.php');
+			} else {
+				include_once('fields/acf-font-awesome-v7.php');
 			}
 
 			if ( ! defined( 'DISABLE_NAG_NOTICES' ) || ! DISABLE_NAG_NOTICES ) {
