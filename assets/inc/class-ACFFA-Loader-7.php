@@ -261,7 +261,7 @@ class ACFFA_Loader_7
 			],
 			'timeout'	=> 30,
 			'body'			=> '{
-				"query" : "query { search(version: \"' . $kit_version . '\", query: \"' . $s . '\", first: 100) { id label unicode FamilyStylesByLicense { ' . $kit_license . ' { family style prefix } } } }" 
+				"query" : "query { search(version: \"' . $kit_version . '\", query: \"' . $s . '\", first: 20) { id label unicode FamilyStylesByLicense { ' . $kit_license . ' { family style prefix } } } }" 
 			}'
 		] );
 
@@ -270,6 +270,7 @@ class ACFFA_Loader_7
 
 			if ( $response_json ) {
 				$response = json_decode( $response_json );
+				ray($response);
 
 				$sorted_icons = [];
 				if ( isset( $response->data->search ) && ! empty( $response->data->search ) ) {
