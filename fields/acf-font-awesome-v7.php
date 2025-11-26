@@ -240,12 +240,8 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 					$family = isset( $icon_info->family ) ? $icon_info->family : apply_filters( 'ACFFA_default_family_by_style', 'classic', $icon_info->style );
 					$style = isset( $icon_info->style ) ? $icon_info->style : '';
 					$classes = [];
-					if ( false !== strpos( $family, 'sharp' ) && false !== strpos( $family, 'duotone' ) ) {
-						$classes[] = 'fa-sharp-duotone';
-					} elseif ( false !== strpos( $family, 'sharp' ) ) {
-						$classes[] = 'fa-sharp';
-					} elseif ( false !== strpos( $family, 'duotone' ) ) {
-						$classes[] = 'fa-duotone';
+					if ( 'classic' !== $family ) {
+						$classes[] = 'fa-' . str_replace( '_', '-', $family );
 					}
 					if ( $style ) {
 						$classes[] = 'fa-' . $style;
@@ -363,12 +359,8 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 				$family = isset( $icon_json->family ) ? $icon_json->family : apply_filters( 'ACFFA_default_family_by_style', 'classic', $icon_json->style );
 				$style = isset( $icon_json->style ) ? $icon_json->style : '';
 				$classes = [];
-				if ( false !== strpos( $family, 'sharp' ) && false !== strpos( $family, 'duotone' ) ) {
-					$classes[] = 'fa-sharp-duotone';
-				} elseif ( false !== strpos( $family, 'sharp' ) ) {
-					$classes[] = 'fa-sharp';
-				} elseif ( false !== strpos( $family, 'duotone' ) ) {
-					$classes[] = 'fa-duotone';
+				if ('classic' !== $family) {
+					$classes[] = 'fa-' . str_replace('_', '-', $family);
 				}
 				if ( $style ) {
 					$classes[] = 'fa-' . $style;
