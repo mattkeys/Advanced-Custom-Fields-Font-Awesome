@@ -461,6 +461,62 @@ class ACFFA_Loader_7
 				$label = __( 'Sharp Duotone (Thin)', 'acf-font-awesome' );
 				break;
 
+			case 'whiteboard_semibold':
+				$label = __( 'Whiteboard (SemiBold)', 'acf-font-awesome' );
+				break;
+
+			case 'etch_solid':
+				$label = __( 'Etch (Solid)', 'acf-font-awesome' );
+				break;
+
+			case 'slab_regular':
+				$label = __( 'Slab (Regular)', 'acf-font-awesome' );
+				break;
+
+			case 'slab-press_regular':
+				$label = __( 'Slab Press (Regular)', 'acf-font-awesome' );
+				break;
+
+			case 'thumbprint_light':
+				$label = __( 'Thumbprint (Light)', 'acf-font-awesome' );
+				break;
+
+			case 'jelly_regular':
+				$label = __( 'Jelly (Regular)', 'acf-font-awesome' );
+				break;
+
+			case 'jelly-duo_regular':
+				$label = __( 'Jelly Duo (Regular)', 'acf-font-awesome' );
+				break;
+
+			case 'jelly-fill_regular':
+				$label = __( 'Jelly Fill (Regular)', 'acf-font-awesome' );
+				break;
+
+			case 'chisel_regular':
+				$label = __( 'Chisel (Regular)', 'acf-font-awesome' );
+				break;
+
+			case 'notdog_solid':
+				$label = __( 'Notdog (Solid)', 'acf-font-awesome' );
+				break;
+
+			case 'notdog-duo_solid':
+				$label = __( 'Notdog Duo (Solid)', 'acf-font-awesome' );
+				break;
+
+			case 'utility_semisolid':
+				$label = __( 'Utility (Solid)', 'acf-font-awesome' );
+				break;
+
+			case 'utility-duo_semisolid':
+				$label = __( 'Utility Duo (Solid)', 'acf-font-awesome' );
+				break;
+			
+			case 'utility-fill_semisolid':
+				$label = __( 'Utility Fill (Solid)', 'acf-font-awesome' );
+				break;
+
 			case 'kit_custom':
 			case 'custom':
 			case 'fak':
