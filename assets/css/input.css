@@ -50,16 +50,13 @@
 	font-family: FontAwesome,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
-.fa-select2.fa5,
-.fa-select2-drop.fa5 {
-	font-family: "Font Awesome 5 Brands","Font Awesome 5 Free",-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+.acf-admin-page .acf-field[data-name="default_value"][data-setting="font-awesome"] .select2-container.-acf .select2-selection__rendered {
+	padding-left: 8px;
+	padding-right: 20px;
 }
-
-.fa-select2.fa5 i.fas,
-.fa-select2-drop.fa5 i.fas {
-	font-weight: 900;
+.acf-admin-page .acf-field[data-name="default_value"][data-setting="font-awesome"] .select2-selection__clear {
+	margin-top: 7px;
 }
-
 .acf-table tr.acf-field.acf-field-setting-get-fontawesome-pro > td.acf-label {
 	background: #1864ab !important;
 	color: #f8f9fa;

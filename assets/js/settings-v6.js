@@ -9,16 +9,19 @@
 			$('.acffa_row.kit').show();
 			$('.acffa_row.v5_compatibility_mode').show();
 			$('.acffa_row.pro_icons').hide();
+			$('.button.button-primary').val( ACFFA.save_settings );
 		} else if ( selected_major_version == 5 ) {
 			$('.acffa_row.api_key').hide();
 			$('.acffa_row.kit').hide();
 			$('.acffa_row.v5_compatibility_mode').hide();
 			$('.acffa_row.pro_icons').show();
+			$('.button.button-primary').val( ACFFA.save_refresh_settings );
 		} else {
 			$('.acffa_row.api_key').hide();
 			$('.acffa_row.kit').hide();
 			$('.acffa_row.pro_icons').hide();
 			$('#pro_icons').prop( 'checked', false );
+			$('.button.button-primary').val( ACFFA.save_refresh_settings );
 		}
 	}
 
@@ -150,8 +153,6 @@
 			}
 			return escHtml( markup ); 
 		},
-		dropdownCssClass	: 'fa-select2-drop fa6',
-		containerCssClass	: 'fa-select2 fa6',
 		minimumInputLength	: 1,
 		placeholder			: ACFFA.search_string
 	});
@@ -179,11 +180,7 @@
 			var iconJson = $( icon ).data('icon-json');
 
 			$('select#acffa_new_icon_set').append('<option value="' + strEscape( JSON.stringify( iconJson ) ) + '" data-label="' + iconJson.label + '" selected>' + iconJson.label + '</option>');
-			if ( 'fak' == iconJson.style ) {
-				$('.acffa_row.custom-icon-set .selected-icons').append( '<div class="new-icon" data-icon-json="' + strEscape( JSON.stringify( iconJson ) ) + '" data-label="' + iconJson.label + '"><i class="' + iconJson.style + ' fa-' + iconJson.id + ' fa-fw"></i>' + iconJson.label + '</div>' );
-			} else {
-				$('.acffa_row.custom-icon-set .selected-icons').append( '<div class="new-icon" data-icon-json="' + strEscape( JSON.stringify( iconJson ) ) + '" data-label="' + iconJson.label + '"><i class="fa-' + iconJson.style + ' fa-' + iconJson.id + ' fa-fw"></i>' + iconJson.label + '</div>' );
-			}
+			$('.acffa_row.custom-icon-set .selected-icons').append( '<div class="new-icon" data-icon-json="' + strEscape( JSON.stringify( iconJson ) ) + '" data-label="' + iconJson.label + '"><i class="fa-' + iconJson.family + ' fa-' + iconJson.style + ' fa-' + iconJson.id + ' fa-fw"></i>' + iconJson.label + '</div>' );
 		});
 
 		$('#acffa_new_icon_set_label').val( label );

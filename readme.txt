@@ -3,8 +3,8 @@
 Contributors: mattkeys
 Tags: Advanced Custom Fields, ACF, Font Awesome, FontAwesome
 Requires at least: 3.5
-Tested up to: 5.9
-Stable tag: trunk
+Tested up to: 6.7
+Stable tag: 4.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,7 +14,7 @@ Adds a new 'Font Awesome Icon' field to the popular Advanced Custom Fields plugi
 
 Add a [Font Awesome](http://fontawesome.io/) icon field type to Advanced Custom Fields.
 
-* Specify which FontAwesome icon sets to use (Solid, Regular, Light, Thin, Duotone, Brands, and Custom Upload Icons) (Some features only available with FontAwesome 5.x or 6.x icons)
+* Specify which FontAwesome icon sets to use (Solid, Regular, Light, Thin, Duotone, Duotone Sharp, Brands, and Custom Upload Icons) (Some features only available with FontAwesome 5.x or 6.x icons)
 * Create your own custom filtered list of FontAwesome icons to use with your fields. Use different custom icon sets with different fields
 * Returns Icon Element, Icon Class, Icon Unicode, or an Object including the element, class, unicode value, and SVG data (if applicable)
 * Optionally enqueues Font Awesome in footer where needed (when a FontAwesome field is being used on the page))
@@ -74,6 +74,9 @@ This notification message is filterable so you can customize it to better repres
 * **ACFFA_get_icons**: (Applies to FontAwesome 4.x and 5.x icons only) Filter the array of icons and icon details loaded from the database
 * **ACFFA_get_fa_url**: Filter the URL used for enqueuing FontAwesome in the frontend and admin areas of the site.
 * **ACFFA_override_major_version**: Filter to manually set the 'major' version of FontAwesome to load (accepts either 4, 5, or 6). NOTE: This filter must be registered before any calls to ACF get_field() function are made.
+* **ACFFA_fa_api_key**: Filter to programmatically set the FontAwesome API key.
+* **ACFFA_fa_kit_token**: Filter to programmatically set the FontAwesome kit token.
+
 
 == Screenshots ==
 
@@ -81,6 +84,50 @@ This notification message is filterable so you can customize it to better repres
 2. Searchable list of all icons, including large live preview
 
 == Changelog ==
+
+= 4.1.2 =
+* Bugfix plugin textdomain can load too early if ACF fields are used before WordPress 'init'
+
+= 4.1.1 =
+* Bugfix icon sets not saving properly when editing FontAwesome icon field
+
+= 4.1.0 =
+* Added support for Duotone Sharp icons
+
+= 4.0.9 =
+* Bugfix certain SVG icons that were previously before 4.0.8 update not outputting properly.
+* Bugfix certain custom icons that were previously selected before 4.0.8 update not outputting properly.
+* Bugfix resolve potential PHP warning in admin post edit screens when downgrading from FontAwesome 6 to 5 icon sets.
+
+= 4.0.8 =
+* Bugfix php warning when returning some custom icons as an object
+* Added support for returning the FontAwesome formatted SVG on custom icons and duotone icons instead of generating it in the plugin. Previously selected icons must be reselected to use this enhanced SVG.
+
+= 4.0.7 =
+* Added support for FontAwesome "Sharp" family icons
+* Added support for user uploaded duotone icons in kits
+* Updated icon initialization for better compatibility with REST API, and a variety of third party site builder plugins that integrate with ACF fields.
+* Added filter (ACFFA_fa_api_key) to allow for the ability to programmatically set the FontAwesome API key.
+* Added filter (ACFFA_fa_kit_token) to allow for the ability to programmatically set the FontAwesome kit token.
+* Limited role of Select2 'dropdownCssClass' and 'containerCssClass' arguments to avoid conflicts with other plugins using older/non full feature versions of Select2
+
+= 4.0.6 =
+* Fixed php 8.2 related warning
+
+= 4.0.5 =
+* Fixed compatibility issue with ACF 6.1+ causing this plugins settings page to break
+* Fixed bug with logic for theme 'bundling' of this plugin that caused issues loading assets in some environments
+
+= 4.0.4 =
+* Fixed bug where queries to the FontAwesome API were timing out for some users, causing issues with searching for icons in the backend
+
+= 4.0.3 =
+* Automatically refresh 4.x and 5.x icon caches when saving the settings
+* Additional strings for translation
+
+= 4.0.2 =
+* Fixed bug where FontAwesome 5.x icon data was improperly loading FontAwesome 6.x data
+* Removed some dependancies on jsDelivr for FontAwesome 5.x icon data
 
 = 4.0.1 =
 * Fixed bug where FontAwesome settings page would not properly load CSS/JS assets on internationalized WordPress installations.
@@ -227,6 +274,50 @@ This notification message is filterable so you can customize it to better repres
 * Initial Release.
 
 == Upgrade Notice ==
+
+= 4.1.2 =
+* Bugfix plugin textdomain can load too early if ACF fields are used before WordPress 'init'
+
+= 4.1.1 =
+* Bugfix icon sets not saving properly when editing FontAwesome icon field
+
+= 4.1.0 =
+* Added support for Duotone Sharp icons
+
+= 4.0.9 =
+* Bugfix certain SVG icons that were previously before 4.0.8 update not outputting properly.
+* Bugfix certain custom icons that were previously selected before 4.0.7 update not outputting properly.
+* Bugfix resolve potential PHP warning in admin post edit screens when downgrading from FontAwesome 6 to 5 icon sets.
+
+= 4.0.8 =
+* Bugfix php warning when returning some custom icons as an object
+* Added support for returning the FontAwesome formatted SVG on custom icons and duotone icons instead of generating it in the plugin. Previously selected icons must be reselected to use this enhanced SVG.
+
+= 4.0.7 =
+* Added support for FontAwesome "Sharp" family icons
+* Added support for user uploaded duotone icons in kits
+* Updated icon initialization for better compatibility with REST API, and a variety of third party site builder plugins that integrate with ACF fields.
+* Added filter (ACFFA_fa_api_key) to allow for the ability to programmatically set the FontAwesome API key.
+* Added filter (ACFFA_fa_kit_token) to allow for the ability to programmatically set the FontAwesome kit token.
+* Limited role of Select2 'dropdownCssClass' and 'containerCssClass' arguments to avoid conflicts with other plugins using older/non full feature versions of Select2
+
+= 4.0.6 =
+* Fixed php 8.2 related warning
+
+= 4.0.5 =
+* Fixed compatibility issue with ACF 6.1+ causing this plugins settings page to break
+* Fixed bug with logic for theme 'bundling' of this plugin that caused issues loading assets in some environments
+
+= 4.0.4 =
+* Fixed bug where queries to the FontAwesome API were timing out for some users, causing issues with searching for icons in the backend
+
+= 4.0.3 =
+* Automatically refresh 4.x and 5.x icon caches when saving the settings
+* Additional strings for translation
+
+= 4.0.2 =
+* Fixed bug where FontAwesome 5.x icon data was improperly loading FontAwesome 6.x data
+* Removed some dependancies on jsDelivr for FontAwesome 5.x icon data
 
 = 4.0.1 =
 * Fixed bug where FontAwesome settings page would not properly load CSS/JS assets on internationalized WordPress installations.

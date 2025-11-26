@@ -11,17 +11,20 @@
 			$('.acffa_row.pro_icons').hide();
 			$('.acffa_row.api_key .validation-result span').hide();
 			$('.acffa_row.api_key .validation-result span.save').show();
+			$('.button.button-primary').val( ACFFA.save_settings );
 		} else if ( selected_major_version == 5 ) {
 			$('.acffa_row.api_key').hide();
 			$('.acffa_row.kit').hide();
 			$('.acffa_row.v5_compatibility_mode').hide();
 			$('.acffa_row.pro_icons').show();
+			$('.button.button-primary').val( ACFFA.save_refresh_settings );
 		} else {
 			$('.acffa_row.api_key').hide();
 			$('.acffa_row.kit').hide();
 			$('.acffa_row.v5_compatibility_mode').hide();
 			$('.acffa_row.pro_icons').hide();
 			$('#pro_icons').prop( 'checked', false );
+			$('.button.button-primary').val( ACFFA.save_refresh_settings );
 		}
 	}
 
