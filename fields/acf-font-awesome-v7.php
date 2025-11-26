@@ -59,8 +59,10 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 			$icon_sets_args = [
 				'label'			=> __( 'Icon Sets', 'acf-font-awesome' ),
 				'instructions'	=> __( 'Specify which icon set(s) to load', 'acf-font-awesome' ),
-				'type'			=> 'checkbox',
+				'type'			=> 'select',
 				'name'			=> 'icon_sets',
+				'multiple'     => 1,
+				'ui'           => 1,
 			];
 
 			$icon_sets_args['choices'] = [
@@ -105,7 +107,7 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 				}
 			}
 
-			$selected_field_sets	= ! empty( $field['icon_sets'] ) ? $field['icon_sets'] : [ 'solid', 'regular', 'brands' ];
+			$selected_field_sets	= ! empty( $field['icon_sets'] ) ? $field['icon_sets'] : [ 'classic_solid', 'classic_regular', 'brands' ];
 			$selected_field_sets	= apply_filters( 'ACFFA_v5_upgrade_compat_selected_field_sets', $selected_field_sets );
 
 			$icon_sets_args['value'] = $selected_field_sets;
