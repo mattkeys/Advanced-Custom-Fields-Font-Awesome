@@ -180,8 +180,14 @@ class ACFFA_Loader_7
 				'sharp_regular',
 				'sharp_light',
 				'sharp_thin',
-				'sharp-duotone_solid',
 				'duotone_solid',
+				'duotone_regular',
+				'duotone_light',
+				'duotone_thin',
+				'sharp-duotone_solid',
+				'sharp-duotone_regular',
+				'sharp-duotone_light',
+				'sharp-duotone_thin',
 				'kit_custom',
 				'kit-duotone_custom'
 			];
@@ -388,7 +394,7 @@ class ACFFA_Loader_7
 		switch ( $prefix ) {
 			case 'classic_solid':
 			case 'solid':
-				$label = __( 'Solid', 'acf-font-awesome' );
+				$label = __( 'Classic (Solid)', 'acf-font-awesome' );
 				break;
 
 			case 'classic_brands':
@@ -398,12 +404,12 @@ class ACFFA_Loader_7
 
 			case 'classic_light':
 			case 'light':
-				$label = __( 'Light', 'acf-font-awesome' );
+				$label = __( 'Classic (Light)', 'acf-font-awesome' );
 				break;
 
 			case 'classic_thin':
 			case 'thin':
-				$label = __( 'Thin', 'acf-font-awesome' );
+				$label = __( 'Classic (Thin)', 'acf-font-awesome' );
 				break;
 
 			case 'sharp_solid':
@@ -422,13 +428,37 @@ class ACFFA_Loader_7
 				$label = __( 'Thin (Sharp)', 'acf-font-awesome' );
 				break;
 
-			case 'sharp-duotone_solid':
-				$label = __( 'Duotone (Sharp)', 'acf-font-awesome' );
-				break;
-
 			case 'duotone_solid':
 			case 'duotone':
 				$label = __( 'Duotone', 'acf-font-awesome' );
+				break;
+
+			case 'duotone_regular':
+				$label = __( 'Duotone (Regular)', 'acf-font-awesome' );
+				break;
+
+			case 'duotone_light':
+				$label = __( 'Duotone (Light)', 'acf-font-awesome' );
+				break;
+
+			case 'duotone_thin':
+				$label = __( 'Duotone (Thin)', 'acf-font-awesome' );
+				break;
+
+			case 'sharp-duotone_solid':
+				$label = __( 'Sharp Duotone (Solid)', 'acf-font-awesome' );
+				break;
+
+			case 'sharp-duotone_regular':
+				$label = __( 'Sharp Duotone (Regular)', 'acf-font-awesome' );
+				break;
+
+			case 'sharp-duotone_light':
+				$label = __( 'Sharp Duotone (Light)', 'acf-font-awesome' );
+				break;
+
+			case 'sharp-duotone_thin':
+				$label = __( 'Sharp Duotone (Thin)', 'acf-font-awesome' );
 				break;
 
 			case 'kit_custom':
@@ -444,7 +474,7 @@ class ACFFA_Loader_7
 			case 'classic_regular':
 			case 'regular':
 			default:
-				$label = __( 'Regular', 'acf-font-awesome' );
+				$label = __( 'Classic (Regular)', 'acf-font-awesome' );
 				break;
 		}
 
@@ -593,7 +623,31 @@ class ACFFA_Loader_7
 				$icon_details = [
 					'family'	=> 'sharp-duotone',
 					'style'		=> 'solid',
-					'prefix'	=> 'fasds'
+					'prefix' 	=> 'fasds'
+				];
+				break;
+
+			case 'sharp-duotone_regular':
+				$icon_details = [
+					'family' 	=> 'sharp-duotone',
+					'style' 	=> 'regular',
+					'prefix' 	=> 'fasdr'
+				];
+				break;
+
+			case 'sharp-duotone_light':
+				$icon_details = [
+					'family' 	=> 'sharp-duotone',
+					'style' 	=> 'light',
+					'prefix' 	=> 'fasdl'
+				];
+				break;
+
+			case 'sharp-duotone_thin':
+				$icon_details = [
+					'family' 	=> 'sharp-duotone',
+					'style' 	=> 'thin',
+					'prefix' 	=> 'fasdt'
 				];
 				break;
 
