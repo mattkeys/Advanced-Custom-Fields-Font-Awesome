@@ -18,15 +18,15 @@ Add a [Font Awesome](http://fontawesome.io/) icon field type to Advanced Custom 
 * Create your own custom filtered list of FontAwesome icons to use with your fields. Use different custom icon sets with different fields
 * Returns Icon Element, Icon Class, Icon Unicode, or an Object including the element, class, unicode value, and SVG data (if applicable)
 * Optionally enqueues Font Awesome in footer where needed (when a FontAwesome field is being used on the page))
-* Integrates with the [FontAwesome GraphQL](https://fontawesome.com/v6.0/docs/apis/graphql/get-started) for loading your [FontAwesome Kits](https://fontawesome.com/v6.0/docs/web/setup/use-kit), searching for icons, and loading the latest version of FontAwesome
+* Integrates with the [FontAwesome GraphQL](https://docs.fontawesome.com/apis/graphql) for loading your [FontAwesome Kits](https://docs.fontawesome.com/web/setup/use-kit), searching for icons, and loading the latest version of FontAwesome
 
-Note: It is recommended to let this plugin enqueue the latest version of Font Awesome on your front-end; or include the latest version yourself using your [FontAwesome Kit](https://fontawesome.com/v6.0/docs/web/setup/use-kit); so that available icons in the admin area will be displayed properly on your sites front-end.
+Note: It is recommended to let this plugin enqueue the latest version of Font Awesome on your front-end; or include the latest version yourself using your [FontAwesome Kit](https://docs.fontawesome.com/web/setup/use-kit); so that available icons in the admin area will be displayed properly on your sites front-end.
 
 = Compatibility =
 
 This ACF field type is compatible with:
 * ACF 5.7+
-* FontAwesome 4.x and 5.x and 6.x fonts
+* FontAwesome 4.x, 5.x, 6.x and 7.x fonts
 
 == Installation ==
 
