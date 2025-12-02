@@ -110,14 +110,14 @@ if ( ! class_exists('acf_plugin_font_awesome') ) :
 		{
 			$current_version		= get_option( 'ACFFA_current_version' );
 			$acffa_settings			= get_option( 'acffa_settings', [] );
-			$default_version		= ( $current_version && empty( $acffa_settings ) ) ? 4 : 6;
+			$default_version		= ( $current_version && empty( $acffa_settings ) ) ? 4 : 7;
 
 			$acffa_major_version	= isset( $acffa_settings['acffa_major_version'] ) ? intval( $acffa_settings['acffa_major_version'] ) : $default_version;
 			$override_major_version	= (int) apply_filters( 'ACFFA_override_major_version', false );
 			if ( $override_major_version ) {
 				$override_major_version = floor( $override_major_version );
 
-				if ( 4 == $override_major_version || 5 == $override_major_version || 6 == $override_major_version ) {
+				if ( 4 == $override_major_version || 5 == $override_major_version || 6 == $override_major_version || 7 == $override_major_version ) {
 					if ( $acffa_major_version !== $override_major_version ) {
 						$acffa_settings['acffa_major_version'] = $override_major_version;
 						update_option( 'acffa_settings', $acffa_settings, false );
