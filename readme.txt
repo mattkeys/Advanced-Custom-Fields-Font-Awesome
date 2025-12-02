@@ -1,6 +1,6 @@
 
 === Advanced Custom Fields: Font Awesome Field ===
-Contributors: mattkeys, justinkruit
+Contributors: justinkruit, mattkeys
 Tags: Advanced Custom Fields, ACF, Font Awesome, FontAwesome
 Requires at least: 3.5
 Tested up to: 6.7
@@ -12,7 +12,7 @@ Adds a new 'Font Awesome Icon' field to the popular Advanced Custom Fields plugi
 
 == Description ==
 
-Add a [Font Awesome](http://fontawesome.io/) icon field type to Advanced Custom Fields.
+Add a [Font Awesome](http://fontawesome.com/) icon field type to Advanced Custom Fields.
 
 * Specify which FontAwesome icon sets to use (Solid, Regular, Light, Thin, Duotone, Duotone Sharp, Brands, and Custom Upload Icons) (Some features only available with FontAwesome 5.x or 6.x icons)
 * Create your own custom filtered list of FontAwesome icons to use with your fields. Use different custom icon sets with different fields
