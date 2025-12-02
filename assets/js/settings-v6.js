@@ -4,7 +4,7 @@
 	function evaluate_field_visibility() {
 		selected_major_version = $('#acffa_major_version').val();
 
-		if ( selected_major_version == 6 ) {
+		if ( selected_major_version == 6 || selected_major_version == 7 ) {
 			$('.acffa_row.api_key').show();
 			$('.acffa_row.kit').show();
 			$('.acffa_row.v5_compatibility_mode').show();

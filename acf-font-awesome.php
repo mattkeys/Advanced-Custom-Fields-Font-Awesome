@@ -23,12 +23,12 @@ if ( ! defined( 'ACFFA_VERSION' ) ) {
 if ( ! defined( 'ACFFA_PUBLIC_PATH' ) ) {
     $stylesheet_dir = trim( get_stylesheet_directory(), '/' );
     $stylesheet_dir = wp_normalize_path($stylesheet_dir);
-    
+
     $file = wp_normalize_path( __FILE__ );
-    
+
     if ( stristr( $file, $stylesheet_dir ) ) {
         define( 'ACFFA_THEME_INSTALLATION', true );
-        
+
         if ( defined( 'MY_ACFFA_URL' ) ) {
             $public_path	= MY_ACFFA_URL;
         } else {
@@ -57,7 +57,7 @@ if ( ! defined( 'ACFFA_BASENAME' ) ) {
 }
 
 function ACFFA_load_textdomain() {
-	load_plugin_textdomain( 'acf-font-awesome', false, plugin_basename( dirname( __FILE__ ) ) . '/lang' ); 
+	load_plugin_textdomain( 'acf-font-awesome', false, plugin_basename( dirname( __FILE__ ) ) . '/lang' );
 }
 add_action( 'init', 'ACFFA_load_textdomain', 10 );
 
@@ -77,16 +77,20 @@ if ( ! class_exists('acf_plugin_font_awesome') ) :
 
 			if ( $acffa_major_version == 4 ) {
 				require 'assets/inc/class-ACFFA-Loader-4.php';
-			} else if ( $acffa_major_version == 5 ) {
+			} elseif ( $acffa_major_version == 5 ) {
 				require 'assets/inc/class-ACFFA-Loader-5.php';
-			} else {
+			} elseif ( $acffa_major_version == 6 ) {
 				require 'assets/inc/class-ACFFA-Loader-6.php';
-			}
+			} else {
+				require 'assets/inc/class-ACFFA-Loader-7.php';
+            }
 
 			if ( version_compare( $acffa_major_version, 6, '<' ) ) {
 				include_once('fields/acf-font-awesome-v5.php');
-			} else {
+			} elseif (version_compare( $acffa_major_version, 7, '<' ) ) {
 				include_once('fields/acf-font-awesome-v6.php');
+			} else {
+				include_once('fields/acf-font-awesome-v7.php');
 			}
 
 			if ( ! defined( 'DISABLE_NAG_NOTICES' ) || ! DISABLE_NAG_NOTICES ) {
@@ -99,21 +103,21 @@ if ( ! class_exists('acf_plugin_font_awesome') ) :
 					wp_schedule_event( time(), 'daily', 'ACFFA_theme_install_update_check' );
 				}
 			}
-			
+
 		}
-		
+
 		private function get_major_version()
 		{
 			$current_version		= get_option( 'ACFFA_current_version' );
 			$acffa_settings			= get_option( 'acffa_settings', [] );
-			$default_version		= ( $current_version && empty( $acffa_settings ) ) ? 4 : 6;
+			$default_version		= ( $current_version && empty( $acffa_settings ) ) ? 4 : 7;
 
 			$acffa_major_version	= isset( $acffa_settings['acffa_major_version'] ) ? intval( $acffa_settings['acffa_major_version'] ) : $default_version;
 			$override_major_version	= (int) apply_filters( 'ACFFA_override_major_version', false );
 			if ( $override_major_version ) {
 				$override_major_version = floor( $override_major_version );
 
-				if ( 4 == $override_major_version || 5 == $override_major_version || 6 == $override_major_version ) {
+				if ( 4 == $override_major_version || 5 == $override_major_version || 6 == $override_major_version || 7 == $override_major_version ) {
 					if ( $acffa_major_version !== $override_major_version ) {
 						$acffa_settings['acffa_major_version'] = $override_major_version;
 						update_option( 'acffa_settings', $acffa_settings, false );
@@ -171,7 +175,7 @@ if ( ! class_exists('acf_plugin_font_awesome') ) :
 			if ( version_compare( $acffa_internal_version, '4.0.3', '<' ) ) {
 				define( 'ACFFA_FORCE_REFRESH', true );
 				do_action( 'ACFFA_refresh_latest_icons' );
-			}			
+			}
 
 			if ( $acffa_internal_version !== ACFFA_VERSION ) {
 				$acffa_settings['acffa_plugin_version'] = ACFFA_VERSION;
