@@ -6,14 +6,10 @@
 		} else {
 			try {
 				var iconJson = $.parseJSON( value );
+
 				if ( 'object' === typeof iconJson ) {
-					if ( 'fak' == iconJson.style ) {
-						$( '.acf-field-setting-fa_live_preview .acf-input', parent ).html( '<i class="' + iconJson.style + ' fa-' + iconJson.id + ' fa-fw" aria-hidden="true"></i>' );
-						$( '.icon_preview', parent ).html( '<i class="' + iconJson.style + ' fa-' + iconJson.id + ' fa-fw" aria-hidden="true"></i>' );
-					} else {
-						$( '.acf-field-setting-fa_live_preview .acf-input', parent ).html( '<i class="fa-' + iconJson.style + ' fa-' + iconJson.id + ' fa-fw" aria-hidden="true"></i>' );
-						$( '.icon_preview', parent ).html( '<i class="fa-' + iconJson.style + ' fa-' + iconJson.id + ' fa-fw" aria-hidden="true"></i>' );
-					}
+					$( '.acf-field-setting-fa_live_preview .acf-input', parent ).html( '<i class="fa-' + iconJson.family + ' fa-' + iconJson.style + ' fa-' + iconJson.id + ' fa-fw" aria-hidden="true"></i>' );
+					$( '.icon_preview', parent ).html( '<i class="fa-' + iconJson.family + ' fa-' + iconJson.style + ' fa-' + iconJson.id + ' fa-fw" aria-hidden="true"></i>' );
 					$( '.icon_preview', parent ).removeClass('v5-compat-alert show-alert');
 				}
 			} catch( err ) {
@@ -37,13 +33,36 @@
 				prefix = 'solid';
 				break;
 
+			case 'fass':
+				prefix = 'sharp_solid';
+				break;
+
 			case 'far':
 				prefix = 'regular';
+				break;
+
+			case 'fasr':
+				prefix = 'sharp_regular';
 				break;
 
 			case 'fal':
 				prefix = 'light';
 				break;
+
+			case 'fasl':
+				prefix = 'sharp_light';
+				break;
+
+			case 'fat':
+				$prefix = 'thin';
+				break;
+
+			case 'fast':
+				$prefix = 'sharp_thin';
+				break;
+
+			case 'fasds':
+				$prefix = 'sharp-duotone';
 
 			case 'fad':
 				prefix = 'duotone';
@@ -51,6 +70,14 @@
 
 			case 'fab':
 				prefix = 'brands';
+				break;
+
+			case 'fak':
+				prefix = 'kit_custom';
+				break;
+
+			case 'fakd':
+				prefix = 'kit-duotone_custom';
 				break;
 		}
 
@@ -81,7 +108,7 @@
 						unicode = iconDetails.icon[3];
 
 					return {
-						value : '{ "style" : "' + prefix + '", "id" : "' + iconDetails.iconName + '", "label" : "' + label + '", "unicode" : "' + unicode + '" }',
+						value : '{"style" : "' + prefix + '", "id" : "' + iconDetails.iconName + '", "label" : "' + label + '", "unicode" : "' + unicode + '"}',
 						label : label
 					};
 				}
@@ -101,7 +128,7 @@
 						unicode = iconDetails.icon[3];
 
 					return {
-						value : '{ "style" : "' + prefix + '", "id" : "' + iconDetails.iconName + '", "label" : "' + label + '", "unicode" : "' + unicode + '" }',
+						value : '{"style" : "' + prefix + '", "id" : "' + iconDetails.iconName + '", "label" : "' + label + '", "unicode" : "' + unicode + '"}',
 						label : label
 					};
 				}
@@ -138,11 +165,9 @@
 		}
 	});
 
-	// Add our classes to FontAwesome select2 fields
+	// Adjust FontAwesome select2 field settings
 	acf.add_filter( 'select2_args', function( args, $select, settings, $field ) {
 		if ( $select.hasClass('select2-fontawesome') ) {
-			args.dropdownCssClass = 'fa-select2-drop fa' + ACFFA.major_version;
-			args.containerCssClass = 'fa-select2 fa' + ACFFA.major_version;
 			args.escapeMarkup = function( markup ) {
 				if (typeof markup !== 'string') {
 					return markup;

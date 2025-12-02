@@ -4,9 +4,10 @@
 Plugin Name: Advanced Custom Fields: Font Awesome
 Plugin URI: https://wordpress.org/plugins/advanced-custom-fields-font-awesome/
 Description: Adds a new 'Font Awesome Icon' field to the popular Advanced Custom Fields plugin.
-Version: 4.0.1
+Version: 4.1.2
 Author: Matt Keys
 Author URI: http://mattkeys.me/
+Text Domain: acf-font-awesome
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
@@ -16,31 +17,49 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'ACFFA_VERSION' ) ) {
-	define( 'ACFFA_VERSION', '4.0.1' );
+	define( 'ACFFA_VERSION', '4.1.2' );
 }
 
 if ( ! defined( 'ACFFA_PUBLIC_PATH' ) ) {
-	$stylesheet_dir = trim( get_stylesheet_directory(), '/' );
-	if ( stristr( __FILE__, $stylesheet_dir ) ) {
-		define( 'ACFFA_THEME_INSTALLATION', true );
-		$basename_dir	= trim( plugin_basename( __DIR__ ), '/' );
-		$theme_path		= str_replace( $stylesheet_dir, '', $basename_dir );
-		$public_path	= get_stylesheet_directory_uri() . trailingslashit( $theme_path );
-	} else {
-		define( 'ACFFA_THEME_INSTALLATION', false );
-		$public_path	= plugin_dir_url( __FILE__ );
-	}
+    $stylesheet_dir = trim( get_stylesheet_directory(), '/' );
+    $stylesheet_dir = wp_normalize_path($stylesheet_dir);
+    
+    $file = wp_normalize_path( __FILE__ );
+    
+    if ( stristr( $file, $stylesheet_dir ) ) {
+        define( 'ACFFA_THEME_INSTALLATION', true );
+        
+        if ( defined( 'MY_ACFFA_URL' ) ) {
+            $public_path	= MY_ACFFA_URL;
+        } else {
+            $basename_dir	= trim( plugin_basename( __DIR__ ), '/' );
+            $theme_path		= str_replace( $stylesheet_dir, '', $basename_dir );
+            $public_path	= get_stylesheet_directory_uri() . trailingslashit( $theme_path );
+        }
+    } else {
+        define( 'ACFFA_THEME_INSTALLATION', false );
+        $public_path = plugin_dir_url( __FILE__ );
+    }
 
-	define( 'ACFFA_PUBLIC_PATH', $public_path );
+    define( 'ACFFA_PUBLIC_PATH', $public_path );
+}
+
+if ( ! defined( 'ACFFA_DIRECTORY' ) ) {
+    if ( defined( 'MY_ACFFA_PATH' ) ) {
+        define( 'ACFFA_DIRECTORY', MY_ACFFA_PATH );
+    } else {
+        define( 'ACFFA_DIRECTORY', dirname( __FILE__ ) );
+    }
 }
 
 if ( ! defined( 'ACFFA_BASENAME' ) ) {
 	define( 'ACFFA_BASENAME', plugin_basename( __FILE__ ) );
 }
 
-if ( ! defined( 'ACFFA_DIRECTORY' ) ) {
-	define( 'ACFFA_DIRECTORY', dirname( __FILE__ ) );
+function ACFFA_load_textdomain() {
+	load_plugin_textdomain( 'acf-font-awesome', false, plugin_basename( dirname( __FILE__ ) ) . '/lang' ); 
 }
+add_action( 'init', 'ACFFA_load_textdomain', 10 );
 
 if ( ! class_exists('acf_plugin_font_awesome') ) :
 
@@ -63,14 +82,6 @@ if ( ! class_exists('acf_plugin_font_awesome') ) :
 			} else {
 				require 'assets/inc/class-ACFFA-Loader-6.php';
 			}
-
-			$this->settings = [
-				'version'	=> ACFFA_VERSION,
-				'url'		=> plugin_dir_url( __FILE__ ),
-				'path'		=> plugin_dir_path( __FILE__ )
-			];
-
-			load_plugin_textdomain( 'acf-font-awesome', false, plugin_basename( dirname( __FILE__ ) ) . '/lang' ); 
 
 			if ( version_compare( $acffa_major_version, 6, '<' ) ) {
 				include_once('fields/acf-font-awesome-v5.php');
@@ -157,6 +168,11 @@ if ( ! class_exists('acf_plugin_font_awesome') ) :
 					break;
 			}
 
+			if ( version_compare( $acffa_internal_version, '4.0.3', '<' ) ) {
+				define( 'ACFFA_FORCE_REFRESH', true );
+				do_action( 'ACFFA_refresh_latest_icons' );
+			}			
+
 			if ( $acffa_internal_version !== ACFFA_VERSION ) {
 				$acffa_settings['acffa_plugin_version'] = ACFFA_VERSION;
 				update_option( 'acffa_settings', $acffa_settings, false );
@@ -188,13 +204,22 @@ if ( ! class_exists('acf_plugin_font_awesome') ) :
 
 		public function theme_install_update_needed()
 		{
-			global $pagenow;
-
-			if ( 'update-core.php' != $pagenow && 'plugins.php' != $pagenow ) {
+			if ( ! ACFFA_THEME_INSTALLATION ) {
 				return;
 			}
 
-			if ( ! ACFFA_THEME_INSTALLATION ) {
+			global $pagenow;
+
+			$show_notice = false;
+			if ( 'update-core.php' == $pagenow || 'plugins.php' == $pagenow ) {
+				$show_notice = true;
+			}
+
+			if ( ( isset( $_GET['post_type'] ) && 'acf-field-group' == $_GET['post_type'] ) && ( isset( $_GET['page'] ) && 'fontawesome-settings' == $_GET['page'] ) ) {
+				$show_notice = true;
+			}
+
+			if ( ! $show_notice ) {
 				return;
 			}
 
