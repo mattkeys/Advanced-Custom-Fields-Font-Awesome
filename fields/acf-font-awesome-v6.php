@@ -49,7 +49,7 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 			if ( apply_filters( 'ACFFA_show_fontawesome_pro_blurbs', true ) ) {
 				acf_render_field_setting( $field, [
 					'label'			=> __( 'Get FontAwesome Pro', 'acf-font-awesome' ),
-					'message'		=> '<p>' . __( 'Support this plugin and get more icons across more styles plus helpful services, regular updates, a lifetime license, and actual human support.', 'acf-font-awesome' ) . '</p>' . '<a class="get-acfpro-btn" target="_blank" href="https://fontawesome.com/referral?a=0032f3e781"><i class="fa-solid fa-carrot"></i>' . __( 'Upgrade to Font Awesome Pro!', 'acf-font-awesome' ) . '</a>',
+					'message'		=> '<p>' . __( 'Support this plugin and get more icons across more styles plus helpful services, regular updates, a lifetime license, and actual human support.', 'acf-font-awesome' ) . '</p>' . '<a class="get-acfpro-btn" target="_blank" href="https://fontawesome.com/referral?a=f4be3e1256"><i class="fa-solid fa-carrot"></i>' . __( 'Upgrade to Font Awesome Pro!', 'acf-font-awesome' ) . '</a>',
 					'type'			=> 'message',
 					'name'			=> 'get-fontawesome-pro',
 					'class'			=> 'get-fontawesome-pro'
@@ -65,16 +65,16 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 
 			$icon_sets_args['choices'] = [
 				'solid'					=> __( 'Solid', 'acf-font-awesome' ),
-				'sharp_solid'			=> __( 'Solid (Sharp)', 'acf-font-awesome' ) . ' (' . '<a target="_blank" href="https://fontawesome.com/referral?a=0032f3e781">' . __( 'FontAwesome Pro License Required', 'acf-font-awesome' ) . '</a>)',
+				'sharp_solid'			=> __( 'Solid (Sharp)', 'acf-font-awesome' ) . ' (' . '<a target="_blank" href="https://fontawesome.com/referral?a=f4be3e1256">' . __( 'FontAwesome Pro License Required', 'acf-font-awesome' ) . '</a>)',
 				'regular'				=> __( 'Regular', 'acf-font-awesome' ),
-				'sharp_regular'			=> __( 'Regular (Sharp)', 'acf-font-awesome' ) . ' (' . '<a target="_blank" href="https://fontawesome.com/referral?a=0032f3e781">' . __( 'FontAwesome Pro License Required', 'acf-font-awesome' ) . '</a>)',
-				'light'					=> __( 'Light', 'acf-font-awesome' ) . ' (' . '<a target="_blank" href="https://fontawesome.com/referral?a=0032f3e781">' . __( 'FontAwesome Pro License Required', 'acf-font-awesome' ) . '</a>)',
-				'sharp_light'			=> __( 'Light (Sharp)', 'acf-font-awesome' ) . ' (' . '<a target="_blank" href="https://fontawesome.com/referral?a=0032f3e781">' . __( 'FontAwesome Pro License Required', 'acf-font-awesome' ) . '</a>)',
-				'thin'					=> __( 'Thin', 'acf-font-awesome' ) . ' (' . '<a target="_blank" href="https://fontawesome.com/referral?a=0032f3e781">' . __( 'FontAwesome Pro License Required', 'acf-font-awesome' ) . '</a>)',
-				'sharp_thin'			=> __( 'Thin (Sharp)', 'acf-font-awesome' ) . ' (' . '<a target="_blank" href="https://fontawesome.com/referral?a=0032f3e781">' . __( 'FontAwesome Pro License Required', 'acf-font-awesome' ) . '</a>)',
-				'sharp-duotone_solid'	=> __( 'Duotone (Sharp)', 'acf-font-awesome' ) . ' (' . '<a target="_blank" href="https://fontawesome.com/referral?a=0032f3e781">' . __( 'FontAwesome Pro License Required', 'acf-font-awesome' ) . '</a>)',
-				'duotone_solid'			=> __( 'Duotone', 'acf-font-awesome' ) . ' (' . '<a target="_blank" href="https://fontawesome.com/referral?a=0032f3e781">' . __( 'FontAwesome Pro License Required', 'acf-font-awesome' ) . '</a>)',
-				'fak'					=> __( 'Uploaded Icons', 'acf-font-awesome' ) . ' (' . '<a target="_blank" href="https://fontawesome.com/referral?a=0032f3e781">' . __( 'FontAwesome Pro License Required', 'acf-font-awesome' ) . '</a>)',
+				'sharp_regular'			=> __( 'Regular (Sharp)', 'acf-font-awesome' ) . ' (' . '<a target="_blank" href="https://fontawesome.com/referral?a=f4be3e1256">' . __( 'FontAwesome Pro License Required', 'acf-font-awesome' ) . '</a>)',
+				'light'					=> __( 'Light', 'acf-font-awesome' ) . ' (' . '<a target="_blank" href="https://fontawesome.com/referral?a=f4be3e1256">' . __( 'FontAwesome Pro License Required', 'acf-font-awesome' ) . '</a>)',
+				'sharp_light'			=> __( 'Light (Sharp)', 'acf-font-awesome' ) . ' (' . '<a target="_blank" href="https://fontawesome.com/referral?a=f4be3e1256">' . __( 'FontAwesome Pro License Required', 'acf-font-awesome' ) . '</a>)',
+				'thin'					=> __( 'Thin', 'acf-font-awesome' ) . ' (' . '<a target="_blank" href="https://fontawesome.com/referral?a=f4be3e1256">' . __( 'FontAwesome Pro License Required', 'acf-font-awesome' ) . '</a>)',
+				'sharp_thin'			=> __( 'Thin (Sharp)', 'acf-font-awesome' ) . ' (' . '<a target="_blank" href="https://fontawesome.com/referral?a=f4be3e1256">' . __( 'FontAwesome Pro License Required', 'acf-font-awesome' ) . '</a>)',
+				'sharp-duotone_solid'	=> __( 'Duotone (Sharp)', 'acf-font-awesome' ) . ' (' . '<a target="_blank" href="https://fontawesome.com/referral?a=f4be3e1256">' . __( 'FontAwesome Pro License Required', 'acf-font-awesome' ) . '</a>)',
+				'duotone_solid'			=> __( 'Duotone', 'acf-font-awesome' ) . ' (' . '<a target="_blank" href="https://fontawesome.com/referral?a=f4be3e1256">' . __( 'FontAwesome Pro License Required', 'acf-font-awesome' ) . '</a>)',
+				'fak'					=> __( 'Uploaded Icons', 'acf-font-awesome' ) . ' (' . '<a target="_blank" href="https://fontawesome.com/referral?a=f4be3e1256">' . __( 'FontAwesome Pro License Required', 'acf-font-awesome' ) . '</a>)',
 				'brands'				=> __( 'Brands', 'acf-font-awesome' ),
 				'custom'				=> __( 'Custom Icon Set', 'acf-font-awesome' )
 			];

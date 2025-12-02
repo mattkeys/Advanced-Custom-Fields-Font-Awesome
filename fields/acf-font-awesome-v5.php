@@ -69,7 +69,7 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 				}
 				acf_render_field_setting( $field, [
 					'label'			=> __( 'Get FontAwesome Pro', 'acf-font-awesome' ),
-					'message'		=> '<p>' . __( 'Support this plugin and get more icons across more styles plus helpful services, regular updates, a lifetime license, and actual human support.', 'acf-font-awesome' ) . '</p>' . '<a class="get-acfpro-btn" target="_blank" href="https://fontawesome.com/referral?a=0032f3e781"><i class="' . $carrot_icon . '"></i>' . __( 'Upgrade to Font Awesome Pro!', 'acf-font-awesome' ) . '</a>',
+					'message'		=> '<p>' . __( 'Support this plugin and get more icons across more styles plus helpful services, regular updates, a lifetime license, and actual human support.', 'acf-font-awesome' ) . '</p>' . '<a class="get-acfpro-btn" target="_blank" href="https://fontawesome.com/referral?a=f4be3e1256"><i class="' . $carrot_icon . '"></i>' . __( 'Upgrade to Font Awesome Pro!', 'acf-font-awesome' ) . '</a>',
 					'type'			=> 'message',
 					'name'			=> 'get-fontawesome-pro',
 					'class'			=> 'get-fontawesome-pro'
