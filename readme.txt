@@ -3,8 +3,8 @@
 Contributors: justinkruit, mattkeys
 Tags: Advanced Custom Fields, ACF, Font Awesome, FontAwesome
 Requires at least: 3.5
-Tested up to: 6.7
-Stable tag: 4.1.2
+Tested up to: 6.9
+Stable tag: 5.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,11 @@ This notification message is filterable so you can customize it to better repres
 2. Searchable list of all icons, including large live preview
 
 == Changelog ==
+
+= 5.0.0 =
+* Added support for FontAwesome 7.x icons and new Icon Styles
+* Updated FontAwesome GraphQL API integration to support FontAwesome 7.x icons and kits
+* Because of the long list of Icon Sets when editing the field, the checkboxes have been replaced with a select2 multi-select field.
 
 = 4.1.2 =
 * Bugfix plugin textdomain can load too early if ACF fields are used before WordPress 'init'

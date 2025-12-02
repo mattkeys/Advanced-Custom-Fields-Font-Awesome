@@ -208,7 +208,7 @@ class ACFFA_Admin
 		array_unshift( $links, '<a href="' . esc_url( admin_url( '/edit.php?post_type=acf-field-group&page=fontawesome-settings' ) ) . '">' . esc_html__( 'Settings', 'acf-font-awesome' ) . '</a>' );
 
 		if ( apply_filters( 'ACFFA_show_fontawesome_pro_blurbs', true ) ) {
-			$links[] = '<a target="_blank" style="color:#20c997;" href="https://fontawesome.com/referral?a=0032f3e781">' . __( 'Get Font Awesome Pro!', 'acf-font-awesome' ) . '</a>';
+			$links[] = '<a target="_blank" style="color:#20c997;" href="https://fontawesome.com/referral?a=f4be3e1256">' . __( 'Get Font Awesome Pro!', 'acf-font-awesome' ) . '</a>';
 		}
 
 		return $links;
@@ -263,7 +263,7 @@ class ACFFA_Admin
 						<div class="title-button-wrap">
 							<i class="<?php echo $fortawesome; ?>"></i>
 							<h3><?php _e( 'Get more icons, styles, tools, & tech support. Upgrade to Font Awesome Pro!', 'acf-font-awesome' ); ?></h3>
-							<a target="_blank" href="https://fontawesome.com/referral?a=0032f3e781"><i class="<?php echo $carrot_icon; ?>"></i><?php _e( 'Get More with Pro', 'acf-font-awesome' ); ?></a>
+							<a target="_blank" href="https://fontawesome.com/referral?a=f4be3e1256"><i class="<?php echo $carrot_icon; ?>"></i><?php _e( 'Get More with Pro', 'acf-font-awesome' ); ?></a>
 						</div>
 						<p><?php _e( 'A subscription to a Font Awesome Pro Plan gives you access to 7,000+ icons, all 5 icon styles, handy services and tools, software and icon updates, a lifetime license to use Pro icons, and actual human support. Signing up with the button above helps to support development on this plugin.', 'acf-font-awesome' ); ?></p>
 					</div>
