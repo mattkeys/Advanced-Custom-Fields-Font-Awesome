@@ -19,9 +19,6 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
   }
 
   async function handleQuery(query, variables) {
-    const headers = {
-      'Content-Type': 'application/json',
-    };
 
     const cleanedQuery = query.replace(/\s+/g, ' ');
 
@@ -35,8 +32,6 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
       method: 'POST',
       body: formData,
     });
-
-    // console.log(res.json());
 
     if (!res.ok) {
       throw new Error('Font Awesome API request failed');
@@ -59,8 +54,6 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
   function handleResult(event) {
     const result = event.detail || {};
 
-    console.log('handleResult:', result);
-
     let iconData = {
       family: result.family || '',
       style: result.style || '',
@@ -68,20 +61,7 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
       unicode: result.icon[3] || '',
     };
 
-    console.log('iconData:', iconData);
-
     currentField.find('.acf-input-wrap input').val(`${JSON.stringify(iconData)}`);
-
-    // Simple preview
-    // const preview = document.getElementById('fa-icon-preview');
-    // if (preview) {
-    //   preview.innerHTML = '';
-    //   if (prefix && iconName) {
-    //     const i = document.createElement('i');
-    //     i.className = `${prefix} fa-${iconName}`;
-    //     preview.appendChild(i);
-    //   }
-    // }
 
     const preview = currentField.find('.icon_preview');
     preview.html('');
