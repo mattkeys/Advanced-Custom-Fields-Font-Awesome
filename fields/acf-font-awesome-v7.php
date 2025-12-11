@@ -224,17 +224,21 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 
 			$v5_icon_preselected = false;
 
-			$field['type']		= 'select';
-			$field['ui']		= 1;
-			$field['ajax']		= 1;
-			$field['choices']	= [];
-			$field['multiple']	= false;
+			$field['type']		= 'text';
+			$field['value']		= $select_value;
+			$field['icon_sets']	= isset( $field['icon_sets'] ) ? $field['icon_sets'] : [ 'classic_solid', 'classic_regular', 'brands' ];
+			$field['prepend'] = '';
+			$field['append'] = '';
+			// $field['ui']		= 1;
+			// $field['ajax']		= 1;
+			// $field['choices']	= [];
+			// $field['multiple']	= false;
 			$field['class']		= $v5_icon_preselected ? 'v5_icon_preselected' : '';
-			if ( ! empty( $field['icon_sets'] ) && in_array( 'custom', $field['icon_sets'] ) && ! empty( $field['custom_icon_set'] ) ) {
-				$field['class'] .= ' fa6 select2-fontawesome fontawesome-edit custom-icon-set';
-			} else {
-				$field['class'] .= ' fa6 select2-fontawesome fontawesome-edit';
-			}
+			// if ( ! empty( $field['icon_sets'] ) && in_array( 'custom', $field['icon_sets'] ) && ! empty( $field['custom_icon_set'] ) ) {
+			// 	$field['class'] .= ' fa6 select2-fontawesome fontawesome-edit custom-icon-set';
+			// } else {
+			// 	$field['class'] .= ' fa6 select2-fontawesome fontawesome-edit';
+			// }
 
 			if ( $select_value ) :
 				$icon_info = json_decode( $select_value );
@@ -249,13 +253,13 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 						$classes[] = 'fa-' . $style;
 					}
 					$classes[] = 'fa-' . $icon_info->id;
-					$field['choices'][ $select_value ] = '<i class="' . implode( ' ', $classes ) . ' fa-fw"></i> ' . $icon_info->label;
+					// $field['choices'][ $select_value ] = '<i class="' . implode( ' ', $classes ) . ' fa-fw"></i> ' . $icon_info->label;
 				} else {
 					$v5_icon_preselected	= true;
 					$options				= get_option( 'acffa_settings' );
 					$label					= isset( $options['acffa_v5_compatibility_mode'] ) && $options['acffa_v5_compatibility_mode'] ? '[v5-compat-lookup]' : false;
 
-					$field['choices'][ $select_value ] = $label;
+					// $field['choices'][ $select_value ] = $label;
 				}
 			endif;
 
@@ -268,7 +272,17 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 					<?php
 				else :
 					?>
-					<div class="icon_preview"></div>
+					<?php if( isset( $icon_info ) && is_object( $icon_info ) ) : ?>
+						<div class="icon_preview">
+							<i class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>"></i>
+						</div>
+					<?php else : ?>
+						<div class="icon_preview">
+						</div>
+					<?php endif; ?>
+					<button type="button" class="button fa-icon-chooser-open"><?php _e( 'Choose Icon', 'acf-font-awesome' ); ?></button>
+					<input type="hidden" name="acffa_nonce" class="acffa-nonce" value="<?= esc_attr( wp_create_nonce( 'acffa_nonce' ) ); ?>" />
+					<input type="hidden" name="icon_sets" class="icon-sets" value="<?= esc_attr( implode( ',', $field['icon_sets'] ) ); ?>" />
 					<?php
 				endif;
 			endif;
@@ -306,10 +320,17 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 			if ( isset( $options['acffa_v5_compatibility_mode'] ) && $options['acffa_v5_compatibility_mode'] ) {
 				wp_enqueue_script( 'acffa_fontawesome-js-api', "https://use.fontawesome.com/releases/v$latest_version/js/all.js", [], $latest_version );
 			}
+			// wp_enqueue_script( 'acffa-icon-chooser', 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.9.1/dist/fa-icon-chooser/fa-icon-chooser.entry.min.js', [], '0.9.1' );
+			// wp_enqueue_script( 'acffa-icon-chooser', 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.9.1/dist/cjs/fa-icon-chooser.cjs.js', [], '0.9.1' );
+			// wp_enqueue_script_module( 'acffa-icon-chooser-module', 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.9.1/dist/fa-icon-chooser/fa-icon-chooser.module.min.js', [ 'acffa-icon-chooser' ], '0.9.1' );
+			wp_register_script_module( 'acffa-icon-chooser-module', ACFFA_PUBLIC_PATH . "assets/js/fa-icon-chooser.esm.js", [], '0.9.1' );
+			wp_enqueue_script_module( 'acffa-icon-chooser-module' );
 			wp_enqueue_script( 'acf-input-font-awesome', ACFFA_PUBLIC_PATH . "assets/js/input-v6.js", [ 'acf-input' ], $version );
 			wp_localize_script( 'acf-input-font-awesome', 'ACFFA', [
 				'major_version'		=> ACFFA_MAJOR_VERSION,
-				'v5_compat_mode'	=> isset( $options['acffa_v5_compatibility_mode'] ) && $options['acffa_v5_compatibility_mode'] ? true : false
+				'v5_compat_mode'	=> isset( $options['acffa_v5_compatibility_mode'] ) && $options['acffa_v5_compatibility_mode'] ? true : false,
+				'kit_token'			=> apply_filters( 'ACFFA_fontawesome_kit_token', false ),
+				'ajax_url'			=> admin_url( 'admin-ajax.php' )
 			] );
 
 			wp_enqueue_style( 'acf-input-microtip', ACFFA_PUBLIC_PATH . "assets/inc/microtip/microtip.min.css", [], '1.0.0' );

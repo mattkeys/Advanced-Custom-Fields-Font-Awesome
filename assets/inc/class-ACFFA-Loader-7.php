@@ -32,6 +32,7 @@ class ACFFA_Loader_7
 
 		add_action( 'wp_ajax_acf/fields/font-awesome/query', [ $this, 'select2_ajax_request' ] );
 		add_filter( 'ACFFA_get_fa_url', [ $this, 'get_fa_url' ], 5, 1 );
+		add_filter( 'ACFFA_fontawesome_kit_token', [ $this, 'get_token' ], 5, 0 );
 		add_filter( 'ACFFA_icon_prefix_label', [ $this, 'get_prefix_label' ], 5, 2 );
 		add_filter( 'ACFFA_get_latest_version', [ $this, 'get_latest_version' ], 5, 2 );
 		add_filter( 'ACFFA_fontawesome_access_token', [ $this, 'get_access_token' ], 5, 2 );
@@ -40,6 +41,7 @@ class ACFFA_Loader_7
 		add_filter( 'ACFFA_default_family_by_style', [ $this, 'get_default_family_by_style' ], 10, 2 );
 		add_filter( 'script_loader_tag', [ $this, 'fa_kit_script_attributes' ], 10, 3 );
 		add_filter( 'script_loader_tag', [ $this, 'js_api_script_attributes' ], 10, 3 );
+		add_action( 'wp_ajax_acffa_fa_query', [ $this, 'fa_query_request' ] );
 	}
 
 	public function select2_ajax_request()
@@ -55,6 +57,38 @@ class ACFFA_Loader_7
 		$response = $this->get_ajax_query( $_POST );
 
 		acf_send_ajax_results( $response );
+	}
+
+	public function fa_query_request()
+	{
+		check_ajax_referer( 'acffa_nonce', 'nonce' );
+
+		$query = isset( $_POST['query'] ) ? sanitize_text_field( wp_unslash( $_POST['query'] ) ) : '';
+		$variables = isset( $_POST['variables'] ) ? wp_unslash( $_POST['variables'] ) : [];
+
+		$body = [
+			'query'		=> $query,
+			'variables'	=> $variables
+		];
+
+		$remote_get = wp_remote_post( 'https://api.fontawesome.com', [
+			'headers'	=> [
+				'Content-Type'	=> 'application/json',
+				'Authorization'	=> 'Bearer ' . apply_filters( 'ACFFA_fontawesome_access_token', false ),
+			],
+			'timeout'	=> 30,
+			'body'		=> json_encode( $body )
+		] );
+
+		if ( ! is_wp_error( $remote_get ) ) {
+			$response_json = wp_remote_retrieve_body( $remote_get );
+
+			if ( $response_json ) {
+				wp_send_json_success( json_decode( $response_json ) );
+			}
+		}
+
+		wp_send_json_error();
 	}
 
 	private function get_search_config()
@@ -385,6 +419,11 @@ class ACFFA_Loader_7
 
 			return $cdn_baseurl . $latest_version . $cdn_filepath;
 		}
+	}
+
+	public function get_token()
+	{
+		return $this->kit_token;
 	}
 
 	public function get_prefix_label( $label, $prefix )
