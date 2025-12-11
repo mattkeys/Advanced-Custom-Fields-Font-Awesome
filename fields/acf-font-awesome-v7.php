@@ -229,16 +229,7 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 			$field['icon_sets']	= isset( $field['icon_sets'] ) ? $field['icon_sets'] : [ 'classic_solid', 'classic_regular', 'brands' ];
 			$field['prepend'] = '';
 			$field['append'] = '';
-			// $field['ui']		= 1;
-			// $field['ajax']		= 1;
-			// $field['choices']	= [];
-			// $field['multiple']	= false;
-			$field['class']		= $v5_icon_preselected ? 'v5_icon_preselected' : '';
-			// if ( ! empty( $field['icon_sets'] ) && in_array( 'custom', $field['icon_sets'] ) && ! empty( $field['custom_icon_set'] ) ) {
-			// 	$field['class'] .= ' fa6 select2-fontawesome fontawesome-edit custom-icon-set';
-			// } else {
-			// 	$field['class'] .= ' fa6 select2-fontawesome fontawesome-edit';
-			// }
+			$field['class']		= $v5_icon_preselected ? 'v5_icon_preselected selected-icon' : 'selected-icon';
 
 			if ( $select_value ) :
 				$icon_info = json_decode( $select_value );
@@ -253,13 +244,10 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 						$classes[] = 'fa-' . $style;
 					}
 					$classes[] = 'fa-' . $icon_info->id;
-					// $field['choices'][ $select_value ] = '<i class="' . implode( ' ', $classes ) . ' fa-fw"></i> ' . $icon_info->label;
 				} else {
 					$v5_icon_preselected	= true;
 					$options				= get_option( 'acffa_settings' );
 					$label					= isset( $options['acffa_v5_compatibility_mode'] ) && $options['acffa_v5_compatibility_mode'] ? '[v5-compat-lookup]' : false;
-
-					// $field['choices'][ $select_value ] = $label;
 				}
 			endif;
 
