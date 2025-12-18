@@ -224,7 +224,7 @@
 	});
 
 	// Update FontAwesome field previews and init select2 in field edit area
-	acf.add_action( 'ready_field/type=font-awesome append_field/type=font-awesome show_field/type=font-awesome', function( $el ) {
+	acf.add_action( 'ready_field/type=font-awesome append_field/type=font-awesome show_field/type=font-awesome new_field/type=font-awesome', function( $el ) {
 		var $fa_fields = $( 'select.fontawesome-edit:not(.select2_initalized)', $el );
 
 		if ( $fa_fields.length ) {
