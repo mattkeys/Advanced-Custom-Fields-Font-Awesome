@@ -26,6 +26,7 @@ class ACFFA_Admin
 		add_filter( 'pre_update_option_acffa_settings', [ $this, 'revoke_access_token' ], 20, 2 );
 		add_filter( 'pre_update_option_acffa_settings', [ $this, 'clear_search_config_cache' ], 20, 2 );
 		add_filter( 'pre_update_option_acffa_settings', [ $this, 'check_kits_settings' ], 25, 2 );
+		add_action( 'update_option_acffa_settings', [ $this, 'get_latest_version' ], 10, 3 );
 		add_action( 'admin_init', [ $this, 'check_kits_api_key_filter'], 10 );
 		add_action( 'wp_ajax_ACFFA_delete_icon_set', [ $this, 'ajax_remove_icon_set' ] );
 		add_filter( 'ACFFA_show_fontawesome_pro_blurbs', [ $this, 'hide_fontawesome_pro_blurbs' ], 5, 1 );
@@ -833,6 +834,23 @@ class ACFFA_Admin
 		}
 
 		$this->get_fontawesome_kits( $new_value['acffa_api_key'] );
+
+		return $new_value;
+	}
+
+	public function get_latest_version($old_value, $new_value, $option)
+	{
+		if ( version_compare( ACFFA_MAJOR_VERSION, 6, '<' ) ) {
+			return $new_value;
+		}
+
+		
+		$old_version = isset( $old_value['acffa_major_version'] ) ? $old_value['acffa_major_version'] : false;
+		$new_version = isset( $new_value['acffa_major_version'] ) ? $new_value['acffa_major_version'] : false;
+
+		if ( $old_version != $new_version ) {
+			delete_option( 'ACFFA_latest_version' );
+		}
 
 		return $new_value;
 	}
