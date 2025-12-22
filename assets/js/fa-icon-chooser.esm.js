@@ -187,7 +187,7 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
 
     let inputWrapper = defaultValueWrapper.find('.acf-input');
     inputWrapper.prepend(
-      '<div class="icon_preview"></div><button type="button" class="fa-icon-chooser-open button">Choose Icon</button>'
+      '<div class="icon_preview"></div><button type="button" class="fa-icon-chooser-open button">Choose icon</button>'
     );
 
     // Initialize preview based on existing value

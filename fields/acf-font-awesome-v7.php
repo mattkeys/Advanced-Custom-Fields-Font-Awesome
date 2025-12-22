@@ -119,18 +119,6 @@ if (! class_exists('acf_field_font_awesome')) :
 			}
 
 			acf_render_field_setting($field, [
-				'label'			=> __('Custom Icon Set', 'acf-font-awesome'),
-				'instructions'	=> sprintf(__('Create custom icon sets in the <a href="%s">FontAwesome Settings page</a>.', 'acf-font-awesome'), admin_url('/edit.php?post_type=acf-field-group&page=fontawesome-settings')),
-				'type'			=> 'select',
-				'name'			=> 'custom_icon_set',
-				'class'	  		=> 'custom-icon-set',
-				'choices'		=> $custom_icon_set_choices,
-				'value'			=> isset($field['custom_icon_set']) ? $field['custom_icon_set'] : false,
-				'placeholder'	=> 'Choose an icon set',
-				'allow_null'	=> 1
-			]);
-
-			acf_render_field_setting($field, [
 				'label'			=> __('Default Label', 'acf-font-awesome'),
 				'instructions'	=> 'Used internally to store the select label for the default icon. For performance reasons.',
 				'type'			=> 'text',
