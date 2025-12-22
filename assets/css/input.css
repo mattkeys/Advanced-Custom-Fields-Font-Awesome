@@ -129,3 +129,7 @@
     width: auto;
   }
 }
+
+input.acffa-default-icon {
+	display: none;
+}
