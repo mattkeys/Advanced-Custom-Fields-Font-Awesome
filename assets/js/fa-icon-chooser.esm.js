@@ -164,7 +164,6 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
 
   function setupFieldActions($el) {
     $el.find('.fa-icon-chooser-open').on('click', function () {
-      console.log('Icon chooser open clicked');
       let wrapper = $(this).closest('.acf-field');
       let iconSetsInput = wrapper.find('input[name="icon_sets"]');
 
@@ -203,7 +202,6 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
     }
 
     $el.find('.fa-icon-chooser-open').on('click', function () {
-      console.log('Icon chooser open clicked');
       let wrapper = $(this).closest('.acf-input');
 
       iconSets = [];
@@ -217,7 +215,6 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
   acf.add_action(
     'ready_field/type=font-awesome append_field/type=font-awesome show_field/type=font-awesome new_field/type=font-awesome',
     function ($el) {
-      console.log('Font Awesome field ready/append/show action triggered');
       setupFieldActions($el);
     }
   );
@@ -225,7 +222,6 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
   acf.add_action(
     'open_field/type=font-awesome change_field_type/type=font-awesome',
     function ($el) {
-      console.log('Font Awesome field open/change action triggered');
       setupEditFieldActions($el);
     }
   );
