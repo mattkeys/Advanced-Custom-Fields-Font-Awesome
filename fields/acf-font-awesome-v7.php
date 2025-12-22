@@ -153,16 +153,12 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 			acf_render_field_setting( $field, [
 				'label'			=> __( 'Default Icon', 'acf-font-awesome' ),
 				'instructions'	=> '',
-				'type'			=> 'select',
+				'type'			=> 'text',
 				'name'			=> 'default_value',
-				'class'	  		=> 'select2-fontawesome fontawesome-create',
-				'choices'		=>  ! empty( $field['default_label'] ) ? [ $field['default_value'] => html_entity_decode( $field['default_label'] ) ] : [ $field['default_value'] => $field['default_value'] ],
-				'value'			=> $field['default_value'],
+				'class'	  		=> 'acffa-default-icon',
+				'value'			=> $field['default_value'] ?? '',
 				'placeholder'	=> 'Choose a default icon (optional)',
-				'ui'			=> 1,
 				'allow_null'	=> 1,
-				'ajax'			=> 1,
-				'ajax_action'	=> 'acf/fields/font-awesome/query'
 			] );
 
 			acf_render_field_setting( $field, [
@@ -315,6 +311,8 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 				'major_version'		=> ACFFA_MAJOR_VERSION,
 				'v5_compat_mode'	=> isset( $options['acffa_v5_compatibility_mode'] ) && $options['acffa_v5_compatibility_mode'] ? true : false,
 				'kit_token'			=> apply_filters( 'ACFFA_fontawesome_kit_token', false ),
+				'latest_version'	=> $latest_version,
+				'nonce'				=> wp_create_nonce( 'acffa_nonce' ),
 				'ajax_url'			=> admin_url( 'admin-ajax.php' )
 			] );
 

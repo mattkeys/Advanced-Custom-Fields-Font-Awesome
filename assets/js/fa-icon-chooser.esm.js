@@ -43,6 +43,10 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
   }
 
   function includeFamilyStyle(familyStyle) {
+    if (iconSets.length === 0) {
+      return true;
+    }
+
     let familyStyleString = familyStyle['family'] + '_' + familyStyle['style'];
     if (familyStyle['style'] === 'brands') {
       familyStyleString = 'brands';
@@ -61,16 +65,11 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
       unicode: result.icon[3] || '',
     };
 
-    inputEl.val(`${JSON.stringify(iconData)}`);
+    inputEl.val(`${JSON.stringify(iconData)}`).trigger('change');
 
     previewEl.html('');
     if (iconData.style && iconData.id) {
-      const i = document.createElement('i');
-      let classes = [];
-      classes.push('fa-' + iconData.family);
-      classes.push('fa-' + iconData.style);
-      classes.push('fa-' + iconData.id);
-      i.className = classes.join(' ');
+      const i = getPreviewElement(iconData);
       previewEl.append(i);
     }
 
@@ -79,6 +78,19 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
     if (chooser.length) chooser.remove();
 
     container.removeClass('open');
+  }
+
+  function getPreviewElement(iconData) {
+    if (!iconData.style || !iconData.id) {
+      return null;
+    }
+    const i = document.createElement('i');
+    let classes = [];
+    classes.push('fa-' + iconData.family);
+    classes.push('fa-' + iconData.style);
+    classes.push('fa-' + iconData.id);
+    i.className = classes.join(' ');
+    return i;
   }
 
   function openIconChooser() {
@@ -148,7 +160,7 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
     }
   });
 
-  function setupFontAwesomeFieldActions($el) {
+  function setupFieldActions($el) {
     $el.find('.fa-icon-chooser-open').on('click', function () {
       console.log('Icon chooser open clicked');
       let wrapper = $(this).closest('.acf-field');
@@ -162,11 +174,49 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
     });
   }
 
+  function setupEditFieldActions($el) {
+    let defaultValueWrapper = $el.find('.acf-field-setting-default_value');
+
+    // if has class acffa-initialized, skip
+    if (defaultValueWrapper.hasClass('acffa-initialized')) {
+      return;
+    }
+    defaultValueWrapper.addClass('acffa-initialized');
+
+    let inputWrapper = defaultValueWrapper.find('.acf-input');
+    inputWrapper.prepend(
+      '<div class="icon_preview"></div><button type="button" class="fa-icon-chooser-open button">Choose Icon</button>'
+    );
+
+    // Initialize preview based on existing value
+    let input = inputWrapper.find('input');
+    try {
+      const iconData = input.val() ? JSON.parse(input.val()) : {};
+      const preview = inputWrapper.find('.icon_preview');
+      if (iconData.style && iconData.id) {
+        preview.append(getPreviewElement(iconData));
+      }
+    } catch (e) {
+      // Invalid JSON, skip preview
+    }
+
+    $el.find('.fa-icon-chooser-open').on('click', function () {
+      console.log('Icon chooser open clicked');
+      let wrapper = $(this).closest('.acf-input');
+
+      iconSets = [];
+      previewEl = wrapper.find('.icon_preview');
+      inputEl = wrapper.find('input');
+
+      openIconChooser();
+    });
+  }
+
   acf.add_action(
-    'ready_field/type=font-awesome append_field/type=font-awesome show_field/type=font-awesome',
+    'ready_field/type=font-awesome append_field/type=font-awesome show_field/type=font-awesome new_field/type=font-awesome',
     function ($el) {
       console.log('Font Awesome field ready/append/show action triggered');
-      setupFontAwesomeFieldActions($el);
+      setupFieldActions($el);
     }
   );
 
@@ -174,7 +224,7 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
     'open_field/type=font-awesome change_field_type/type=font-awesome',
     function ($el) {
       console.log('Font Awesome field open/change action triggered');
-      setupFontAwesomeFieldActions($el);
+      setupEditFieldActions($el);
     }
   );
 })(jQuery);
