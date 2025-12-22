@@ -5,7 +5,8 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
   const API_URL = 'https://api.fontawesome.com';
 
   let iconSets = [];
-  let currentField = null;
+  let previewEl = null;
+  let inputEl = null;
   let container = null;
 
   function getUrlText(url) {
@@ -19,14 +20,13 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
   }
 
   async function handleQuery(query, variables) {
-
     const cleanedQuery = query.replace(/\s+/g, ' ');
 
     const formData = new FormData();
     formData.append('action', 'acffa_fa_query');
     formData.append('query', cleanedQuery);
     formData.append('variables', JSON.stringify(variables || {}));
-    formData.append('nonce', currentField.find('input[name="acffa_nonce"]').val());
+    formData.append('nonce', ACFFA.nonce);
 
     const res = await fetch(ACFFA.ajax_url, {
       method: 'POST',
@@ -61,10 +61,9 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
       unicode: result.icon[3] || '',
     };
 
-    currentField.find('.acf-input-wrap input').val(`${JSON.stringify(iconData)}`);
+    inputEl.val(`${JSON.stringify(iconData)}`);
 
-    const preview = currentField.find('.icon_preview');
-    preview.html('');
+    previewEl.html('');
     if (iconData.style && iconData.id) {
       const i = document.createElement('i');
       let classes = [];
@@ -72,7 +71,7 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
       classes.push('fa-' + iconData.style);
       classes.push('fa-' + iconData.id);
       i.className = classes.join(' ');
-      preview.append(i);
+      previewEl.append(i);
     }
 
     // Remove chooser when done (optional)
@@ -80,6 +79,47 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
     if (chooser.length) chooser.remove();
 
     container.removeClass('open');
+  }
+
+  function openIconChooser() {
+    // Remove existing chooser
+    let existing = container.find('fa-icon-chooser');
+    if (existing.length) existing.remove();
+
+    const el = document.createElement('fa-icon-chooser');
+
+    // Attach required callbacks as properties
+    el.handleQuery = handleQuery;
+    el.getUrlText = getUrlText;
+    el.includeFamilyStyle = includeFamilyStyle;
+
+    if (!ACFFA.kit_token && ACFFA.latest_version) {
+      el.setAttribute('version', ACFFA.latest_version);
+    } else if (ACFFA.kit_token) {
+      el.setAttribute('kit-token', ACFFA.kit_token);
+    }
+
+    el.addEventListener('finish', handleResult);
+
+    // create empty slot start-view-heading and start-view-detail
+    const startViewHeading = document.createElement('div');
+    startViewHeading.setAttribute('slot', 'start-view-heading');
+    startViewHeading.textContent = '';
+    el.appendChild(startViewHeading);
+    const startViewDetails = document.createElement('div');
+    startViewDetails.setAttribute('slot', 'start-view-detail');
+    startViewDetails.textContent = '';
+    el.appendChild(startViewDetails);
+
+    // Optional slot content
+    const fatalErrorHeading = document.createElement('p');
+    fatalErrorHeading.setAttribute('slot', 'fatal-error-heading');
+    fatalErrorHeading.textContent = 'Something went wrong';
+    el.appendChild(fatalErrorHeading);
+
+    container.find('.chooser-wrapper').append(el);
+
+    container.addClass('open');
   }
 
   function insertIconChooserContainer() {
@@ -110,61 +150,31 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
 
   function setupFontAwesomeFieldActions($el) {
     $el.find('.fa-icon-chooser-open').on('click', function () {
-        console.log('Icon chooser open clicked');
-        let wrapper = $(this).closest('.acf-field');
-        currentField = wrapper;
-        let iconSetsInput = wrapper.find('input[name="icon_sets"]');
+      console.log('Icon chooser open clicked');
+      let wrapper = $(this).closest('.acf-field');
+      let iconSetsInput = wrapper.find('input[name="icon_sets"]');
 
-        // Remove existing chooser
-        let existing = container.find('fa-icon-chooser');
-        if (existing.length) existing.remove();
+      iconSets = iconSetsInput.val() ? iconSetsInput.val().split(',') : [];
+      previewEl = wrapper.find('.icon_preview');
+      inputEl = wrapper.find('.acf-input-wrap input');
 
-        const el = document.createElement('fa-icon-chooser');
-
-        // Attach required callbacks as properties
-        el.handleQuery = handleQuery;
-        el.getUrlText = getUrlText;
-        el.includeFamilyStyle = includeFamilyStyle;
-        // Configure your chooser – version or kit-token, etc.
-        // el.setAttribute('version', '7.1.0'); // example; adjust for your setup
-        el.setAttribute('kit-token', ACFFA.kit_token || '');
-
-        iconSets = iconSetsInput.val() ? iconSetsInput.val().split(',') : [];
-
-        el.addEventListener('finish', handleResult);
-
-        // create empty slot start-view-heading and start-view-detail
-        const startViewHeading = document.createElement('div');
-        startViewHeading.setAttribute('slot', 'start-view-heading');
-        startViewHeading.textContent = '';
-        el.appendChild(startViewHeading);
-        const startViewDetails = document.createElement('div');
-        startViewDetails.setAttribute('slot', 'start-view-detail');
-        startViewDetails.textContent = '';
-        el.appendChild(startViewDetails);
-
-        // Optional slot content
-        const fatalErrorHeading = document.createElement('p');
-        fatalErrorHeading.setAttribute('slot', 'fatal-error-heading');
-        fatalErrorHeading.textContent = 'Something went wrong';
-        el.appendChild(fatalErrorHeading);
-
-        container.find('.chooser-wrapper').append(el);
-
-        container.addClass('open');
-      });
-    }
+      openIconChooser();
+    });
+  }
 
   acf.add_action(
     'ready_field/type=font-awesome append_field/type=font-awesome show_field/type=font-awesome',
     function ($el) {
       console.log('Font Awesome field ready/append/show action triggered');
-        setupFontAwesomeFieldActions($el);      
+      setupFontAwesomeFieldActions($el);
     }
   );
 
-  acf.add_action( 'open_field/type=font-awesome change_field_type/type=font-awesome', function( $el ) {
-    console.log('Font Awesome field open/change action triggered');
-    setupFontAwesomeFieldActions($el);
-    });
+  acf.add_action(
+    'open_field/type=font-awesome change_field_type/type=font-awesome',
+    function ($el) {
+      console.log('Font Awesome field open/change action triggered');
+      setupFontAwesomeFieldActions($el);
+    }
+  );
 })(jQuery);
