@@ -306,7 +306,7 @@ if ( ! class_exists( 'acf_field_font_awesome' ) ) :
 			}
 			wp_register_script_module( 'acffa-icon-chooser-module', ACFFA_PUBLIC_PATH . "assets/js/fa-icon-chooser.esm.js", [], '0.9.1' );
 			wp_enqueue_script_module( 'acffa-icon-chooser-module' );
-			wp_enqueue_script( 'acf-input-font-awesome', ACFFA_PUBLIC_PATH . "assets/js/input-v6.js", [ 'acf-input' ], $version );
+			wp_enqueue_script( 'acf-input-font-awesome', ACFFA_PUBLIC_PATH . "assets/js/input-v7.js", [ 'acf-input' ], $version );
 			wp_localize_script( 'acf-input-font-awesome', 'ACFFA', [
 				'major_version'		=> ACFFA_MAJOR_VERSION,
 				'v5_compat_mode'	=> isset( $options['acffa_v5_compatibility_mode'] ) && $options['acffa_v5_compatibility_mode'] ? true : false,
