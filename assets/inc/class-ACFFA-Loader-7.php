@@ -37,6 +37,7 @@ class ACFFA_Loader_7 {
 		add_filter('ACFFA_fontawesome_access_token', [$this, 'get_access_token'], 5, 2);
 		add_filter('ACFFA_family_style_string_to_array', [$this, 'family_style_string_to_array'], 10, 2);
 		add_filter('ACFFA_standardize_custom_icon_set_family_style', [$this, 'standardize_custom_icon_set_family_style'], 10, 1);
+		add_filter('ACFFA_standardize_icon_set_family_style', [$this, 'standardize_icon_set_family_style'], 10, 1);
 		add_filter('ACFFA_default_family_by_style', [$this, 'get_default_family_by_style'], 10, 2);
 		add_filter('script_loader_tag', [$this, 'fa_kit_script_attributes'], 10, 3);
 		add_filter('script_loader_tag', [$this, 'js_api_script_attributes'], 10, 3);
@@ -808,7 +809,7 @@ class ACFFA_Loader_7 {
 		return $default_family;
 	}
 
-	private function standardize_icon_set_family_style($icon_set) {
+	public function standardize_icon_set_family_style($icon_set) {
 		if (! is_array($icon_set)) {
 			return $icon_set;
 		}

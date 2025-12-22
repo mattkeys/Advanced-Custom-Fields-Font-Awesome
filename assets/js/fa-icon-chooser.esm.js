@@ -48,9 +48,6 @@ import 'https://cdn.jsdelivr.net/npm/@fortawesome/fa-icon-chooser@0.10.0-2/dist/
     }
 
     let familyStyleString = familyStyle['family'] + '_' + familyStyle['style'];
-    if (familyStyle['style'] === 'brands') {
-      familyStyleString = 'brands';
-    }
 
     return iconSets.includes(familyStyleString);
   }

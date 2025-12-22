@@ -210,7 +210,7 @@ if (! class_exists('acf_field_font_awesome')) :
 
 			$field['type']		= 'text';
 			$field['value']		= $select_value;
-			$field['icon_sets']	= isset($field['icon_sets']) ? $field['icon_sets'] : ['classic_solid', 'classic_regular', 'brands'];
+			$field['icon_sets']	= isset($field['icon_sets']) ? apply_filters('ACFFA_standardize_icon_set_family_style', $field['icon_sets']) : ['classic_solid', 'classic_regular', 'brands'];
 			$field['prepend'] = '';
 			$field['append'] = '';
 			$field['class']		= $v5_icon_preselected ? 'v5_icon_preselected selected-icon hidden' : 'selected-icon hidden';
