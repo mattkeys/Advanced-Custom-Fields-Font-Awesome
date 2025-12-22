@@ -131,14 +131,6 @@ if (! class_exists('acf_field_font_awesome')) :
 			]);
 
 			acf_render_field_setting($field, [
-				'label'			=> __('Icon Preview', 'acf-font-awesome'),
-				'instructions'	=> '',
-				'type'			=> 'message',
-				'name'			=> 'fa_live_preview',
-				'class'			=> 'live-preview'
-			]);
-
-			acf_render_field_setting($field, [
 				'label'			=> __('Default Label', 'acf-font-awesome'),
 				'instructions'	=> 'Used internally to store the select label for the default icon. For performance reasons.',
 				'type'			=> 'text',
