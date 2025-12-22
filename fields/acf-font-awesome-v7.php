@@ -213,7 +213,7 @@ if (! class_exists('acf_field_font_awesome')) :
 			$field['icon_sets']	= isset($field['icon_sets']) ? $field['icon_sets'] : ['classic_solid', 'classic_regular', 'brands'];
 			$field['prepend'] = '';
 			$field['append'] = '';
-			$field['class']		= $v5_icon_preselected ? 'v5_icon_preselected selected-icon' : 'selected-icon';
+			$field['class']		= $v5_icon_preselected ? 'v5_icon_preselected selected-icon hidden' : 'selected-icon hidden';
 
 			if ($select_value) :
 				$icon_info = json_decode($select_value);
@@ -252,7 +252,7 @@ if (! class_exists('acf_field_font_awesome')) :
 						<div class="icon_preview">
 						</div>
 					<?php endif; ?>
-					<button type="button" class="button fa-icon-chooser-open"><?php _e('Choose Icon', 'acf-font-awesome'); ?></button>
+					<button type="button" class="button fa-icon-chooser-open"><?php _e('Choose icon', 'acf-font-awesome'); ?></button>
 					<input type="hidden" name="acffa_nonce" class="acffa-nonce" value="<?= esc_attr(wp_create_nonce('acffa_nonce')); ?>" />
 					<input type="hidden" name="icon_sets" class="icon-sets" value="<?= esc_attr(implode(',', $field['icon_sets'])); ?>" />
 				<?php
