@@ -4,7 +4,7 @@ Contributors: justinkruit, mattkeys
 Tags: Advanced Custom Fields, ACF, Font Awesome, FontAwesome
 Requires at least: 6.5
 Tested up to: 7.0
-Stable tag: 6.0.4
+Stable tag: 6.1.1
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -86,7 +86,7 @@ This notification message is filterable so you can customize it to better repres
 
 == Changelog ==
 
-= 6.1.0 =
+= 6.1.1 =
 * Added: Support for new FontAwesome 7.3.0 Pro+ icon families: Pixel, Mosaic, Vellum, Slab Duo, and Slab Press Duo.
 
 = 6.0.4 =
