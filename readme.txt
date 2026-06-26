@@ -86,6 +86,9 @@ This notification message is filterable so you can customize it to better repres
 
 == Changelog ==
 
+= 6.1.0 =
+* Added: Support for new FontAwesome 7.3.0 Pro+ icon families: Pixel, Mosaic, Vellum, Slab Duo, and Slab Press Duo.
+
 = 6.0.4 =
 * Bugfix: Made z-index of the icon chooser popup higher to avoid conflicts with with ACF block sidebar.
 
