@@ -82,7 +82,9 @@ if (! class_exists('acf_field_font_awesome')) :
 				'whiteboard_semibold'    => __('Whiteboard (Semibold)', 'acf-font-awesome'),
 				'etch_solid'             => __('Etch (Solid)', 'acf-font-awesome'),
 				'slab_regular'           => __('Slab (Regular)', 'acf-font-awesome'),
+				'slab-duo_regular'       => __('Slab Duo (Regular)', 'acf-font-awesome'),
 				'slab-press_regular'     => __('Slab Press (Regular)', 'acf-font-awesome'),
+				'slab-press-duo_regular' => __('Slab Press Duo (Regular)', 'acf-font-awesome'),
 				'thumbprint_light'       => __('Thumbprint (Light)', 'acf-font-awesome'),
 				'jelly_regular'          => __('Jelly (Regular)', 'acf-font-awesome'),
 				'jelly-duo_regular'      => __('Jelly Duo (Regular)', 'acf-font-awesome'),
@@ -94,6 +96,9 @@ if (! class_exists('acf_field_font_awesome')) :
 				'utility-duo_semisolid'  => __('Utility Duo (Solid)', 'acf-font-awesome'),
 				'utility-fill_semisolid' => __('Utility Fill (Solid)', 'acf-font-awesome'),
 				'graphite_thin'          => __('Graphite (Thin)', 'acf-font-awesome'),
+				'pixel_regular'          => __('Pixel (Regular)', 'acf-font-awesome'),
+				'mosaic_solid'           => __('Mosaic (Solid)', 'acf-font-awesome'),
+				'vellum_solid'           => __('Vellum (Solid)', 'acf-font-awesome'),
 				'fak'                    => __('Uploaded Icons', 'acf-font-awesome'),
 				'brands'                 => __('Brands', 'acf-font-awesome')
 			];
