@@ -49,6 +49,10 @@ class ACFFA_Loader_7 {
 		$query = isset($_POST['query']) ? sanitize_text_field(wp_unslash($_POST['query'])) : '';
 		$variables = isset($_POST['variables']) ? json_decode(wp_unslash($_POST['variables']), true) : [];
 
+		if (! $this->acffa_is_query_allowed($query)) {
+			wp_send_json_error(['message' => __('This query requests fields that are not permitted.', 'acf-font-awesome')]);
+		}
+
 		$body = [
 			'query'		=> $query,
 			'variables'	=> $variables
@@ -72,6 +76,327 @@ class ACFFA_Loader_7 {
 		}
 
 		wp_send_json_error();
+	}
+
+	/**
+	 * Blocks GraphQL queries/mutations from reading or triggering fields that
+	 * expose account/kit secrets (Account.id, Account.email, Account.kits,
+	 * Kit.domains) or that create/poll kit downloads (Mutation.createKitDownload,
+	 * Query.getKitDownload), regardless of aliasing, nesting, or fragment usage.
+	 */
+	private function acffa_is_query_allowed($query) {
+		if (! is_string($query) || trim($query) === '') {
+			return true;
+		}
+
+		$tokens		= $this->acffa_tokenize_query($query);
+		$document	= $this->acffa_parse_document($tokens);
+
+		foreach ($document['operations'] as $operation) {
+			$root_context = ($operation['type'] === 'mutation') ? 'Mutation' : 'Query';
+
+			if ($this->acffa_query_contains_blocked_field($operation['selections'], $root_context, $document['fragments'], [])) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private function acffa_query_contains_blocked_field($selections, $context, $fragments, $visited_fragments) {
+		if (! is_array($selections)) {
+			return false;
+		}
+
+		foreach ($selections as $node) {
+			if ($node['kind'] === 'field') {
+				$name = $node['name'];
+
+				if ($context === 'Query' && $name === 'getKitDownload') {
+					return true;
+				}
+
+				if ($context === 'Mutation' && $name === 'createKitDownload') {
+					return true;
+				}
+
+				if ($context === 'Account' && in_array($name, ['id', 'email', 'kits'], true)) {
+					return true;
+				}
+
+				if ($context === 'Kit' && $name === 'domains') {
+					return true;
+				}
+
+				$child_context = $context;
+				if ($context === 'Query' && $name === 'me') {
+					$child_context = 'Account';
+				} elseif ($context === 'Account' && $name === 'kit') {
+					$child_context = 'Kit';
+				}
+
+				if ($this->acffa_query_contains_blocked_field($node['children'], $child_context, $fragments, $visited_fragments)) {
+					return true;
+				}
+			} elseif ($node['kind'] === 'inline_fragment') {
+				$child_context = in_array($node['type'], ['Account', 'Kit'], true) ? $node['type'] : $context;
+
+				if ($this->acffa_query_contains_blocked_field($node['children'], $child_context, $fragments, $visited_fragments)) {
+					return true;
+				}
+			} elseif ($node['kind'] === 'fragment_spread') {
+				$frag_name = $node['name'];
+
+				if ($frag_name && isset($fragments[$frag_name]) && ! in_array($frag_name, $visited_fragments, true)) {
+					$visited_fragments[] = $frag_name;
+					$frag = $fragments[$frag_name];
+					$child_context = in_array($frag['type'], ['Account', 'Kit'], true) ? $frag['type'] : $context;
+
+					if ($this->acffa_query_contains_blocked_field($frag['children'], $child_context, $fragments, $visited_fragments)) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private function acffa_parse_document($tokens) {
+		$pos		= 0;
+		$length		= count($tokens);
+		$fragments	= [];
+		$operations	= [];
+
+		while ($pos < $length) {
+			$tok = $tokens[$pos];
+
+			if ($tok['type'] === 'name' && $tok['value'] === 'fragment') {
+				$pos++;
+				$frag_name = isset($tokens[$pos]) ? $tokens[$pos]['value'] : null;
+				$pos++;
+
+				if (isset($tokens[$pos]) && $tokens[$pos]['value'] === 'on') {
+					$pos++;
+				}
+
+				$type_name = isset($tokens[$pos]) ? $tokens[$pos]['value'] : null;
+				$pos++;
+
+				$this->acffa_skip_directives($tokens, $pos);
+				$children = $this->acffa_parse_selection_set($tokens, $pos);
+
+				if ($frag_name) {
+					$fragments[$frag_name] = ['type' => $type_name, 'children' => $children];
+				}
+
+				continue;
+			}
+
+			if ($tok['type'] === 'name' && in_array($tok['value'], ['query', 'mutation', 'subscription'], true)) {
+				$operation_type = $tok['value'];
+				$pos++;
+
+				if (isset($tokens[$pos]) && $tokens[$pos]['type'] === 'name') {
+					$pos++;
+				}
+
+				if (isset($tokens[$pos]) && $tokens[$pos]['value'] === '(') {
+					$this->acffa_skip_balanced($tokens, $pos, '(', ')');
+				}
+
+				$this->acffa_skip_directives($tokens, $pos);
+				$operations[] = ['type' => $operation_type, 'selections' => $this->acffa_parse_selection_set($tokens, $pos)];
+
+				continue;
+			}
+
+			if ($tok['type'] === 'punct' && $tok['value'] === '{') {
+				$operations[] = ['type' => 'query', 'selections' => $this->acffa_parse_selection_set($tokens, $pos)];
+				continue;
+			}
+
+			$pos++;
+		}
+
+		return ['operations' => $operations, 'fragments' => $fragments];
+	}
+
+	private function acffa_parse_selection_set($tokens, &$pos) {
+		$selections = [];
+
+		if (! isset($tokens[$pos]) || $tokens[$pos]['value'] !== '{') {
+			return $selections;
+		}
+
+		$pos++;
+
+		while (isset($tokens[$pos]) && ! ($tokens[$pos]['type'] === 'punct' && $tokens[$pos]['value'] === '}')) {
+			$selections[] = $this->acffa_parse_selection($tokens, $pos);
+		}
+
+		if (isset($tokens[$pos])) {
+			$pos++;
+		}
+
+		return $selections;
+	}
+
+	private function acffa_parse_selection($tokens, &$pos) {
+		if (! isset($tokens[$pos])) {
+			return ['kind' => 'unknown', 'children' => []];
+		}
+
+		$tok = $tokens[$pos];
+
+		if ($tok['type'] === 'name' && $tok['value'] === '...') {
+			$pos++;
+
+			if (isset($tokens[$pos]) && $tokens[$pos]['value'] === 'on') {
+				$pos++;
+				$type_name = isset($tokens[$pos]) && $tokens[$pos]['type'] === 'name' ? $tokens[$pos]['value'] : null;
+				$pos++;
+				$this->acffa_skip_directives($tokens, $pos);
+				$children = $this->acffa_parse_selection_set($tokens, $pos);
+
+				return ['kind' => 'inline_fragment', 'type' => $type_name, 'children' => $children];
+			}
+
+			$frag_name = isset($tokens[$pos]) && $tokens[$pos]['type'] === 'name' ? $tokens[$pos]['value'] : null;
+			$pos++;
+			$this->acffa_skip_directives($tokens, $pos);
+
+			return ['kind' => 'fragment_spread', 'name' => $frag_name];
+		}
+
+		if ($tok['type'] !== 'name') {
+			$pos++;
+			return ['kind' => 'unknown', 'children' => []];
+		}
+
+		$field_name = $tok['value'];
+		$pos++;
+
+		if (isset($tokens[$pos]) && $tokens[$pos]['type'] === 'punct' && $tokens[$pos]['value'] === ':') {
+			$pos++;
+
+			if (isset($tokens[$pos]) && $tokens[$pos]['type'] === 'name') {
+				$field_name = $tokens[$pos]['value'];
+				$pos++;
+			}
+		}
+
+		if (isset($tokens[$pos]) && $tokens[$pos]['value'] === '(') {
+			$this->acffa_skip_balanced($tokens, $pos, '(', ')');
+		}
+
+		$this->acffa_skip_directives($tokens, $pos);
+
+		$children = [];
+		if (isset($tokens[$pos]) && $tokens[$pos]['type'] === 'punct' && $tokens[$pos]['value'] === '{') {
+			$children = $this->acffa_parse_selection_set($tokens, $pos);
+		}
+
+		return ['kind' => 'field', 'name' => $field_name, 'children' => $children];
+	}
+
+	private function acffa_skip_directives($tokens, &$pos) {
+		while (isset($tokens[$pos]) && $tokens[$pos]['type'] === 'punct' && $tokens[$pos]['value'] === '@') {
+			$pos++;
+
+			if (isset($tokens[$pos]) && $tokens[$pos]['type'] === 'name') {
+				$pos++;
+			}
+
+			if (isset($tokens[$pos]) && $tokens[$pos]['value'] === '(') {
+				$this->acffa_skip_balanced($tokens, $pos, '(', ')');
+			}
+		}
+	}
+
+	private function acffa_skip_balanced($tokens, &$pos, $open, $close) {
+		if (! isset($tokens[$pos]) || $tokens[$pos]['value'] !== $open) {
+			return;
+		}
+
+		$depth = 0;
+
+		do {
+			if (isset($tokens[$pos]) && $tokens[$pos]['type'] === 'punct') {
+				if ($tokens[$pos]['value'] === $open) {
+					$depth++;
+				} elseif ($tokens[$pos]['value'] === $close) {
+					$depth--;
+				}
+			}
+
+			$pos++;
+		} while ($depth > 0 && isset($tokens[$pos]));
+	}
+
+	private function acffa_tokenize_query($query) {
+		$tokens	= [];
+		$length	= strlen($query);
+		$i		= 0;
+
+		while ($i < $length) {
+			$char = $query[$i];
+
+			if ($char === ' ' || $char === "\t" || $char === "\n" || $char === "\r" || $char === ',') {
+				$i++;
+				continue;
+			}
+
+			if ($char === '#') {
+				while ($i < $length && $query[$i] !== "\n") {
+					$i++;
+				}
+				continue;
+			}
+
+			if ($char === '"') {
+				if (substr($query, $i, 3) === '"""') {
+					$end = strpos($query, '"""', $i + 3);
+					$i = ($end === false) ? $length : $end + 3;
+				} else {
+					$i++;
+					while ($i < $length && $query[$i] !== '"') {
+						$i += ($query[$i] === '\\') ? 2 : 1;
+					}
+					$i++;
+				}
+				continue;
+			}
+
+			if (strpos('{}():[]!$@', $char) !== false) {
+				$tokens[] = ['type' => 'punct', 'value' => $char];
+				$i++;
+				continue;
+			}
+
+			if ($char === '.') {
+				$dots = 0;
+				while ($i < $length && $query[$i] === '.' && $dots < 3) {
+					$dots++;
+					$i++;
+				}
+				$tokens[] = ['type' => 'name', 'value' => str_repeat('.', $dots)];
+				continue;
+			}
+
+			if (preg_match('/[A-Za-z0-9_\-]/', $char)) {
+				$start = $i;
+				while ($i < $length && preg_match('/[A-Za-z0-9_\-]/', $query[$i])) {
+					$i++;
+				}
+				$tokens[] = ['type' => 'name', 'value' => substr($query, $start, $i - $start)];
+				continue;
+			}
+
+			$i++;
+		}
+
+		return $tokens;
 	}
 
 	public function get_access_token($access_token, $new_api_key = false) {
