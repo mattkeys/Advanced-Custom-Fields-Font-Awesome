@@ -46,6 +46,10 @@ class ACFFA_Loader_7 {
 	public function fa_query_request() {
 		check_ajax_referer('acffa_nonce', 'nonce');
 
+		if (! current_user_can('edit_posts')) {
+			wp_send_json_error(['message' => __('You do not have permission to perform this action.', 'acf-font-awesome')]);
+		}
+
 		$query = isset($_POST['query']) ? sanitize_text_field(wp_unslash($_POST['query'])) : '';
 		$variables = isset($_POST['variables']) ? json_decode(wp_unslash($_POST['variables']), true) : [];
 
