@@ -4,7 +4,7 @@ Contributors: justinkruit, mattkeys
 Tags: Advanced Custom Fields, ACF, Font Awesome, FontAwesome
 Requires at least: 6.5
 Tested up to: 7.0
-Stable tag: 6.1.2
+Stable tag: 6.1.3
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -90,6 +90,9 @@ This notification message is filterable so you can customize it to better repres
 Please report security bugs found in the source code of the Advanced Custom Fields: Font Awesome Field plugin through the [Patchstack Vulnerability Disclosure  Program](https://patchstack.com/database/vdp/d5028112-9b80-4292-b5da-bc0e3c1cac0d). The Patchstack team will assist you with verification, CVE assignment, and notify the developers of this plugin.
 
 == Changelog ==
+
+= 6.1.3 =
+* Security: Further hardened the FontAwesome API query feature.
 
 = 6.1.2 =
 * Security: Hardened the FontAwesome API query feature against unauthorized use.
