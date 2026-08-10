@@ -83,10 +83,10 @@ class ACFFA_Loader_7 {
 	}
 
 	/**
-	 * Blocks GraphQL queries/mutations from reading or triggering fields that
-	 * expose account/kit secrets (Account.id, Account.email, Account.kits,
-	 * Kit.domains) or that create/poll kit downloads (Mutation.createKitDownload,
-	 * Query.getKitDownload), regardless of aliasing, nesting, or fragment usage.
+	 * Allows only the exact named GraphQL queries issued by the bundled
+	 * fa-icon-chooser web component (KitMetadata and Search). Anything
+	 * else--other operations, mutations, introspection, fragments, or
+	 * fields not present in the matching template--is rejected by default.
 	 */
 	private function acffa_is_query_allowed($query) {
 		if (! is_string($query) || trim($query) === '') {
@@ -96,74 +96,116 @@ class ACFFA_Loader_7 {
 		$tokens		= $this->acffa_tokenize_query($query);
 		$document	= $this->acffa_parse_document($tokens);
 
-		foreach ($document['operations'] as $operation) {
-			$root_context = ($operation['type'] === 'mutation') ? 'Mutation' : 'Query';
+		if (! empty($document['fragments'])) {
+			return false;
+		}
 
-			if ($this->acffa_query_contains_blocked_field($operation['selections'], $root_context, $document['fragments'], [])) {
+		if (count($document['operations']) !== 1) {
+			return false;
+		}
+
+		$operation = $document['operations'][0];
+
+		if ($operation['type'] !== 'query') {
+			return false;
+		}
+
+		$allowed_shapes = $this->acffa_allowed_query_shapes();
+
+		if (empty($operation['name']) || ! isset($allowed_shapes[$operation['name']])) {
+			return false;
+		}
+
+		return $this->acffa_selections_match_shape($operation['selections'], $allowed_shapes[$operation['name']]);
+	}
+
+	/**
+	 * Exact field shapes for the two named queries fa-icon-chooser sends,
+	 * captured from @fortawesome/fa-icon-chooser 0.10.2 (the version this
+	 * plugin loads). A leaf value of [] means the field must not have a
+	 * sub-selection; a non-empty array lists the only permitted sub-fields.
+	 */
+	private function acffa_allowed_query_shapes() {
+		return [
+			'KitMetadata' => [
+				'me' => [
+					'kit' => [
+						'version'				=> [],
+						'technologySelected'	=> [],
+						'licenseSelected'		=> [],
+						'name'					=> [],
+						'permits'				=> [
+							'embedProSvg' => [
+								'prefix'	=> [],
+								'family'	=> [],
+							],
+						],
+						'release' => [
+							'version'		=> [],
+							'familyStyles'	=> [
+								'family'	=> [],
+								'style'		=> [],
+								'prefix'	=> [],
+							],
+						],
+						'iconUploads' => [
+							'name'		=> [],
+							'unicode'	=> [],
+							'version'	=> [],
+							'width'		=> [],
+							'height'	=> [],
+							'pathData'	=> [],
+						],
+					],
+				],
+			],
+			'Search' => [
+				'search' => [
+					'id'		=> [],
+					'label'		=> [],
+					'familyStylesByLicense' => [
+						'free' => [
+							'family'	=> [],
+							'style'		=> [],
+						],
+						'pro' => [
+							'family'	=> [],
+							'style'		=> [],
+						],
+					],
+				],
+			],
+		];
+	}
+
+	private function acffa_selections_match_shape($selections, $shape) {
+		if (! is_array($selections) || empty($selections)) {
+			return false;
+		}
+
+		foreach ($selections as $node) {
+			if ($node['kind'] !== 'field') {
+				return false;
+			}
+
+			$name = $node['name'];
+
+			if (! isset($shape[$name])) {
+				return false;
+			}
+
+			$child_shape = $shape[$name];
+
+			if (! empty($node['children'])) {
+				if (empty($child_shape) || ! $this->acffa_selections_match_shape($node['children'], $child_shape)) {
+					return false;
+				}
+			} elseif (! empty($child_shape)) {
 				return false;
 			}
 		}
 
 		return true;
-	}
-
-	private function acffa_query_contains_blocked_field($selections, $context, $fragments, $visited_fragments) {
-		if (! is_array($selections)) {
-			return false;
-		}
-
-		foreach ($selections as $node) {
-			if ($node['kind'] === 'field') {
-				$name = $node['name'];
-
-				if ($context === 'Query' && $name === 'getKitDownload') {
-					return true;
-				}
-
-				if ($context === 'Mutation' && $name === 'createKitDownload') {
-					return true;
-				}
-
-				if ($context === 'Account' && in_array($name, ['id', 'email', 'kits'], true)) {
-					return true;
-				}
-
-				if ($context === 'Kit' && $name === 'domains') {
-					return true;
-				}
-
-				$child_context = $context;
-				if ($context === 'Query' && $name === 'me') {
-					$child_context = 'Account';
-				} elseif ($context === 'Account' && $name === 'kit') {
-					$child_context = 'Kit';
-				}
-
-				if ($this->acffa_query_contains_blocked_field($node['children'], $child_context, $fragments, $visited_fragments)) {
-					return true;
-				}
-			} elseif ($node['kind'] === 'inline_fragment') {
-				$child_context = in_array($node['type'], ['Account', 'Kit'], true) ? $node['type'] : $context;
-
-				if ($this->acffa_query_contains_blocked_field($node['children'], $child_context, $fragments, $visited_fragments)) {
-					return true;
-				}
-			} elseif ($node['kind'] === 'fragment_spread') {
-				$frag_name = $node['name'];
-
-				if ($frag_name && isset($fragments[$frag_name]) && ! in_array($frag_name, $visited_fragments, true)) {
-					$visited_fragments[] = $frag_name;
-					$frag = $fragments[$frag_name];
-					$child_context = in_array($frag['type'], ['Account', 'Kit'], true) ? $frag['type'] : $context;
-
-					if ($this->acffa_query_contains_blocked_field($frag['children'], $child_context, $fragments, $visited_fragments)) {
-						return true;
-					}
-				}
-			}
-		}
-
-		return false;
 	}
 
 	private function acffa_parse_document($tokens) {
@@ -201,7 +243,9 @@ class ACFFA_Loader_7 {
 				$operation_type = $tok['value'];
 				$pos++;
 
+				$operation_name = null;
 				if (isset($tokens[$pos]) && $tokens[$pos]['type'] === 'name') {
+					$operation_name = $tokens[$pos]['value'];
 					$pos++;
 				}
 
@@ -210,13 +254,13 @@ class ACFFA_Loader_7 {
 				}
 
 				$this->acffa_skip_directives($tokens, $pos);
-				$operations[] = ['type' => $operation_type, 'selections' => $this->acffa_parse_selection_set($tokens, $pos)];
+				$operations[] = ['type' => $operation_type, 'name' => $operation_name, 'selections' => $this->acffa_parse_selection_set($tokens, $pos)];
 
 				continue;
 			}
 
 			if ($tok['type'] === 'punct' && $tok['value'] === '{') {
-				$operations[] = ['type' => 'query', 'selections' => $this->acffa_parse_selection_set($tokens, $pos)];
+				$operations[] = ['type' => 'query', 'name' => null, 'selections' => $this->acffa_parse_selection_set($tokens, $pos)];
 				continue;
 			}
 
