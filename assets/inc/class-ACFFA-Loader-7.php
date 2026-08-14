@@ -52,15 +52,13 @@ class ACFFA_Loader_7 {
 
 		$query = isset($_POST['query']) ? sanitize_text_field(wp_unslash($_POST['query'])) : '';
 		$variables = isset($_POST['variables']) ? json_decode(wp_unslash($_POST['variables']), true) : [];
+		$variables = is_array($variables) ? $variables : [];
 
-		if (! $this->acffa_is_query_allowed($query)) {
+		$request = $this->acffa_build_upstream_request($query, $variables);
+
+		if (! $request) {
 			wp_send_json_error(['message' => __('This query requests fields that are not permitted.', 'acf-font-awesome')]);
 		}
-
-		$body = [
-			'query'		=> $query,
-			'variables'	=> $variables
-		];
 
 		$remote_get = wp_remote_post('https://api.fontawesome.com', [
 			'headers'	=> [
@@ -68,7 +66,7 @@ class ACFFA_Loader_7 {
 				'Authorization'	=> 'Bearer ' . apply_filters('ACFFA_fontawesome_access_token', false),
 			],
 			'timeout'	=> 30,
-			'body'		=> json_encode($body)
+			'body'		=> json_encode($request)
 		]);
 
 		if (! is_wp_error($remote_get)) {
@@ -83,368 +81,66 @@ class ACFFA_Loader_7 {
 	}
 
 	/**
-	 * Allows only the exact named GraphQL queries issued by the bundled
-	 * fa-icon-chooser web component (KitMetadata and Search). Anything
-	 * else--other operations, mutations, introspection, fragments, or
-	 * fields not present in the matching template--is rejected by default.
+	 * The bundled fa-icon-chooser web component (version pinned in
+	 * assets/js/fa-icon-chooser.esm.js) only ever issues these two exact
+	 * GraphQL documents. Rather than trying to validate arbitrary
+	 * client-supplied GraphQL text, recognize which of these two fixed
+	 * operations was requested and send our own canonical copy of it--never
+	 * the client's original text--with arguments bound to trusted values.
+	 * Anything that doesn't match one of these two documents exactly is
+	 * rejected.
 	 */
-	private function acffa_is_query_allowed($query) {
-		if (! is_string($query) || trim($query) === '') {
-			return true;
-		}
-
-		$tokens		= $this->acffa_tokenize_query($query);
-		$document	= $this->acffa_parse_document($tokens);
-
-		if (! empty($document['fragments'])) {
-			return false;
-		}
-
-		if (count($document['operations']) !== 1) {
-			return false;
-		}
-
-		$operation = $document['operations'][0];
-
-		if ($operation['type'] !== 'query') {
-			return false;
-		}
-
-		$allowed_shapes = $this->acffa_allowed_query_shapes();
-
-		if (empty($operation['name']) || ! isset($allowed_shapes[$operation['name']])) {
-			return false;
-		}
-
-		return $this->acffa_selections_match_shape($operation['selections'], $allowed_shapes[$operation['name']]);
-	}
-
-	/**
-	 * Exact field shapes for the two named queries fa-icon-chooser sends,
-	 * captured from @fortawesome/fa-icon-chooser 0.10.2 (the version this
-	 * plugin loads). A leaf value of [] means the field must not have a
-	 * sub-selection; a non-empty array lists the only permitted sub-fields.
-	 */
-	private function acffa_allowed_query_shapes() {
+	private function acffa_upstream_query_templates() {
 		return [
-			'KitMetadata' => [
-				'me' => [
-					'kit' => [
-						'version'				=> [],
-						'technologySelected'	=> [],
-						'licenseSelected'		=> [],
-						'name'					=> [],
-						'permits'				=> [
-							'embedProSvg' => [
-								'prefix'	=> [],
-								'family'	=> [],
-							],
-						],
-						'release' => [
-							'version'		=> [],
-							'familyStyles'	=> [
-								'family'	=> [],
-								'style'		=> [],
-								'prefix'	=> [],
-							],
-						],
-						'iconUploads' => [
-							'name'		=> [],
-							'unicode'	=> [],
-							'version'	=> [],
-							'width'		=> [],
-							'height'	=> [],
-							'pathData'	=> [],
-						],
-					],
-				],
-			],
-			'Search' => [
-				'search' => [
-					'id'		=> [],
-					'label'		=> [],
-					'familyStylesByLicense' => [
-						'free' => [
-							'family'	=> [],
-							'style'		=> [],
-						],
-						'pro' => [
-							'family'	=> [],
-							'style'		=> [],
-						],
-					],
-				],
-			],
+			'KitMetadata' => 'query KitMetadata($token: String!) { me { kit(token: $token) { version technologySelected licenseSelected name permits { embedProSvg { prefix family } } release { version familyStyles { family style prefix } } iconUploads { name unicode version width height pathData } } } }',
+			'Search'      => 'query Search($version: String!, $query: String!) { search(version: $version, query: $query, first: 100) { id label familyStylesByLicense { free { family style } pro { family style } } } }',
 		];
 	}
 
-	private function acffa_selections_match_shape($selections, $shape) {
-		if (! is_array($selections) || empty($selections)) {
+	private function acffa_build_upstream_request($query, $variables) {
+		if (! is_string($query) || trim($query) === '') {
 			return false;
 		}
 
-		foreach ($selections as $node) {
-			if ($node['kind'] !== 'field') {
+		$operation_name = array_search($query, $this->acffa_upstream_query_templates(), true);
+
+		if ($operation_name === false) {
+			return false;
+		}
+
+		if ($operation_name === 'KitMetadata') {
+			if (empty($this->kit_token)) {
 				return false;
 			}
 
-			$name = $node['name'];
-
-			if (! isset($shape[$name])) {
-				return false;
-			}
-
-			$child_shape = $shape[$name];
-
-			if (! empty($node['children'])) {
-				if (empty($child_shape) || ! $this->acffa_selections_match_shape($node['children'], $child_shape)) {
-					return false;
-				}
-			} elseif (! empty($child_shape)) {
-				return false;
-			}
+			return [
+				'query'		=> $this->acffa_upstream_query_templates()['KitMetadata'],
+				'variables'	=> ['token' => $this->kit_token],
+			];
 		}
 
-		return true;
-	}
-
-	private function acffa_parse_document($tokens) {
-		$pos		= 0;
-		$length		= count($tokens);
-		$fragments	= [];
-		$operations	= [];
-
-		while ($pos < $length) {
-			$tok = $tokens[$pos];
-
-			if ($tok['type'] === 'name' && $tok['value'] === 'fragment') {
-				$pos++;
-				$frag_name = isset($tokens[$pos]) ? $tokens[$pos]['value'] : null;
-				$pos++;
-
-				if (isset($tokens[$pos]) && $tokens[$pos]['value'] === 'on') {
-					$pos++;
-				}
-
-				$type_name = isset($tokens[$pos]) ? $tokens[$pos]['value'] : null;
-				$pos++;
-
-				$this->acffa_skip_directives($tokens, $pos);
-				$children = $this->acffa_parse_selection_set($tokens, $pos);
-
-				if ($frag_name) {
-					$fragments[$frag_name] = ['type' => $type_name, 'children' => $children];
-				}
-
-				continue;
-			}
-
-			if ($tok['type'] === 'name' && in_array($tok['value'], ['query', 'mutation', 'subscription'], true)) {
-				$operation_type = $tok['value'];
-				$pos++;
-
-				$operation_name = null;
-				if (isset($tokens[$pos]) && $tokens[$pos]['type'] === 'name') {
-					$operation_name = $tokens[$pos]['value'];
-					$pos++;
-				}
-
-				if (isset($tokens[$pos]) && $tokens[$pos]['value'] === '(') {
-					$this->acffa_skip_balanced($tokens, $pos, '(', ')');
-				}
-
-				$this->acffa_skip_directives($tokens, $pos);
-				$operations[] = ['type' => $operation_type, 'name' => $operation_name, 'selections' => $this->acffa_parse_selection_set($tokens, $pos)];
-
-				continue;
-			}
-
-			if ($tok['type'] === 'punct' && $tok['value'] === '{') {
-				$operations[] = ['type' => 'query', 'name' => null, 'selections' => $this->acffa_parse_selection_set($tokens, $pos)];
-				continue;
-			}
-
-			$pos++;
+		// $operation_name === 'Search'
+		if (! isset($variables['query']) || ! is_string($variables['query'])) {
+			return false;
 		}
 
-		return ['operations' => $operations, 'fragments' => $fragments];
-	}
-
-	private function acffa_parse_selection_set($tokens, &$pos) {
-		$selections = [];
-
-		if (! isset($tokens[$pos]) || $tokens[$pos]['value'] !== '{') {
-			return $selections;
+		if (! isset($variables['version']) || ! is_string($variables['version'])) {
+			return false;
 		}
 
-		$pos++;
+		$search_term = substr(sanitize_text_field($variables['query']), 0, 100);
 
-		while (isset($tokens[$pos]) && ! ($tokens[$pos]['type'] === 'punct' && $tokens[$pos]['value'] === '}')) {
-			$selections[] = $this->acffa_parse_selection($tokens, $pos);
+		if (! preg_match('/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.]+)?$/', $variables['version'])) {
+			return false;
 		}
 
-		if (isset($tokens[$pos])) {
-			$pos++;
-		}
-
-		return $selections;
-	}
-
-	private function acffa_parse_selection($tokens, &$pos) {
-		if (! isset($tokens[$pos])) {
-			return ['kind' => 'unknown', 'children' => []];
-		}
-
-		$tok = $tokens[$pos];
-
-		if ($tok['type'] === 'name' && $tok['value'] === '...') {
-			$pos++;
-
-			if (isset($tokens[$pos]) && $tokens[$pos]['value'] === 'on') {
-				$pos++;
-				$type_name = isset($tokens[$pos]) && $tokens[$pos]['type'] === 'name' ? $tokens[$pos]['value'] : null;
-				$pos++;
-				$this->acffa_skip_directives($tokens, $pos);
-				$children = $this->acffa_parse_selection_set($tokens, $pos);
-
-				return ['kind' => 'inline_fragment', 'type' => $type_name, 'children' => $children];
-			}
-
-			$frag_name = isset($tokens[$pos]) && $tokens[$pos]['type'] === 'name' ? $tokens[$pos]['value'] : null;
-			$pos++;
-			$this->acffa_skip_directives($tokens, $pos);
-
-			return ['kind' => 'fragment_spread', 'name' => $frag_name];
-		}
-
-		if ($tok['type'] !== 'name') {
-			$pos++;
-			return ['kind' => 'unknown', 'children' => []];
-		}
-
-		$field_name = $tok['value'];
-		$pos++;
-
-		if (isset($tokens[$pos]) && $tokens[$pos]['type'] === 'punct' && $tokens[$pos]['value'] === ':') {
-			$pos++;
-
-			if (isset($tokens[$pos]) && $tokens[$pos]['type'] === 'name') {
-				$field_name = $tokens[$pos]['value'];
-				$pos++;
-			}
-		}
-
-		if (isset($tokens[$pos]) && $tokens[$pos]['value'] === '(') {
-			$this->acffa_skip_balanced($tokens, $pos, '(', ')');
-		}
-
-		$this->acffa_skip_directives($tokens, $pos);
-
-		$children = [];
-		if (isset($tokens[$pos]) && $tokens[$pos]['type'] === 'punct' && $tokens[$pos]['value'] === '{') {
-			$children = $this->acffa_parse_selection_set($tokens, $pos);
-		}
-
-		return ['kind' => 'field', 'name' => $field_name, 'children' => $children];
-	}
-
-	private function acffa_skip_directives($tokens, &$pos) {
-		while (isset($tokens[$pos]) && $tokens[$pos]['type'] === 'punct' && $tokens[$pos]['value'] === '@') {
-			$pos++;
-
-			if (isset($tokens[$pos]) && $tokens[$pos]['type'] === 'name') {
-				$pos++;
-			}
-
-			if (isset($tokens[$pos]) && $tokens[$pos]['value'] === '(') {
-				$this->acffa_skip_balanced($tokens, $pos, '(', ')');
-			}
-		}
-	}
-
-	private function acffa_skip_balanced($tokens, &$pos, $open, $close) {
-		if (! isset($tokens[$pos]) || $tokens[$pos]['value'] !== $open) {
-			return;
-		}
-
-		$depth = 0;
-
-		do {
-			if (isset($tokens[$pos]) && $tokens[$pos]['type'] === 'punct') {
-				if ($tokens[$pos]['value'] === $open) {
-					$depth++;
-				} elseif ($tokens[$pos]['value'] === $close) {
-					$depth--;
-				}
-			}
-
-			$pos++;
-		} while ($depth > 0 && isset($tokens[$pos]));
-	}
-
-	private function acffa_tokenize_query($query) {
-		$tokens	= [];
-		$length	= strlen($query);
-		$i		= 0;
-
-		while ($i < $length) {
-			$char = $query[$i];
-
-			if ($char === ' ' || $char === "\t" || $char === "\n" || $char === "\r" || $char === ',') {
-				$i++;
-				continue;
-			}
-
-			if ($char === '#') {
-				while ($i < $length && $query[$i] !== "\n") {
-					$i++;
-				}
-				continue;
-			}
-
-			if ($char === '"') {
-				if (substr($query, $i, 3) === '"""') {
-					$end = strpos($query, '"""', $i + 3);
-					$i = ($end === false) ? $length : $end + 3;
-				} else {
-					$i++;
-					while ($i < $length && $query[$i] !== '"') {
-						$i += ($query[$i] === '\\') ? 2 : 1;
-					}
-					$i++;
-				}
-				continue;
-			}
-
-			if (strpos('{}():[]!$@', $char) !== false) {
-				$tokens[] = ['type' => 'punct', 'value' => $char];
-				$i++;
-				continue;
-			}
-
-			if ($char === '.') {
-				$dots = 0;
-				while ($i < $length && $query[$i] === '.' && $dots < 3) {
-					$dots++;
-					$i++;
-				}
-				$tokens[] = ['type' => 'name', 'value' => str_repeat('.', $dots)];
-				continue;
-			}
-
-			if (preg_match('/[A-Za-z0-9_\-]/', $char)) {
-				$start = $i;
-				while ($i < $length && preg_match('/[A-Za-z0-9_\-]/', $query[$i])) {
-					$i++;
-				}
-				$tokens[] = ['type' => 'name', 'value' => substr($query, $start, $i - $start)];
-				continue;
-			}
-
-			$i++;
-		}
-
-		return $tokens;
+		return [
+			'query'		=> $this->acffa_upstream_query_templates()['Search'],
+			'variables'	=> [
+				'version'	=> $variables['version'],
+				'query'		=> $search_term,
+			],
+		];
 	}
 
 	public function get_access_token($access_token, $new_api_key = false) {
