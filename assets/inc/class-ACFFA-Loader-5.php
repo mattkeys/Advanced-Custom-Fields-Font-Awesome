@@ -127,7 +127,19 @@ class ACFFA_Loader_5
 					$v = strval( $v );
 
 					if ( is_string( $s ) && false === stripos( $v, $s ) ) {
-						continue;
+						$terms = isset( $fa_icons['search'][ $prefix ][ $k ] ) ? $fa_icons['search'][ $prefix ][ $k ] : array();
+						$found = false;
+
+						foreach ( $terms as $term ) {
+							if ( false !== stripos( strval( $term ), $s ) ) {
+								$found = true;
+								break;
+							}
+						}
+
+						if ( ! $found ) {
+							continue;
+						}
 					}
 
 					$prefix_icons[] = array(
@@ -170,7 +182,7 @@ class ACFFA_Loader_5
 	{
 		$fa_icons = get_option( 'ACFFA_icon_data' );
 
-		if ( empty( $fa_icons ) || defined( 'ACFFA_FORCE_REFRESH' ) || ! isset( $fa_icons[ $this->current_version ] ) || ! $this->active_icon_set || ( $this->pro_icons_enabled && 'pro' !== $this->active_icon_set ) || ( ! $this->pro_icons_enabled && 'free' !== $this->active_icon_set ) ) {
+		if ( empty( $fa_icons ) || defined( 'ACFFA_FORCE_REFRESH' ) || ! isset( $fa_icons[ $this->current_version ] ) || ! isset( $fa_icons[ $this->current_version ]['search'] ) || ! $this->active_icon_set || ( $this->pro_icons_enabled && 'pro' !== $this->active_icon_set ) || ( ! $this->pro_icons_enabled && 'free' !== $this->active_icon_set ) ) {
 			$manifest = file_get_contents( $this->manifest_url );
 
 			if ( ! empty( $manifest ) ) {
@@ -212,27 +224,41 @@ class ACFFA_Loader_5
 	{
 		$icons = array(
 			'list'		=> array(),
-			'details'	=> array()
+			'details'	=> array(),
+			'search'	=> array()
 		);
 
 		foreach ( $manifest as $icon => $details ) {
 			foreach( $details['styles'] as $style ) {
 				$prefix = apply_filters( 'ACFFA_icon_prefix', '', $style );
+				$key = $prefix . ' fa-' . $icon;
 
 				if ( ! isset( $icons['list'][ $prefix ] ) ) {
 					$icons['list'][ $prefix ] = array();
 				}
 
 				if ( 'fad' == $prefix ) {
-					$icons['list'][ $prefix ][ $prefix . ' fa-' . $icon ] = '<i class="' . $prefix . ' fa-' . $icon . '"></i> ' . $icon;
+					$icons['list'][ $prefix ][ $key ] = '<i class="' . $prefix . ' fa-' . $icon . '"></i> ' . $icon;
 				} else {
-					$icons['list'][ $prefix ][ $prefix . ' fa-' . $icon ] = '<i class="' . $prefix . '">&#x' . $details['unicode'] . ';</i> ' . $icon;
+					$icons['list'][ $prefix ][ $key ] = '<i class="' . $prefix . '">&#x' . $details['unicode'] . ';</i> ' . $icon;
 				}
 
-				$icons['details'][ $prefix ][ $prefix . ' fa-' . $icon ] = array(
+				$icons['details'][ $prefix ][ $key ] = array(
 					'hex'		=> '\\' . $details['unicode'],
 					'unicode'	=> '&#x' . $details['unicode'] . ';'
 				);
+
+				$terms = array();
+
+				if ( ! empty( $details['label'] ) ) {
+					$terms[] = $details['label'];
+				}
+
+				if ( ! empty( $details['search']['terms'] ) && is_array( $details['search']['terms'] ) ) {
+					$terms = array_merge( $terms, $details['search']['terms'] );
+				}
+
+				$icons['search'][ $prefix ][ $key ] = $terms;
 			}
 		}
 
