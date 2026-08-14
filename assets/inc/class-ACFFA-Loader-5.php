@@ -136,7 +136,7 @@ class ACFFA_Loader_5
 					);
 				}
 				$results[] = array(
-					'id'		=> 'fab',
+					'id'		=> $prefix,
 					'text'		=> apply_filters( 'ACFFA_icon_prefix_label', 'Regular', $prefix ),
 					'children'	=> $prefix_icons
 				);
