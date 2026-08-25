@@ -82,18 +82,32 @@ class ACFFA_Loader_7 {
 
 	/**
 	 * The bundled fa-icon-chooser web component (version pinned in
-	 * assets/js/fa-icon-chooser.esm.js) only ever issues these two exact
+	 * assets/js/fa-icon-chooser.esm.js) only ever issues a small, fixed set of
 	 * GraphQL documents. Rather than trying to validate arbitrary
-	 * client-supplied GraphQL text, recognize which of these two fixed
-	 * operations was requested and send our own canonical copy of it--never
-	 * the client's original text--with arguments bound to trusted values.
-	 * Anything that doesn't match one of these two documents exactly is
-	 * rejected.
+	 * client-supplied GraphQL text, recognize which of these fixed operations
+	 * was requested and send our own canonical copy of it--never the
+	 * client's original text--with arguments bound to trusted values.
+	 * Anything that doesn't match one of these documents exactly is rejected.
+	 *
+	 * Captured from @fortawesome/fa-icon-chooser 0.11.0 (the version this
+	 * plugin loads).
 	 */
 	private function acffa_upstream_query_templates() {
 		return [
-			'KitMetadata' => 'query KitMetadata($token: String!) { me { kit(token: $token) { version technologySelected licenseSelected name permits { embedProSvg { prefix family } } release { version familyStyles { family style prefix } } iconUploads { name unicode version width height pathData } } } }',
-			'Search'      => 'query Search($version: String!, $query: String!) { search(version: $version, query: $query, first: 100) { id label familyStylesByLicense { free { family style } pro { family style } } } }',
+			// Kit metadata.
+			'KitMetadata'   => 'query KitMetadata($token: String!) { me { kit(token: $token) { kitRevision showcaseCacheKey familyStylesPaginated(page: 1, pageSize: 50) { familyStyles { familyStyle { family style prefix } } } version technologySelected licenseSelected name permits { embedProSvg { prefix family } } release { version } iconUploads { name unicode version width height pathData } } } }',
+
+			// Lightweight kit-identity probe run before KitMetadata/SearchKit/ShowcaseIcons to check cache freshness.
+			'KitRevision'   => 'query KitRevision($token: String!) { me { kit(token: $token) { kitRevision showcaseCacheKey } } }',
+
+			// Icon search when no kit token is configured (free/CDN version mode).
+			'Search'        => 'query Search($version: String!, $query: String!) { search(version: $version, query: $query, first: 100) { id label familyStylesByLicense { free { family style } pro { family style } } } }',
+
+			// Icon search in kit mode, replaces Search when a kit token is configured.
+			'SearchKit'     => 'query SearchKit($token: String!, $query: String!, $searchMode: KitSearchMode!, $page: Int!, $pageSize: Int!) { me { kit(token: $token) { searchKit(query: $query, searchMode: $searchMode, page: $page, pageSize: $pageSize) { page pageSize totalIconCount totalPageCount icons { __typename ... on IconWithVariants { name label unicodeHex variants { name unicodeHex familyStyle { family style prefix } } } ... on IconUpload { name unicodeHex width height pathData } } } } } }',
+
+			// Opening icon showcase for one family-style, in kit mode.
+			'ShowcaseIcons' => 'query ShowcaseIcons($token: String!, $selector: FamilyStyleSelector!) { me { kit(token: $token) { showcaseIcons(selector: $selector, page: 1, pageSize: 80, limitPerFamilyStyle: 80) { page pageSize totalIconVariantCount totalPageCount iconVariants { name unicodeHex familyStyle { family style prefix } } } } } }',
 		];
 	}
 
@@ -108,37 +122,101 @@ class ACFFA_Loader_7 {
 			return false;
 		}
 
-		if ($operation_name === 'KitMetadata') {
-			if (empty($this->kit_token)) {
-				return false;
-			}
+		switch ($operation_name) {
+			case 'KitMetadata':
+			case 'KitRevision':
+				if (empty($this->kit_token)) {
+					return false;
+				}
 
-			return [
-				'query'		=> $this->acffa_upstream_query_templates()['KitMetadata'],
-				'variables'	=> ['token' => $this->kit_token],
-			];
+				return [
+					'query'		=> $query,
+					'variables'	=> ['token' => $this->kit_token],
+				];
+
+			case 'Search':
+				return $this->acffa_build_search_request($query, $variables);
+
+			case 'SearchKit':
+				return $this->acffa_build_search_kit_request($query, $variables);
+
+			case 'ShowcaseIcons':
+				return $this->acffa_build_showcase_icons_request($query, $variables);
 		}
 
-		// $operation_name === 'Search'
+		return false;
+	}
+
+	private function acffa_build_search_request($query, $variables) {
 		if (! isset($variables['query']) || ! is_string($variables['query'])) {
 			return false;
 		}
 
-		if (! isset($variables['version']) || ! is_string($variables['version'])) {
-			return false;
-		}
-
-		$search_term = substr(sanitize_text_field($variables['query']), 0, 100);
-
-		if (! preg_match('/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.]+)?$/', $variables['version'])) {
+		if (! isset($variables['version']) || ! is_string($variables['version']) || ! preg_match('/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.]+)?$/', $variables['version'])) {
 			return false;
 		}
 
 		return [
-			'query'		=> $this->acffa_upstream_query_templates()['Search'],
+			'query'		=> $query,
 			'variables'	=> [
 				'version'	=> $variables['version'],
-				'query'		=> $search_term,
+				'query'		=> substr(sanitize_text_field($variables['query']), 0, 100),
+			],
+		];
+	}
+
+	private function acffa_build_search_kit_request($query, $variables) {
+		if (empty($this->kit_token)) {
+			return false;
+		}
+
+		if (! isset($variables['query']) || ! is_string($variables['query'])) {
+			return false;
+		}
+
+		if (! isset($variables['searchMode']) || ! in_array($variables['searchMode'], ['OFFICIAL', 'CUSTOM'], true)) {
+			return false;
+		}
+
+		$page		= $variables['page'] ?? null;
+		$page_size	= $variables['pageSize'] ?? null;
+
+		if (! is_int($page) || $page < 1 || $page > 5) {
+			return false;
+		}
+
+		if (! is_int($page_size) || $page_size < 1 || $page_size > 50) {
+			return false;
+		}
+
+		return [
+			'query'		=> $query,
+			'variables'	=> [
+				'token'			=> $this->kit_token,
+				'query'			=> substr(sanitize_text_field($variables['query']), 0, 100),
+				'searchMode'	=> $variables['searchMode'],
+				'page'			=> $page,
+				'pageSize'		=> $page_size,
+			],
+		];
+	}
+
+	private function acffa_build_showcase_icons_request($query, $variables) {
+		if (empty($this->kit_token)) {
+			return false;
+		}
+
+		$prefix = isset($variables['selector']) && is_array($variables['selector']) ? ($variables['selector']['prefix'] ?? null) : null;
+
+		if (! is_string($prefix) || ! preg_match('/^[a-z]{2,10}$/', $prefix)) {
+			return false;
+		}
+
+		return [
+			'query'		=> $query,
+			'variables'	=> [
+				'token'		=> $this->kit_token,
+				'selector'	=> ['prefix' => $prefix],
 			],
 		];
 	}
